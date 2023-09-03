@@ -24,6 +24,12 @@ all_aes <- c("adj", "alpha", "angle", "bg", "cex", "col", "color",
              "xintercept", "y", "yend", "ymax", "ymin", "yintercept", "z",
              "family", "fontface", "lineheight", "outside", "image")
 
+#' Extract ggplot elements
+#' @description Internal function to extract ggplot elements.
+#' @param plot a ggplot object.
+#' @return elements list of plot.
+#' @rdname extract_ggplot
+#' @author Hou Yun
 #' @importFrom ggplot2 ggplot_build
 #' @export
 extract_ggplot <- function(plot) {
@@ -96,22 +102,27 @@ print.gg_element <- function(x, ...) {
   cli::cli_h1("------------------------------------")
 }
 
+#' @param layer layers of ggplot object.
+#' @rdname extract_ggplot
 #' @export
 extract_params <- function(layer, ...) {
   UseMethod("extract_params")
 }
 
+#' @rdname extract_ggplot
 #' @export
 extract_params.default <- function(layer, ...) {
   out <- layer$computed_geom_params
   out[setdiff(names(out), all_aes)]
 }
 
+#' @rdname extract_ggplot
 #' @export
 extract_guides <- function(plot, ...) {
   UseMethod("extract_guides")
 }
 
+#' @rdname extract_ggplot
 #' @export
 extract_guides.default <- function(plot, ...) {
   if (!inherits(plot, "ggplot_built")) {
@@ -122,7 +133,7 @@ extract_guides.default <- function(plot, ...) {
   plot$grob[[match("guide-box", plot$layout$name)]]
 }
 
-#' @export
+#' @noRd
 gg2coord <- function(panel_params) {
   x_limits <- panel_params$x$limits
   x_breaks <- panel_params$x$breaks
@@ -192,7 +203,23 @@ gg2coord <- function(panel_params) {
   structure(list(x = x, y = y), class = "PANEL")
 }
 
+#' @title Test function
+#' @description Helper funtion used to quickly preview the results of the conversion.
+#' @param plot a ggplot object.
+#' @param region a `CELL` object.
+#' @param ... other parameters passing to `ArcPlot_build()`.
+#' @return return grob object invisibly.
+#' @rdname arc_test
+#' @author Hou Yun
 #' @export
+#' @examples
+#' if (FALSE) { Not Run
+#'   library(ggplot2)
+#'   library(grid)
+#'   library(arcET)
+#'   ggplot(mtcars, aes(wt, mpg)) + geom_point()
+#'   arc_test()
+#' }
 arc_test <- function(plot = ggplot2::last_plot(),
                      region = NULL,
                      ...) {
@@ -215,5 +242,5 @@ arc_test <- function(plot = ggplot2::last_plot(),
   grid::grid.newpage()
   grid::grid.draw(plot)
 
-  invisible()
+  invisible(plot)
 }
