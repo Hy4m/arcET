@@ -18,16 +18,31 @@ plot.ArcPlot <- function(x, ...) {
   invisible()
 }
 
+#' @title Build ArcPlot
+#' @description Internal function used to convert ArcPlot to grobs.
+#' @param plot an ArcPlot object.
+#' @param theme a ggplot theme object.
+#' @param title plot title.
+#' @param subtitle not used
+#' @param tag not used
+#' @param xlim,ylim two-length numeric vector used to set scale limits.
+#' @param ... other parameters passing to `merge_guides()`.
+#' @return grid grobs.
+#' @author Hou Yun
+#' @rdname ArcPlot_build
 #' @export
 ArcPlot_build <- function(plot, ...) {
   UseMethod("ArcPlot_build")
 }
 
 #' @importFrom ggplot2 theme_get
+#' @rdname ArcPlot_build
 #' @export
 ArcPlot_build.ArcPlot <- function(plot,
                                   theme = theme_get(),
                                   title = NULL,
+                                  subtitle = NULL,
+                                  tag = NULL,
                                   xlim = NULL,
                                   ylim = NULL,
                                   ...) {

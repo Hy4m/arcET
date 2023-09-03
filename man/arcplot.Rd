@@ -7,14 +7,11 @@
 arcplot(data = NULL, mapping = aes(), ...)
 }
 \arguments{
-\item{data}{Default dataset to use for plot. If not already a data.frame,
-will be converted to one by \code{\link[ggplot2:fortify]{fortify()}}. If not specified,
-must be supplied in each layer added to the plot.}
+\item{data}{default dataset to use for arcplot. If not specified, must be
+supplied in each cell plot.}
 
-\item{mapping}{Default list of aesthetic mappings to use for plot.
-If not specified, must be supplied in each layer added to the plot.}
-
-\item{...}{Other arguments passed on to methods. Not currently used.}
+\item{mapping}{default list of aesthetic mappings to use for plot. If not
+specified, must be supplied in each cell plot.}
 }
 \value{
 an ArcPlot object.

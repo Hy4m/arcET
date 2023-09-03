@@ -1,7 +1,10 @@
 #' @title Create a new ArcPlot
 #' @description `arcplot()` initializes a ArcPlot object, and It works similarly
 #' to `ggplot()`.
-#' @inheritParams ggplot2::ggplot
+#' @param data default dataset to use for arcplot. If not specified, must be
+#' supplied in each cell plot.
+#' @param mapping default list of aesthetic mappings to use for plot. If not
+#' specified, must be supplied in each cell plot.
 #' @return an ArcPlot object.
 #' @rdname arcplot
 #' @author Hou Yun
