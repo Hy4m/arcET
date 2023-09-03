@@ -1,0 +1,13 @@
+citHeader("To cite arcET in publications use:")
+citEntry(
+  entry    = "manual",
+  title    = paste("arcET:", meta$Title),
+  author   = "Houyun Huang",
+  year     = "2023",
+  note     = paste("R package version", meta$Version),
+  url      = meta$URL,
+  textVersion = paste("Houyun Huang(2023).",
+                      paste0(paste("arcET:", meta$Title), "."),
+                      paste0(paste("R package version", meta$Version), ".")
+                      )
+)
