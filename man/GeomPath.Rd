@@ -172,6 +172,12 @@ GeomFunction2grob(
 
 \item{trans}{coordinate transform function.}
 
+\item{coord}{coordinate specification, as created by `PANEL()` or extract from
+ggplot object.}
+
+\item{region}{a CELL object (created by `CELL()` function) used to set
+the drawing area.}
+
 \item{...}{other parameters passing to `Arc*Grob()` function.}
 
 \item{clip}{logical. Allows points to overflow outside the drawing area when
@@ -181,6 +187,10 @@ GeomFunction2grob(
 a warning. If \code{TRUE}, missing values are silently removed.}
 
 \item{flipped_aes}{TRUE means that coordinates are inherit `CoordFlip`.}
+
+\item{sides}{A string that controls which sides of the plot the rugs appear on.
+It can be set to a string containing any of \code{"trbl"}, for top, right,
+bottom, and left.}
 
 \item{steps}{step length used to split data. A smaller value means a
 smoother curve.}
@@ -203,10 +213,12 @@ Convert a ggplot layer to arc grob.
 \seealso{
 Other transform: 
 \code{\link{GeomBar2grob}()},
+\code{\link{GeomBlank2grob}()},
 \code{\link{GeomBoxplot2grob}()},
 \code{\link{GeomLinerange2grob}()},
 \code{\link{GeomPoint2grob}()},
 \code{\link{GeomPolygon2grob}()},
+\code{\link{GeomText2grob}()},
 \code{\link{GeomViolin2grob}()}
 }
 \author{

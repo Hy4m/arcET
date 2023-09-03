@@ -18,11 +18,18 @@ layer_boxplot <- function(..., show.legend = FALSE) {
 #' @description Convert a ggplot layer to arc grob.
 #' @param data data frame object, which is extract from a ggplot object.
 #' @param trans coordinate transform function.
+#' @param coord coordinate specification, as created by `PANEL()` or extract from
+#' ggplot object.
+#' @param region a CELL object (created by `CELL()` function) used to set
+#' the drawing area.
 #' @param ... other parameters passing to `Arc*Grob()` function.
 #' @param flipped_aes TRUE means that coordinates are inherit `CoordFlip`.
+#' @param outlier.colour,outlier.color,outlier.fill,outlier.shape,outlier.size,outlier.stroke,outlier.alpha default
+#' aesthetics for outliers. Set to NULL to inherit from the aesthetics used for the box.
+#' @inheritParams ggplot2::geom_boxplot
+#' @inheritParams ggplot2::geom_crossbar
 #' @param clip logical. Allows points to overflow outside the drawing area when
 #' `clip` is FALSE.
-#' @inheritParams ggplot2::geom_boxplot
 #' @return a grid grob object.
 #' @family transform
 #' @author Hou Yun
@@ -38,6 +45,7 @@ GeomBoxplot2grob <- function(data,
                              notchwidth = 0.5,
                              fatten = 2,
                              outlier.colour = NULL,
+                             outlier.color = NULL,
                              outlier.fill = NULL,
                              outlier.shape = 19,
                              outlier.size = 1.5,
@@ -51,6 +59,7 @@ GeomBoxplot2grob <- function(data,
   if (is.null(data$linewidth) && !is.null(data$size)) {
     data$linewidth <- data$size
   }
+  outlier.colour <- outlier.color %||% outlier.colour
 
   ngroup <- count_by_group(data)
   if (any(ngroup != 1)) {

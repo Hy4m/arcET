@@ -1,14 +1,26 @@
-
+#' @title Text Layer
+#' @description These functions are an encapsulation of relative functions in
+#' the ggplot2 package, and the only difference is that these functions do
+#' not add legends by default.
+#'
+#' @param ... extra parameters passing to `geom_*()` function.
+#' @inheritParams ggplot2::geom_text
+#' @return a gg layer object.
+#' @family layer
+#' @rdname layer_text
+#' @author Hou Yun
 #' @export
 layer_text <- function(..., show.legend = FALSE) {
   ggplot2::geom_text(..., show.legend = show.legend)
 }
 
+#' @rdname layer_text
 #' @export
 layer_label <- function(..., show.legend = FALSE) {
   ggplot2::geom_label(..., show.legend = show.legend)
 }
 
+#' @rdname layer_text
 #' @importFrom ggplot2 layer ggproto
 #' @export
 layer_banner_text <- function(mapping = NULL,
@@ -30,6 +42,7 @@ layer_banner_text <- function(mapping = NULL,
         params = rlang::list2(na.rm = na.rm, ...))
 }
 
+#' @rdname layer_text
 #' @export
 layer_margin_vtext <- function(mapping = NULL,
                                data = NULL,
@@ -50,6 +63,7 @@ layer_margin_vtext <- function(mapping = NULL,
         params = rlang::list2(na.rm = na.rm, ...))
 }
 
+#' @rdname layer_text
 #' @export
 layer_margin_htext <- function(mapping = NULL,
                                data = NULL,
@@ -70,6 +84,25 @@ layer_margin_htext <- function(mapping = NULL,
         params = rlang::list2(na.rm = na.rm, ...))
 }
 
+#' Convert Layer to Grob
+#' @description Convert a ggplot layer to arc grob.
+#' @param data data frame object, which is extract from a ggplot object.
+#' @param trans coordinate transform function.
+#' @param coord coordinate specification, as created by `PANEL()` or extract from
+#' ggplot object.
+#' @param region a CELL object (created by `CELL()` function) used to set
+#' the drawing area.
+#' @param ... other parameters passing to `Arc*Grob()` function.
+#' @param flipped_aes TRUE means that coordinates are inherit `CoordFlip`.
+#' @inheritParams ggplot2::geom_text
+#' @inheritParams ggplot2::geom_label
+#' @param clip logical. Allows points to overflow outside the drawing area when
+#' `clip` is FALSE.
+#' @inheritParams ggplot2::geom_hex
+#' @return a grid grob object.
+#' @family transform
+#' @author Hou Yun
+#' @rdname GeomText
 #' @export
 GeomText2grob <- function(data,
                           trans = NULL,
@@ -98,6 +131,7 @@ GeomText2grob <- function(data,
   exec(ArcTextGrob, !!!data, parse = parse, auto_adjust = TRUE, ...)
 }
 
+#' @rdname GeomText
 #' @export
 GeomLabel2grob <- function(data,
                            trans = NULL,
@@ -133,6 +167,7 @@ GeomLabel2grob <- function(data,
        label.size = label.size)
 }
 
+#' @rdname GeomText
 #' @export
 GeomBannerText2grob <- function(data,
                                 trans = NULL,
@@ -158,6 +193,7 @@ GeomBannerText2grob <- function(data,
   exec(ArcBannerTextGrob, !!!data, ...)
 }
 
+#' @rdname GeomText
 #' @export
 GeomMarginVtext2grob <- function(data,
                                  trans = NULL,
@@ -185,6 +221,7 @@ GeomMarginVtext2grob <- function(data,
   }
 }
 
+#' @rdname GeomText
 #' @export
 GeomMarginHtext2grob <- function(data,
                                  trans = NULL,
@@ -212,6 +249,9 @@ GeomMarginHtext2grob <- function(data,
   }
 }
 
+#' @rdname arcET-extensions
+#' @format NULL
+#' @usage NULL
 #' @export
 GeomBannerText <- ggproto(
   "GeomBannerText", GeomText,
@@ -230,6 +270,7 @@ GeomBannerText <- ggproto(
   }
 )
 
+#' @noRd
 ArcLabelGrob <- function(label,
                          x = 90,
                          y = 0.5,
@@ -302,6 +343,7 @@ ArcLabelGrob <- function(label,
   do.call(grid::gList, grobs)
 }
 
+#' @noRd
 LabelGrob <- function(label,
                       x = unit(0.5, "npc"),
                       y = unit(0.5, "npc"),
@@ -348,6 +390,9 @@ makeContent.LabelGrob <- function (x)
   setChildren(x, gList(r, t))
 }
 
+#' @rdname arcET-extensions
+#' @format NULL
+#' @usage NULL
 #' @export
 GeomMarginVtext <- ggproto(
   "GeomMarginVtext", GeomText,
@@ -378,6 +423,9 @@ GeomMarginVtext <- ggproto(
   }
 )
 
+#' @rdname arcET-extensions
+#' @format NULL
+#' @usage NULL
 #' @export
 GeomMarginHtext <- ggproto(
   "GeomMarginHtext", GeomText,

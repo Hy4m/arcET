@@ -31,7 +31,8 @@ Other layer:
 \code{\link{layer_path}()},
 \code{\link{layer_pointrange}()},
 \code{\link{layer_point}()},
-\code{\link{layer_polygon}()}
+\code{\link{layer_polygon}()},
+\code{\link{layer_text}()}
 }
 \author{
 Hou Yun

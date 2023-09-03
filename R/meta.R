@@ -182,10 +182,12 @@ print.CELL <- function(x, ...) {
 #' vector of length 2, representing the value range of coordinate axes.
 #' For discrete coordinates, it is an enumeration vector of all
 #' that can take values.
-#' @param x_breaks,y_breaks For continuous coordinates, it is a numerical
+#' @param x_breaks,y_breaks for continuous coordinates, it is a numerical
 #' vector in the interval, representing the position of the ticks.
+#' @param x_minor_breaks,y_minor_breaks minor breaks used to draw minor panel grid.
 #' For discrete coordinates, it's anything within the limits.
 #' @param x_labels,y_labels labels of ticks, should be same length as breaks.
+#' @param x_range,y_range axis scale in numeric.
 #' @param x_expand,y_expand a vector of range expansion constants used to add
 #' some padding around the data to ensure that they are placed some distance
 #' away from the axes. It can be created by `ggplot2::expansion()`.

@@ -42,6 +42,10 @@ layer_crossbar <- function(..., show.legend = FALSE) {
 #' @description Convert a ggplot layer to arc grob.
 #' @param data data frame object, which is extract from a ggplot object.
 #' @param trans coordinate transform function.
+#' @param coord coordinate specification, as created by `PANEL()` or extract from
+#' ggplot object.
+#' @param region a CELL object (created by `CELL()` function) used to set
+#' the drawing area.
 #' @param ... other parameters passing to `Arc*Grob()` function.
 #' @param flipped_aes TRUE means that coordinates are inherit `CoordFlip`.
 #' @param clip logical. Allows points to overflow outside the drawing area when

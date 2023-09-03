@@ -1,17 +1,13 @@
 #' Arc x-axis Grob
 #' @description These functions can draw x-axis on polar coordinate.
 #'
-#' @param title character used to specifying x-axis's title.
-#' @param breaks numeric vector of x-value [in degree] locations for the tick marks.
-#' @param labels character vector of tick's label.
-#' @param postion "bottom" or "top" used to specifying axis position,
-#' and default is "bottom"
-#' @param facing "clockwise" or "banner".
+#' @param coord coordinate specification, as created by `PANEL()` or extract from
+#' ggplot object.
+#' @param position axis position specification, and default is "bottom".
 #' @param ticks.length a grid unit object or numeric, and numerical value
 #' means that the length of ticks is measured in millimeters.
-#' @param title.gp should be created by `ggplot2::element_text()`.
 #' @param line.gp should be created by `ggplot2::element_line()`.
-#' @param ticks.gp should be created by `ggplot2::element_line()`.
+#' @param tick.gp should be created by `ggplot2::element_line()`.
 #' @param text.gp should be created by `ggplot2::element_text()`.
 #' @param region a CELL object (created by `CELL()` function) used to set
 #' the drawing area.
@@ -22,7 +18,6 @@
 #' @rdname ArcxAxisGrob
 #' @author Hou Yun
 #' @export
-
 ArcxAxisGrob <- function(coord = PANEL(),
                          region = CELL(),
                          position = "top",
@@ -69,6 +64,24 @@ ArcxAxisGrob <- function(coord = PANEL(),
               cl = "ArcxAxisGrob")
 }
 
+#' Arc y-axis Grob
+#' @description These functions can draw y-axis on polar coordinate.
+#'
+#' @param coord coordinate specification, as created by `PANEL()` or extract from
+#' ggplot object.
+#' @param position axis position specification, and default is "left".
+#' @param ticks.length a grid unit object or numeric, and numerical value
+#' means that the length of ticks is measured in millimeters.
+#' @param line.gp should be created by `ggplot2::element_line()`.
+#' @param tick.gp should be created by `ggplot2::element_line()`.
+#' @param text.gp should be created by `ggplot2::element_text()`.
+#' @param region a CELL object (created by `CELL()` function) used to set
+#' the drawing area.
+#' @param ... not used.
+#' @return a `yAxisGrob` object.
+#' @rdname ArcyAxisGrob
+#' @author Hou Yun
+#' @export
 ArcyAxisGrob <- function(coord = PANEL(),
                          region = CELL(),
                          position = "left",

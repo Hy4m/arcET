@@ -70,6 +70,12 @@ GeomCrossbar2grob(
 
 \item{trans}{coordinate transform function.}
 
+\item{coord}{coordinate specification, as created by `PANEL()` or extract from
+ggplot object.}
+
+\item{region}{a CELL object (created by `CELL()` function) used to set
+the drawing area.}
+
 \item{...}{other parameters passing to `Arc*Grob()` function.}
 
 \item{flipped_aes}{TRUE means that coordinates are inherit `CoordFlip`.}
@@ -93,10 +99,12 @@ Convert a ggplot layer to arc grob.
 \seealso{
 Other transform: 
 \code{\link{GeomBar2grob}()},
+\code{\link{GeomBlank2grob}()},
 \code{\link{GeomBoxplot2grob}()},
 \code{\link{GeomPath2grob}()},
 \code{\link{GeomPoint2grob}()},
 \code{\link{GeomPolygon2grob}()},
+\code{\link{GeomText2grob}()},
 \code{\link{GeomViolin2grob}()}
 }
 \author{

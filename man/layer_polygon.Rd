@@ -5,6 +5,7 @@
 \alias{layer_rect}
 \alias{layer_tile}
 \alias{layer_area}
+\alias{layer_ribbon}
 \alias{layer_contour_filled}
 \alias{layer_density}
 \alias{layer_density2d_filled}
@@ -19,6 +20,8 @@ layer_rect(..., show.legend = FALSE)
 layer_tile(..., show.legend = FALSE)
 
 layer_area(..., show.legend = FALSE)
+
+layer_ribbon(..., show.legend = FALSE)
 
 layer_contour_filled(..., show.legend = FALSE)
 
@@ -55,6 +58,7 @@ Other layer:
 \code{\link{layer_path}()},
 \code{\link{layer_pointrange}()},
 \code{\link{layer_point}()},
+\code{\link{layer_text}()},
 \code{\link{layer_violin}()}
 }
 \author{

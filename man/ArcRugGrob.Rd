@@ -44,6 +44,10 @@ bottom, and left.}
 \item{region}{a CELL object (created by `CELL()` function) used to set
 the panel area.}
 
+\item{lineend}{line end style (round, butt, square).}
+
+\item{clip}{logical. If TRUE will remove overflow ticks.}
+
 \item{...}{not used.}
 }
 \value{

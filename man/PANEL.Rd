@@ -26,11 +26,15 @@ vector of length 2, representing the value range of coordinate axes.
 For discrete coordinates, it is an enumeration vector of all
 that can take values.}
 
-\item{x_breaks, y_breaks}{For continuous coordinates, it is a numerical
-vector in the interval, representing the position of the ticks.
+\item{x_breaks, y_breaks}{for continuous coordinates, it is a numerical
+vector in the interval, representing the position of the ticks.}
+
+\item{x_minor_breaks, y_minor_breaks}{minor breaks used to draw minor panel grid.
 For discrete coordinates, it's anything within the limits.}
 
 \item{x_labels, y_labels}{labels of ticks, should be same length as breaks.}
+
+\item{x_range, y_range}{axis scale in numeric.}
 
 \item{x_expand, y_expand}{a vector of range expansion constants used to add
 some padding around the data to ensure that they are placed some distance

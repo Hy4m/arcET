@@ -15,6 +15,7 @@ GeomBoxplot2grob(
   notchwidth = 0.5,
   fatten = 2,
   outlier.colour = NULL,
+  outlier.color = NULL,
   outlier.fill = NULL,
   outlier.shape = 19,
   outlier.size = 1.5,
@@ -29,6 +30,12 @@ GeomBoxplot2grob(
 
 \item{trans}{coordinate transform function.}
 
+\item{coord}{coordinate specification, as created by `PANEL()` or extract from
+ggplot object.}
+
+\item{region}{a CELL object (created by `CELL()` function) used to set
+the drawing area.}
+
 \item{...}{other parameters passing to `Arc*Grob()` function.}
 
 \item{flipped_aes}{TRUE means that coordinates are inherit `CoordFlip`.}
@@ -40,6 +47,13 @@ are significantly different.}
 
 \item{notchwidth}{For a notched box plot, width of the notch relative to
 the body (defaults to \code{notchwidth = 0.5}).}
+
+\item{fatten}{A multiplicative factor used to increase the size of the
+middle bar in \code{geom_crossbar()} and the middle point in
+\code{geom_pointrange()}.}
+
+\item{outlier.colour, outlier.color, outlier.fill, outlier.shape, outlier.size, outlier.stroke, outlier.alpha}{default
+aesthetics for outliers. Set to NULL to inherit from the aesthetics used for the box.}
 
 \item{clip}{logical. Allows points to overflow outside the drawing area when
 `clip` is FALSE.}
@@ -56,10 +70,12 @@ Convert a ggplot layer to arc grob.
 \seealso{
 Other transform: 
 \code{\link{GeomBar2grob}()},
+\code{\link{GeomBlank2grob}()},
 \code{\link{GeomLinerange2grob}()},
 \code{\link{GeomPath2grob}()},
 \code{\link{GeomPoint2grob}()},
 \code{\link{GeomPolygon2grob}()},
+\code{\link{GeomText2grob}()},
 \code{\link{GeomViolin2grob}()}
 }
 \author{

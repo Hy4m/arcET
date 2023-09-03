@@ -40,6 +40,8 @@ ArcSegmentsGrob(
 
 \item{alpha}{transparency of lines.}
 
+\item{arrow}{arrow specification, as created by `grid::arrow()`.}
+
 \item{lineend}{line end style (round, butt, square).}
 
 \item{linejoin}{line join style (round, mitre, bevel).}
@@ -47,6 +49,11 @@ ArcSegmentsGrob(
 \item{linemitre}{line mitre limit (number greater than 1).}
 
 \item{arc}{logical, if TRUE will split each path in small pieces.}
+
+\item{steps}{step length used to split data. A smaller value means a
+smoother curve.}
+
+\item{simplify}{logical, When TRUE, line segments equal to x will not be split.}
 
 \item{...}{not used.}
 }

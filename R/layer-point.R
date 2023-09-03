@@ -46,7 +46,14 @@ layer_bin2d <- layer_bin_2d
 #' @description Convert a ggplot layer to arc grob.
 #' @param data data frame object, which is extract from a ggplot object.
 #' @param trans coordinate transform function.
+#' @param coord coordinate specification, as created by `PANEL()` or extract from
+#' ggplot object.
+#' @param region a CELL object (created by `CELL()` function) used to set
+#' the drawing area.
 #' @param ... other parameters passing to `Arc*Grob()` function.
+#' @param lineend line end style (round, butt, square).
+#' @param linejoin line join style (round, mitre, bevel).
+#' @param linemitre line mitre limit (number greater than 1).
 #' @param clip logical. Allows points to overflow outside the drawing area when
 #' `clip` is FALSE.
 #' @inheritParams ggplot2::geom_hex

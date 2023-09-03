@@ -62,7 +62,20 @@ arcplot <- function(data = NULL, mapping = aes(), ...) {
             class = c("ArcPlot", class(out)))
 }
 
-#' @importFrom ggplot2 aes ggplot
+#' @title Add CellPlot
+#' @description `init_cell()` add a new CellPlot on ArcPlot.
+#' @param plot an ArcPlot object.
+#' @param data default dataset to use for this CellPlot. If not specified, must be
+#' supplied in each layer. Note: data can also be an ggplot object.
+#' @param mapping default list of aesthetic mappings to use for plot. If not
+#' specified, must be supplied in each layer.
+#' @param region a CELL object (created by `CELL()` function) used to set
+#' the drawing area.
+#' @param CellID,TrackID,SectorID ids specification, must be one-length character.
+#' @inheritParams ggplot2::geom_blank
+#' @return an modified ArcPlot object.
+#' @rdname init_cell
+#' @author Hou Yun
 #' @export
 init_cell <- function(plot,
                       data = NULL,
@@ -71,7 +84,7 @@ init_cell <- function(plot,
                       CellID = NULL,
                       TrackID = NULL,
                       SectorID = NULL,
-                      inherits_aes = TRUE) {
+                      inherit.aes = TRUE) {
   if (!is_ArcPlot(plot)) {
     cli::cli_abort(c("`plot` should be created with `arcplot()`.",
                      x = "You've supplied a {.cls {class(plot)[1]}} object."))
@@ -84,7 +97,7 @@ init_cell <- function(plot,
   if (!inherits(data, "ggplot")) {
     data <- get_data(plot = plot, CellID = CellID, TrackID = TrackID,
                      SectorID = SectorID)
-    if (inherits_aes) {
+    if (inherit.aes) {
       mapping <- modify_aes(plot$mapping, mapping)
     }
     cell <- tryCatch(ggplot(data = data, mapping = mapping),

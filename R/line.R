@@ -125,10 +125,14 @@ ArcLineGrob <- function(...) {
 #' @param linewidth line width in pt.
 #' @param linetype line type, same as `lty` in `gpar()`.
 #' @param alpha transparency of lines.
+#' @param arrow arrow specification, as created by `grid::arrow()`.
 #' @param lineend line end style (round, butt, square).
 #' @param linejoin line join style (round, mitre, bevel).
 #' @param linemitre line mitre limit (number greater than 1).
 #' @param arc logical, if TRUE will split each path in small pieces.
+#' @param steps step length used to split data. A smaller value means a
+#' smoother curve.
+#' @param simplify logical, When TRUE, line segments equal to x will not be split.
 #' @param ... not used.
 #' @return a grob object.
 #' @rdname ArcSegmentsGrob
@@ -279,6 +283,8 @@ ArcStepsGrob <- function(x = c(0, 20, 70),
 #' @inheritParams ggplot2::geom_rug
 #' @param region a CELL object (created by `CELL()` function) used to set
 #' the panel area.
+#' @param lineend line end style (round, butt, square).
+#' @param clip logical. If TRUE will remove overflow ticks.
 #' @param ... not used.
 #' @return a grob object.
 #' @rdname ArcRugGrob
