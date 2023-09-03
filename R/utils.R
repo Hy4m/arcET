@@ -21,7 +21,7 @@ euclid_dist2 <- function(x, y, xend, yend) {
                       xend = xend,
                       yend = yend)
   vapply(split(data, seq_len(nrow(data))), function(d) {
-    if (!complete.cases(d)) {
+    if (!stats::complete.cases(d)) {
       return(NA)
     }
     if (identical0(d$x, d$xend) && identical0(d$y, d$yend)) {
@@ -55,7 +55,7 @@ empty <- function(x) {
 #' @noRd
 rand_chr <- function (n, max_len = 10, min_len = 2, lambda = 5)
 {
-  ll <- rpois(n, lambda)
+  ll <- stats::rpois(n, lambda)
   ll <- ifelse(ll > max_len, ll %% max_len, ll)
   ll <- ifelse(ll < min_len, min_len, ll)
   vapply_chr(ll, function(n) {

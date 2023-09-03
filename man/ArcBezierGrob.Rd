@@ -66,6 +66,8 @@ ArcLinkGrob(
 \item{linemitre}{line mitre limit (number greater than 1).}
 
 \item{...}{not used.}
+
+\item{arc}{logical. If TURE will cut segments into smaller segments.}
 }
 \value{
 a grob object.

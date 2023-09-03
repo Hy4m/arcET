@@ -33,6 +33,7 @@ all_aes <- c("adj", "alpha", "angle", "bg", "cex", "col", "color",
 #' Extract ggplot elements
 #' @description Internal function to extract ggplot elements.
 #' @param plot a ggplot object.
+#' @param ... not used.
 #' @return elements list of plot.
 #' @rdname extract_ggplot
 #' @author Hou Yun
@@ -219,7 +220,7 @@ gg2coord <- function(panel_params) {
 #' @author Hou Yun
 #' @export
 #' @examples
-#' if (FALSE) { Not Run
+#' if (FALSE) { # Not Run
 #'   library(ggplot2)
 #'   library(grid)
 #'   library(arcET)

@@ -150,6 +150,7 @@ ArcBezierGrob <- function(x = 20,
                                linemitre = linemitre))
 }
 
+#' @param arc logical. If TURE will cut segments into smaller segments.
 #' @rdname ArcBezierGrob
 #' @export
 ArcLinkGrob <- function(x = 20,

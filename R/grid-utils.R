@@ -178,39 +178,3 @@ ArcViewPort <- function(coord = PANEL(),
 
 zeroGrob <- ggplot2::zeroGrob
 
-guideGrob <- function(x, ...) {
-  UseMethod("guideGrob")
-}
-
-guideGrob.ArcViewPort <- function(x,
-                                  x_args = list(),
-                                  y_args = list(),
-                                  ...) {
-  coord <- x$coord
-  region <- x$region
-
-  grobs <- list()
-  if (!all(is.na(x$background, x$border))) {
-    grobs <- c(grobs, list(ArcPanelGrob(region = region,
-                                        fill = x$background,
-                                        colour = x$border,
-                                        ...)))
-  }
-
-  if (x$guide %in% c("x", "all")) {
-    xaxis <- inject(guide_x(coord = coord, region = region, !!!x_args))
-    grobs <- c(grobs, list(xaxis))
-  }
-
-  if (x$guide %in% c("y", "all")) {
-    yaxis <- inject(guide_y(coord = coord, region = region, !!!y_args))
-    grobs <- c(grobs, list(yaxis))
-  }
-
-  if (length(grobs) < 1) {
-    zeroGrob()
-  } else {
-    do.call(grid::grobTree, grobs)
-  }
-}
-

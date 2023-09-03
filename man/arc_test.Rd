@@ -20,7 +20,7 @@ return grob object invisibly.
 Helper funtion used to quickly preview the results of the conversion.
 }
 \examples{
-if (FALSE) { Not Run
+if (FALSE) { # Not Run
   library(ggplot2)
   library(grid)
   library(arcET)

@@ -33,6 +33,8 @@ of start and end points.}
 
 \item{linewidth}{border size of rect.}
 
+\item{linetype}{border type of rect.}
+
 \item{alpha}{transparency of rect.}
 
 \item{...}{other parameters passing to `ArcPolygonGrob()`.}

@@ -37,6 +37,8 @@ of vertical ribbon.}
 
 \item{linewidth}{border size of ribbon.}
 
+\item{linetype}{border type of ribbon.}
+
 \item{alpha}{transparency of ribbon.}
 
 \item{group}{numeric vector used to separate locations in x and y

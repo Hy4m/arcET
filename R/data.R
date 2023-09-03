@@ -59,7 +59,7 @@ discrete2numeric <- function(data, coord = PANEL()) {
   }
 
   if (is_discrete(coord$x)) {
-    for (ii in intersect(nm, all_x)) {
+    for (ii in intersect(nm, x_aes)) {
       if (!is.numeric(data[[ii]])) {
         data[[ii]] <- as.integer(factor(data[[ii]], levels = coord$x$limits))
       }
@@ -67,7 +67,7 @@ discrete2numeric <- function(data, coord = PANEL()) {
   }
 
   if (is_discrete(coord$y)) {
-    for (jj in intersect(nm, all_y)) {
+    for (jj in intersect(nm, y_aes)) {
       if (!is.numeric(data[[jj]])) {
         data[[jj]] <- as.integer(factor(data[[jj]], levels = coord$y$limits))
       }
@@ -117,7 +117,7 @@ cartesian2polar <- function(data,
     }
   }
 
-  ids <- complete.cases(data[c(all_x, all_y)])
+  ids <- stats::complete.cases(data[c(all_x, all_y)])
   if (isFALSE(na.rm) && sum(!ids) > 0) {
     cli::cli_inform("Removed {sum(!ids)} rows containing missing values.")
   }

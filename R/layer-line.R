@@ -492,7 +492,7 @@ GeomStep2grob <- function(data,
   data <- data[intersect(names(data), c("x", "y", "colour", "linetype",
                                         "linetype", "alpha", "group"))]
   data <- flip_data(data, flipped_aes)
-  data <- ggplot2:::stairstep(data = data, direction = direction)
+  data <- stairstep(data = data, direction = direction)
   data <- flip_data(data, flipped_aes)
 
   data <- cartesian2polar(data = data, coord = coord, region = region,

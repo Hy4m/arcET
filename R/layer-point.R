@@ -68,7 +68,7 @@ GeomPoint2grob <- function(data,
 
   data <- trans(data)
   if (is.character(data$shape)) {
-    data$shape <- ggplot2:::translate_shape_string(data$shape)
+    data$shape <- translate_shape_string(data$shape)
   }
   data <- cartesian2polar(data, coord = coord, region = region,
                           clip = clip, na.rm = na.rm)

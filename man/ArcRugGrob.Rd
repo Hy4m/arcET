@@ -16,6 +16,7 @@ ArcRugGrob(
   length = unit(2, "mm"),
   region = CELL(),
   lineend = "butt",
+  clip = FALSE,
   ...
 )
 }

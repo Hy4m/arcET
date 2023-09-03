@@ -32,6 +32,8 @@ ArcTileGrob(
 
 \item{linewidth}{border size of tile.}
 
+\item{linetype}{border type of tile.}
+
 \item{alpha}{transparency of rect.}
 
 \item{...}{other parameters passing to `ArcPolygonGrob()`.}

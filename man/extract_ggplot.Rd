@@ -22,6 +22,8 @@ extract_guides(plot, ...)
 \item{plot}{a ggplot object.}
 
 \item{layer}{layers of ggplot object.}
+
+\item{...}{not used.}
 }
 \value{
 elements list of plot.

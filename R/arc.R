@@ -5,6 +5,7 @@
 #' supplied in each cell plot.
 #' @param mapping default list of aesthetic mappings to use for plot. If not
 #' specified, must be supplied in each cell plot.
+#' @param ... not used.
 #' @return an ArcPlot object.
 #' @rdname arcplot
 #' @author Hou Yun

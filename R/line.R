@@ -12,6 +12,7 @@
 #' @param linejoin line join style (round, mitre, bevel).
 #' @param linemitre line mitre limit (number greater than 1).
 #' @param group used to separate locations in x and y into sub-paths.
+#' @param arrow arrow specification, as created by `grid::arrow()`.
 #' @param arc logical, if TRUE will split each path in small pieces.
 #' @param steps step length used to split data. A smaller value means a
 #' smoother curve.
@@ -294,6 +295,7 @@ ArcRugGrob <- function(x = NULL,
                        length = unit(2, "mm"),
                        region = CELL(),
                        lineend = "butt",
+                       clip = FALSE,
                        ...) {
   stopifnot(is_CELL(region))
   sides <- intersect(unlist(strsplit(sides, "", TRUE)), c("r", "l", "b", "t"))

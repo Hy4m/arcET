@@ -35,6 +35,8 @@ ArcPolygonGrob(
 
 \item{linewidth}{border size of polygon.}
 
+\item{linetype}{border type of polygon.}
+
 \item{alpha}{transparency of polygon.}
 
 \item{group}{numeric vector used to separate locations in x and y

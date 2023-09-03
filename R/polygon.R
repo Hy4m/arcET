@@ -8,6 +8,7 @@
 #' @param colour color of polygon.
 #' @param fill background of polygon.
 #' @param linewidth border size of polygon.
+#' @param linetype border type of polygon.
 #' @param alpha transparency of polygon.
 #' @param group numeric vector used to separate locations in x and y
 #' into multiple polygons.
@@ -112,6 +113,7 @@ ArcPolygonGrob <- function(x = c(30, 150, 150, 30),
 #' @param colour color of rect.
 #' @param fill background of rect.
 #' @param linewidth border size of rect.
+#' @param linetype border type of rect.
 #' @param alpha transparency of rect.
 #' @param ... other parameters passing to `ArcPolygonGrob()`.
 #' @return a grob object.
@@ -165,6 +167,7 @@ ArcRectGrob <- function(xmin = 30,
 #' @param colour color of tile.
 #' @param fill background of tile.
 #' @param linewidth border size of tile.
+#' @param linetype border type of tile.
 #' @param alpha transparency of rect.
 #' @param ... other parameters passing to `ArcPolygonGrob()`.
 #' @return a grob object.
@@ -195,10 +198,10 @@ if (empty(data)) {
 
   width <- width %||% ggplot2::resolution(data$x, zero = FALSE)
   height <- height %||% ggplot2::resolution(data$y, zero = FALSE)
-  ArcRectGrob(xmin = ddata$x - width/2,
+  ArcRectGrob(xmin = data$x - width/2,
               ymin = data$y - height/2,
               xmax = data$x + width/2,
-              ymax = ata$y + height/2,
+              ymax = data$y + height/2,
               colour = data$colour,
               fill = data$fill,
               linewidth = data$linewidth,
@@ -217,6 +220,7 @@ if (empty(data)) {
 #' @param colour color of polygon.
 #' @param fill background of polygon.
 #' @param linewidth border size of polygon.
+#' @param linetype border type of polygon.
 #' @param alpha transparency of polygon.
 #' @param group numeric vector used to separate locations in x and y
 #' into multiple polygons.
@@ -286,6 +290,7 @@ ArcAreaGrob <- function(x = c(120, 90, 60),
 #' @param colour color of ribbon.
 #' @param fill background of ribbon.
 #' @param linewidth border size of ribbon.
+#' @param linetype border type of ribbon.
 #' @param alpha transparency of ribbon.
 #' @param group numeric vector used to separate locations in x and y
 #' into multiple ribbons.

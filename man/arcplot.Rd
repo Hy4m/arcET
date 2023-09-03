@@ -12,6 +12,8 @@ supplied in each cell plot.}
 
 \item{mapping}{default list of aesthetic mappings to use for plot. If not
 specified, must be supplied in each cell plot.}
+
+\item{...}{not used.}
 }
 \value{
 an ArcPlot object.

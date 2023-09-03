@@ -40,6 +40,8 @@ ArcLineGrob(...)
 
 \item{group}{used to separate locations in x and y into sub-paths.}
 
+\item{arrow}{arrow specification, as created by `grid::arrow()`.}
+
 \item{lineend}{line end style (round, butt, square).}
 
 \item{linejoin}{line join style (round, mitre, bevel).}
