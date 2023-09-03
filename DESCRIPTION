@@ -15,7 +15,9 @@ LazyData: TRUE
 Encoding: UTF-8
 Depends: R (>= 3.5.0)
 Imports: 
+    cli,
     ggplot2 (>= 3.4.0),
+    glue,
     grDevices,
     grid,
     gtable,
@@ -27,4 +29,7 @@ Imports:
     vctrs
 Suggests: 
     testthat (>= 3.0.0),
+    bezier,
+    hexbin,
+    magick
 RoxygenNote: 7.2.1

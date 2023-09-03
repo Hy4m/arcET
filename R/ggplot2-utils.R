@@ -8,6 +8,12 @@ compute_just <- getFromNamespace("compute_just", ns = "ggplot2")
 plot_theme <- getFromNamespace("plot_theme", ns = "ggplot2")
 
 #' @noRd
+stairstep <- getFromNamespace("stairstep", ns = "ggplot2")
+
+#' @noRd
+translate_shape_string <- getFromNamespace("translate_shape_string", ns = "ggplot2")
+
+#' @noRd
 x_aes <- c("x", "xmin", "xmax", "xend", "xintercept", "xmin_final",
            "xmax_final", "xlower", "xmiddle", "xupper", "x0")
 
