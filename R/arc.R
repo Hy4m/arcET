@@ -1,3 +1,10 @@
+#' @title Create a new ArcPlot
+#' @description `arcplot()` initializes a ArcPlot object, and It works similarly
+#' to `ggplot()`.
+#' @inheritParams ggplot2::ggplot
+#' @return an ArcPlot object.
+#' @rdname arcplot
+#' @author Hou Yun
 #' @export
 arcplot <- function(data = NULL, mapping = aes(), ...) {
   if (!is.null(data)) {
@@ -100,7 +107,21 @@ init_cell <- function(plot,
             class = c("ArcPlot", class(out)))
 }
 
+#' @title Get ids
+#' @description Helper functions used to generate "CellID", "TrackID" and "SectorID".
+#' @param id if "all" will reset all id's index.
+#' @return `*_id()` return a character vector.
+#' @rdname IDs
+#' @author Hou Yun
 #' @export
+#' @examples
+#' cell_id()
+#' ## increment 1
+#' cell_id()
+#'
+#' ## reset
+#' reset_ids()
+#' cell_id()
 cell_id <- function() {
   old <- getOption("arcET.cell.id", 0)
   new <- old + 1
@@ -108,6 +129,7 @@ cell_id <- function() {
   paste0("CellID_", new)
 }
 
+#' @rdname IDs
 #' @export
 track_id <- function() {
   old <- getOption("arcET.track.id", 0)
@@ -116,6 +138,7 @@ track_id <- function() {
   paste0("TrackID_", new)
 }
 
+#' @rdname IDs
 #' @export
 sector_id <- function() {
   old <- getOption("arcET.sector.id", 0)
@@ -124,6 +147,7 @@ sector_id <- function() {
   paste0("SectorID_", new)
 }
 
+#' @rdname IDs
 #' @export
 reset_ids <- function(id = c("all", "CellID", "TrackID", "SectorID")) {
   id <- match.arg(id)
@@ -188,11 +212,6 @@ get_data <- function(plot,
   out
 }
 
-#' @noRd
-is_ArcPlot <- function(x) {
-  inherits(x, "ArcPlot")
-}
-
 #' @export
 reset_ids <- function(id = c("all", "CellID", "TrackID", "SectorID")) {
   id <- match.arg(id)
@@ -211,4 +230,9 @@ reset_ids <- function(id = c("all", "CellID", "TrackID", "SectorID")) {
   }
 
   invisible()
+}
+
+#' @noRd
+is_ArcPlot <- function(x) {
+  inherits(x, "ArcPlot")
 }
