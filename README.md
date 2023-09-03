@@ -4,16 +4,24 @@
 # arcET
 
 <!-- badges: start -->
+
+[![Lifecycle:
+experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 <!-- badges: end -->
 
-The goal of arcET is to …
+In some cases, the polar-coordinate plot in ‘ggplot2’ are not flexible
+enough to meet actual needs. In contrast, the ‘circlize’ package is
+flexible enough, but too complex for beginners. This package provides a
+compromise solution that helps beginners to draw fast and well, and also
+allows advanced users to use flexibly.
 
 ## Installation
 
 You can install the development version of arcET like so:
 
 ``` r
-# FILL THIS IN! HOW CAN PEOPLE INSTALL YOUR DEV PACKAGE?
+## install.packages("devtools")
+devtools::install_github("Hy4m/arcET", force = TRUE)
 ```
 
 ## Example
@@ -22,35 +30,28 @@ This is a basic example which shows you how to solve a common problem:
 
 ``` r
 library(arcET)
-#> Registered S3 method overwritten by 'arcET':
-#>   method           from   
-#>   ggplot_add.Facet ggplot2
-## basic example code
+library(ggplot2)
+library(grid)
+
+## ggplot2 plot
+ggplot(mtcars, aes(wt, mpg)) + geom_point()
 ```
 
-What is special about using `README.Rmd` instead of just `README.md`?
-You can include R chunks like so:
+<img src="man/figures/README-example-1.png" width="100%" />
 
 ``` r
-summary(cars)
-#>      speed           dist       
-#>  Min.   : 4.0   Min.   :  2.00  
-#>  1st Qu.:12.0   1st Qu.: 26.00  
-#>  Median :15.0   Median : 36.00  
-#>  Mean   :15.4   Mean   : 42.98  
-#>  3rd Qu.:19.0   3rd Qu.: 56.00  
-#>  Max.   :25.0   Max.   :120.00
+## transform
+arc_test()
+#> Build CellID_1 plot...
 ```
 
-You’ll still need to render `README.Rmd` regularly, to keep `README.md`
-up-to-date. `devtools::build_readme()` is handy for this. You could also
-use GitHub Actions to re-render `README.Rmd` every time you push. An
-example workflow can be found here:
-<https://github.com/r-lib/actions/tree/v1/examples>.
+<img src="man/figures/README-example-2.png" width="100%" />
 
-You can also embed plots, for example:
+## Notes
 
-<img src="man/figures/README-pressure-1.png" width="100%" />
-
-In that case, don’t forget to commit and push the resulting figure
-files, so they display on GitHub and CRAN.
+It is still in the phase of code testing and updating help
+documentation, so many features and usage you may not be able to find
+the corresponding documentation. In addition, arcET currently does not
+support the special layer functions provided in other ggplot2
+extensions, and of course I welcome everyone to submit PR to improve the
+arcET package.

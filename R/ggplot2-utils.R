@@ -212,7 +212,7 @@ arc_test <- function(plot = ggplot2::last_plot(),
                      "Connot convert {.cls {clss}} to arcplot..."
                    })
 
-  grid.newpage()
+  grid::grid.newpage()
   grid::grid.draw(plot)
 
   invisible()
