@@ -1,21 +1,60 @@
 #' @export
-print.ArcPlot <- function(x, ..., verbose = FALSE) {
+print.ArcPlot <- function(x,
+                          newpage = is.null(vp),
+                          vp = NULL,
+                          verbose = FALSE,
+                          ...) {
   if (isTRUE(verbose)) {
     NextMethod()
   }
 
   grobs <- ArcPlot_build(plot = x, ...)
-  grid::grid.newpage()
-  grid::grid.draw(grobs)
-  invisible()
+
+  if (newpage) {
+    grid::grid.newpage()
+  }
+
+  if (is.null(vp)) {
+    grid::grid.draw(grobs)
+  } else {
+    if (is.character(vp)) {
+      grid::seekViewport(vp)
+    } else {
+      grid::pushViewport(vp)
+    }
+    grid::grid.draw(grobs)
+
+    grid::upViewport()
+  }
+
+  invisible(x)
 }
 
 #' @export
-plot.ArcPlot <- function(x, ...) {
+plot.ArcPlot <- function(x,
+                         newpage = is.null(vp),
+                         vp = NULL,
+                         ...) {
   grobs <- ArcPlot_build(plot = x, ...)
-  grid::grid.newpage()
-  grid::grid.draw(grobs)
-  invisible()
+
+  if (newpage) {
+    grid::grid.newpage()
+  }
+
+  if (is.null(vp)) {
+    grid::grid.draw(grobs)
+  } else {
+    if (is.character(vp)) {
+      grid::seekViewport(vp)
+    } else {
+      grid::pushViewport(vp)
+    }
+    grid::grid.draw(grobs)
+
+    grid::upViewport()
+  }
+
+  invisible(x)
 }
 
 #' @title Build ArcPlot
@@ -68,7 +107,7 @@ ArcPlot_build.ArcPlot <- function(plot,
     params <- tryCatch(extract_ggplot(p), error = function(e) NULL)
     if (is.null(params)) next
 
-    theme <- params$theme
+    thm <- params$theme
     coord <- params$coord
     guides <- params$guides
     layers <- lapply(seq_along(params$data), function(ii) {
@@ -85,25 +124,25 @@ ArcPlot_build.ArcPlot <- function(plot,
       }
     })
 
-    if (inherits(theme$panel.background, "element_blank")) {
+    if (inherits(thm$panel.background, "element_blank")) {
       panel <- list()
     } else {
-      if (inherits(theme$panel.background$linewidth, "rel")) {
-        theme$panel.background$linewidth <- theme$panel.background$linewidth/.pt
+      if (inherits(thm$panel.background$linewidth, "rel")) {
+        thm$panel.background$linewidth <- thm$panel.background$linewidth/.pt
       }
       panel <- list(ArcPanelGrob(region = region,
-                                 fill = theme$panel.background$fill %||% "grey20",
-                                 colour = theme$panel.background$colour %||% NA,
-                                 linewidth = theme$panel.background$linewidth %||% 0.5,
-                                 linetype = theme$panel.background$linetype %||% 1))
+                                 fill = thm$panel.background$fill %||% "grey20",
+                                 colour = thm$panel.background$colour %||% NA,
+                                 linewidth = thm$panel.background$linewidth %||% 0.5,
+                                 linetype = thm$panel.background$linetype %||% 1))
     }
 
-    panel.grid.major.x <- calc_element("panel.grid.major.x", theme) %||%
-      calc_element("panel.grid.major", theme) %||%
-      calc_element("panel.grid", theme)
-    panel.grid.minor.x <- calc_element("panel.grid.minor.x", theme) %||%
-      calc_element("panel.grid.minor", theme) %||%
-      calc_element("panel.grid", theme)
+    panel.grid.major.x <- calc_element("panel.grid.major.x", thm) %||%
+      calc_element("panel.grid.major", thm) %||%
+      calc_element("panel.grid", thm)
+    panel.grid.minor.x <- calc_element("panel.grid.minor.x", thm) %||%
+      calc_element("panel.grid.minor", thm) %||%
+      calc_element("panel.grid", thm)
     if (inherits(panel.grid.major.x$linewidth, "rel")) {
       panel.grid.major.x$linewidth <- panel.grid.major.x$linewidth/.pt
     }
@@ -135,12 +174,12 @@ ArcPlot_build.ArcPlot <- function(plot,
                                   linetype = grid_x$linetype))
     }
 
-    panel.grid.major.y <- calc_element("panel.grid.major.y", theme) %||%
-      calc_element("panel.grid.major", theme) %||%
-      calc_element("panel.grid", theme)
-    panel.grid.minor.y <- calc_element("panel.grid.minor.y", theme) %||%
-      calc_element("panel.grid.minor", theme) %||%
-      calc_element("panel.grid", theme)
+    panel.grid.major.y <- calc_element("panel.grid.major.y", thm) %||%
+      calc_element("panel.grid.major", thm) %||%
+      calc_element("panel.grid", thm)
+    panel.grid.minor.y <- calc_element("panel.grid.minor.y", thm) %||%
+      calc_element("panel.grid.minor", thm) %||%
+      calc_element("panel.grid", thm)
     if (inherits(panel.grid.major.y$linewidth, "rel")) {
       panel.grid.major.y$linewidth <- panel.grid.major.y$linewidth/.pt
     }
@@ -176,18 +215,18 @@ ArcPlot_build.ArcPlot <- function(plot,
       xaxis <- list()
     } else {
       position <- p$layout$panel_params[[1]]$x$position
-      line.gp <- calc_element(paste0("axis.line.x.", position), theme) %||%
-        calc_element("axis.line.x", theme) %||%
-        calc_element("axis.line", theme)
-      tick.gp <- calc_element(paste0("axis.line.x.", position), theme) %||%
-        calc_element("axis.ticks.x", theme) %||%
-        calc_element("axis.ticks", theme)
-      ticks.length <- calc_element(paste0("axis.ticks.length.x.", position), theme) %||%
-        calc_element("axis.ticks.length.x", theme) %||%
-        calc_element("axis.ticks.length", theme)
-      text.gp <- calc_element(paste0("axis.text.x.", position), theme) %||%
-        calc_element("axis.text.x", theme) %||%
-        calc_element("axis.text", theme)
+      line.gp <- calc_element(paste0("axis.line.x.", position), thm) %||%
+        calc_element("axis.line.x", thm) %||%
+        calc_element("axis.line", thm)
+      tick.gp <- calc_element(paste0("axis.line.x.", position), thm) %||%
+        calc_element("axis.ticks.x", thm) %||%
+        calc_element("axis.ticks", thm)
+      ticks.length <- calc_element(paste0("axis.ticks.length.x.", position), thm) %||%
+        calc_element("axis.ticks.length.x", thm) %||%
+        calc_element("axis.ticks.length", thm)
+      text.gp <- calc_element(paste0("axis.text.x.", position), thm) %||%
+        calc_element("axis.text.x", thm) %||%
+        calc_element("axis.text", thm)
       if (!is.null(text.gp$size)) {
         text.gp$size <- text.gp$size/.pt
       }
@@ -205,18 +244,18 @@ ArcPlot_build.ArcPlot <- function(plot,
       yaxis <- list()
     } else {
       position <- p$layout$panel_params[[1]]$y$position
-      line.gp <- calc_element(paste0("axis.line.y.", position), theme) %||%
-        calc_element("axis.line.y", theme) %||%
-        calc_element("axis.line", theme)
-      tick.gp <- calc_element(paste0("axis.line.y.", position), theme) %||%
-        calc_element("axis.ticks.y", theme) %||%
-        calc_element("axis.ticks", theme)
-      ticks.length <- calc_element(paste0("axis.ticks.length.y.", position), theme) %||%
-        calc_element("axis.ticks.length.y", theme) %||%
-        calc_element("axis.ticks.length", theme)
-      text.gp <- calc_element(paste0("axis.text.y.", position), theme) %||%
-        calc_element("axis.text.y", theme) %||%
-        calc_element("axis.text", theme)
+      line.gp <- calc_element(paste0("axis.line.y.", position), thm) %||%
+        calc_element("axis.line.y", thm) %||%
+        calc_element("axis.line", thm)
+      tick.gp <- calc_element(paste0("axis.line.y.", position), thm) %||%
+        calc_element("axis.ticks.y", thm) %||%
+        calc_element("axis.ticks", thm)
+      ticks.length <- calc_element(paste0("axis.ticks.length.y.", position), thm) %||%
+        calc_element("axis.ticks.length.y", thm) %||%
+        calc_element("axis.ticks.length", thm)
+      text.gp <- calc_element(paste0("axis.text.y.", position), thm) %||%
+        calc_element("axis.text.y", thm) %||%
+        calc_element("axis.text", thm)
       if (!is.null(text.gp$size)) {
         text.gp$size <- text.gp$size/.pt
       }
@@ -258,7 +297,7 @@ ArcPlot_build.ArcPlot <- function(plot,
   }
 
   position <- theme$legend.position
-  if (position != "none" && length(legends) > 0) {
+  if (!identical(position, "none") && length(legends) > 0) {
     legends <- merge_guide(legends, theme = theme, ...)
     legend_width <- gtable::gtable_width(legends)
     legend_height <- gtable::gtable_height(legends)
@@ -274,6 +313,8 @@ ArcPlot_build.ArcPlot <- function(plot,
                                               just = c(xjust, yjust),
                                               height = legend_height,
                                               width = legend_width))
+      gt <- gtable::gtable_add_grob(gt, legends, t = 1, b = 1, l = 1, r = 1,
+                                    clip = "off", name = "guide-box")
     } else {
       if (identical(position, "bottom")) {
         gt <- gtable::gtable_add_rows(gt, heights = legend_height)

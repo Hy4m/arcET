@@ -229,7 +229,9 @@ gg2coord <- function(panel_params) {
 #' }
 arc_test <- function(plot = ggplot2::last_plot(),
                      region = NULL,
-                     ...) {
+                     ...,
+                     vp = NULL,
+                     newpage = is.null(vp)) {
   if (!inherits(plot, "ggplot")) {
     cli::cli_abort("{.arg plot} must be a ggplot object.")
   }
@@ -246,8 +248,22 @@ arc_test <- function(plot = ggplot2::last_plot(),
                      "Connot convert {.cls {clss}} to arcplot..."
                    })
 
-  grid::grid.newpage()
-  grid::grid.draw(plot)
+  if (newpage) {
+    grid::grid.newpage()
+  }
+
+  if (is.null(vp)) {
+    grid::grid.draw(plot)
+  } else {
+    if (is.character(vp)) {
+      grid::seekViewport(vp)
+    } else {
+      grid::pushViewport(vp)
+    }
+    grid::grid.draw(plot)
+
+    grid::upViewport()
+  }
 
   invisible(plot)
 }
