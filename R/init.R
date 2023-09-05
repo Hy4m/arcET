@@ -215,6 +215,9 @@ ArcPlot_build.ArcPlot <- function(plot,
       xaxis <- list()
     } else {
       position <- p$layout$panel_params[[1]]$x$position
+      title.gp <- calc_element(paste0("axis.title.y.", position), thm) %||%
+        calc_element("axis.title.y", thm) %||%
+        calc_element("axis.title", thm)
       line.gp <- calc_element(paste0("axis.line.x.", position), thm) %||%
         calc_element("axis.line.x", thm) %||%
         calc_element("axis.line", thm)
@@ -227,13 +230,12 @@ ArcPlot_build.ArcPlot <- function(plot,
       text.gp <- calc_element(paste0("axis.text.x.", position), thm) %||%
         calc_element("axis.text.x", thm) %||%
         calc_element("axis.text", thm)
-      if (!is.null(text.gp$size)) {
-        text.gp$size <- text.gp$size/.pt
-      }
 
-      xaxis <- list(ArcxAxisGrob(coord = coord,
+      xaxis <- list(ArcxAxisGrob(title = params$labels$x,
+                                 coord = coord,
                                  region = region,
                                  position = position,
+                                 title.gp = title.gp,
                                  line.gp = line.gp,
                                  tick.gp = tick.gp,
                                  text.gp = text.gp,
@@ -244,6 +246,9 @@ ArcPlot_build.ArcPlot <- function(plot,
       yaxis <- list()
     } else {
       position <- p$layout$panel_params[[1]]$y$position
+      title.gp <- calc_element(paste0("axis.title.y.", position), thm) %||%
+        calc_element("axis.title.y", thm) %||%
+        calc_element("axis.title", thm)
       line.gp <- calc_element(paste0("axis.line.y.", position), thm) %||%
         calc_element("axis.line.y", thm) %||%
         calc_element("axis.line", thm)
@@ -256,13 +261,12 @@ ArcPlot_build.ArcPlot <- function(plot,
       text.gp <- calc_element(paste0("axis.text.y.", position), thm) %||%
         calc_element("axis.text.y", thm) %||%
         calc_element("axis.text", thm)
-      if (!is.null(text.gp$size)) {
-        text.gp$size <- text.gp$size/.pt
-      }
 
-      yaxis <- list(ArcyAxisGrob(coord = coord,
+      yaxis <- list(ArcyAxisGrob(title = params$labels$y,
+                                 coord = coord,
                                  region = region,
                                  position = position,
+                                 title.gp = title.gp,
                                  line.gp = line.gp,
                                  tick.gp = tick.gp,
                                  text.gp = text.gp,
