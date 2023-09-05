@@ -29,8 +29,9 @@ euclid_dist2 <- function(x, y, xend, yend) {
     } else if (identical0(d$y, d$yend)) {
       radian(abs(d$x - d$xend)) * abs(d$y)
     } else {
-      angle <- radian(abs(d$x - d$xend))
-      sqrt((d$y - d$yend)^2 + angle * abs(d$y) * angle * abs(d$yend))
+      xs <- seq(d$x, d$xend, length.out = 200)
+      ys <- seq(d$y, d$yend, length.out = 200)
+      sum(euclid_dist(xs[-200], ys[-200], xs[-1], ys[-1]))
     }
   }, numeric(1), USE.NAMES = FALSE)
 }
