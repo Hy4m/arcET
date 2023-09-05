@@ -129,14 +129,9 @@ polar2cartesian <- function(data) {
   nm <- names(data)
   all_x <- intersect(nm, x_aes)
   all_y <- intersect(nm, y_aes)
-
-  idx <- match(all_x, x_aes)
-  idy <- match(all_y, y_aes)
-  if (!identical(sort(idx), sort(idy))) {
-    cli::cli_abort("all x-axis vars need to have a matching y-axis vars.")
-  }
-  all_x <- all_x[rank(idx)]
-  all_y <- all_y[rank(idy)]
+  ids <- intersect(match(all_x, x_aes), match(all_y, y_aes))
+  all_x <- x_aes[ids]
+  all_y <- y_aes[ids]
 
   for (ii in seq_along(all_x)) {
     rr <- data[[all_y[ii]]]
