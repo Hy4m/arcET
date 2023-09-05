@@ -4,7 +4,13 @@
 \alias{arc_test}
 \title{Test function}
 \usage{
-arc_test(plot = ggplot2::last_plot(), region = NULL, ...)
+arc_test(
+  plot = ggplot2::last_plot(),
+  region = NULL,
+  ...,
+  vp = NULL,
+  newpage = is.null(vp)
+)
 }
 \arguments{
 \item{plot}{a ggplot object.}
