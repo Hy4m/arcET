@@ -52,9 +52,9 @@ extract_ggplot <- function(plot) {
   if (length(panel_params) > 1) {
     cli::cli_warn("{CellPlot don't support facet.")
   }
-  panel_params <- panel_params[[1]]
 
-  data <- plot$data
+  labels <- plot$plot$labels
+  panel_params <- panel_params[[1]]
   trans <- function() {
     parameters <- force(panel_params)
     FUN <- force(plot$plot$coordinates$transform)
@@ -70,6 +70,9 @@ extract_ggplot <- function(plot) {
 
   ## handle clip param
   flipped_aes <- inherits(plot$plot$coordinates, "CoordFlip")
+  if (flipped_aes) {
+    labels <- rename(labels, x = "y", y = "x")
+  }
   clip <- plot$plot$coordinates$clip
   if (is.character(clip)) {
     clip <- switch (clip,
@@ -86,6 +89,7 @@ extract_ggplot <- function(plot) {
   structure(list(data = plot$data,
                  layer_name = layer_name,
                  layer_params = layer_params,
+                 labels = labels,
                  trans = trans(),
                  coord = coord,
                  theme = plot_theme(plot$plot),
@@ -94,9 +98,9 @@ extract_ggplot <- function(plot) {
 
 #' @export
 print.gg_element <- function(x, ...) {
-  layers <- data_frame0(layer = x$layer_name,
-                        data = x$data,
-                        parameters = x$layer_params)
+  layers <- tibble::tibble(layer = x$layer_name,
+                           data = x$data,
+                           parameters = x$layer_params)
 
   cli::cli_h1("--------elements of ggplot:--------")
   cat("Layer data: ")
@@ -245,7 +249,7 @@ arc_test <- function(plot = ggplot2::last_plot(),
 
   plot <- tryCatch(ArcPlot_build(plot, ...),
                    error = function(e) {
-                     "Connot convert {.cls {clss}} to arcplot..."
+                     cli::cli_abort("Connot convert {.cls {clss}} to arcplot...")
                    })
 
   if (newpage) {
