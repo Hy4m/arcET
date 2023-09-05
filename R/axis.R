@@ -1,11 +1,14 @@
+## TODO: can add title?
 #' Arc x-axis Grob
 #' @description These functions can draw x-axis on polar coordinate.
 #'
+#' @param title charccter specifying axis title.
 #' @param coord coordinate specification, as created by `PANEL()` or extract from
 #' ggplot object.
 #' @param position axis position specification, and default is "bottom".
 #' @param ticks.length a grid unit object or numeric, and numerical value
 #' means that the length of ticks is measured in millimeters.
+#' @param title.gp should be created by `ggplot2::element_text()`.
 #' @param line.gp should be created by `ggplot2::element_line()`.
 #' @param tick.gp should be created by `ggplot2::element_line()`.
 #' @param text.gp should be created by `ggplot2::element_text()`.
@@ -18,10 +21,12 @@
 #' @rdname ArcxAxisGrob
 #' @author Hou Yun
 #' @export
-ArcxAxisGrob <- function(coord = PANEL(),
+ArcxAxisGrob <- function(title = NULL,
+                         coord = PANEL(),
                          region = CELL(),
                          position = "top",
                          ticks.length = 1.5,
+                         title.gp = element_text(),
                          line.gp = element_line(),
                          tick.gp = element_line(),
                          text.gp = element_text(),
@@ -35,6 +40,11 @@ ArcxAxisGrob <- function(coord = PANEL(),
     cli::cli_abort(c("{.arg region} must be an `CELL` object,",
                      i = "it can be created by {.fun CELL}."))
   }
+  if (!inherits(title.gp, "element_text") && inherits(title.gp, "element_markdown") &&
+      !inherits(text.gp, "element_blank")) {
+    cli::cli_abort(c("{.arg title.gp} must be an `element` object,",
+                     i = "it can be created by {.fun element_text} or {.fun element_blank}."))
+  }
   if (!inherits(line.gp, "element_line") && !inherits(line.gp, "element_blank")) {
     cli::cli_abort(c("{.arg line.gp} must be an `element` object,",
                      i = "it can be created by {.fun element_line} or {.fun element_blank}."))
@@ -43,7 +53,8 @@ ArcxAxisGrob <- function(coord = PANEL(),
     cli::cli_abort(c("{.arg tick.gp} must be an `element` object,",
                      i = "it can be created by {.fun element_line} or {.fun element_blank}."))
   }
-  if (!inherits(text.gp, "element_text") && !inherits(text.gp, "element_blank")) {
+  if (!inherits(text.gp, "element_text") && inherits(title.gp, "element_markdown") &&
+      !inherits(text.gp, "element_blank")) {
     cli::cli_abort(c("{.arg text.gp} must be an `element` object,",
                      i = "it can be created by {.fun element_text} or {.fun element_blank}."))
   }
@@ -53,10 +64,12 @@ ArcxAxisGrob <- function(coord = PANEL(),
     return(zeroGrob())
   }
 
-  grid::gTree(coord = coord,
+  grid::gTree(title = title,
+              coord = coord,
               region = region,
               position = position,
               ticks.length = ticks.length,
+              title.gp = title.gp,
               line.gp = line.gp,
               tick.gp = tick.gp,
               text.gp = text.gp,
@@ -67,11 +80,13 @@ ArcxAxisGrob <- function(coord = PANEL(),
 #' Arc y-axis Grob
 #' @description These functions can draw y-axis on polar coordinate.
 #'
+#' @param title charccter specifying axis title.
 #' @param coord coordinate specification, as created by `PANEL()` or extract from
 #' ggplot object.
 #' @param position axis position specification, and default is "left".
 #' @param ticks.length a grid unit object or numeric, and numerical value
 #' means that the length of ticks is measured in millimeters.
+#' @param title.gp should be created by `ggplot2::element_text()`.
 #' @param line.gp should be created by `ggplot2::element_line()`.
 #' @param tick.gp should be created by `ggplot2::element_line()`.
 #' @param text.gp should be created by `ggplot2::element_text()`.
@@ -82,10 +97,12 @@ ArcxAxisGrob <- function(coord = PANEL(),
 #' @rdname ArcyAxisGrob
 #' @author Hou Yun
 #' @export
-ArcyAxisGrob <- function(coord = PANEL(),
+ArcyAxisGrob <- function(title = NULL,
+                         coord = PANEL(),
                          region = CELL(),
                          position = "left",
                          ticks.length = 1.5,
+                         title.gp = element_text(),
                          line.gp = element_line(),
                          tick.gp = element_line(),
                          text.gp = element_text(),
@@ -98,6 +115,12 @@ ArcyAxisGrob <- function(coord = PANEL(),
     cli::cli_abort(c("{.arg region} must be an `CELL` object,",
                      i = "it can be created by {.fun CELL}."))
   }
+
+  if (!inherits(title.gp, "element_text") && inherits(title.gp, "element_markdown") &&
+      !inherits(text.gp, "element_blank")) {
+    cli::cli_abort(c("{.arg title.gp} must be an `element` object,",
+                     i = "it can be created by {.fun element_text} or {.fun element_blank}."))
+  }
   if (!inherits(line.gp, "element_line") && !inherits(line.gp, "element_blank")) {
     cli::cli_abort(c("{.arg line.gp} must be an `element` object,",
                      i = "it can be created by {.fun element_line} or {.fun element_blank}."))
@@ -106,7 +129,8 @@ ArcyAxisGrob <- function(coord = PANEL(),
     cli::cli_abort(c("{.arg tick.gp} must be an `element` object,",
                      i = "it can be created by {.fun element_line} or {.fun element_blank}."))
   }
-  if (!inherits(text.gp, "element_text") && !inherits(text.gp, "element_blank")) {
+  if (!inherits(text.gp, "element_text") && inherits(title.gp, "element_markdown") &&
+      !inherits(text.gp, "element_blank")) {
     cli::cli_abort(c("{.arg text.gp} must be an `element` object,",
                      i = "it can be created by {.fun element_text} or {.fun element_blank}."))
   }
@@ -116,10 +140,12 @@ ArcyAxisGrob <- function(coord = PANEL(),
     return(zeroGrob())
   }
 
-  grid::gTree(coord = coord,
+  grid::gTree(title = title,
+              coord = coord,
               region = region,
               position = position,
               ticks.length = ticks.length,
+              title.gp = title.gp,
               line.gp = line.gp,
               tick.gp = tick.gp,
               text.gp = text.gp,
@@ -128,129 +154,168 @@ ArcyAxisGrob <- function(coord = PANEL(),
 
 #' @export
 makeContent.ArcxAxisGrob <- function(x) {
-  coord <- x$coord
-  region <- x$region
-  position <- x$position
-  ticks.length <- x$ticks.length
-  line.gp <- x$line.gp
-  tick.gp <- x$tick.gp
-  text.gp <- x$text.gp
-  steps <- x$steps
+  g <- .ArcxAxisGrob(title = x$title,
+                     coord = x$coord,
+                     region = x$region,
+                     position = x$position,
+                     ticks.length = x$ticks.length,
+                     title.gp = x$title.gp,
+                     line.gp = x$line.gp,
+                     tick.gp = x$tick.gp,
+                     text.gp = x$text.gp)
+  grid::setChildren(x, children = g$children)
+}
 
-  has_line <- has_tick <- has_text <- TRUE
+#' @export
+makeContent.ArcyAxisGrob <- function(x) {
+  g <- .ArcyAxisGrob(title = x$title,
+                     coord = x$coord,
+                     region = x$region,
+                     position = x$position,
+                     ticks.length = x$ticks.length,
+                     title.gp = x$title.gp,
+                     line.gp = x$line.gp,
+                     tick.gp = x$tick.gp,
+                     text.gp = x$text.gp)
+  grid::setChildren(x, children = g$children)
+}
 
+#' @noRd
+.ArcxAxisGrob <- function(title = NULL,
+                          coord = PANEL(),
+                          region = CELL(),
+                          position = "left",
+                          ticks.length = 1.5,
+                          title.gp = element_text(),
+                          line.gp = element_line(),
+                          tick.gp = element_line(),
+                          text.gp = element_text(),
+                          steps = 0.01,
+                          ...) {
+  if (!is.unit(ticks.length)) {
+    ticks.length <- unit(ticks.length, "mm")
+  }
+  ticks.length <- convert_height(ticks.length, "native", TRUE)
+  one_mm <- convert_height(unit(1, "mm"), "native", TRUE)
+  r0 <- min(region$y.range)
+  r1 <- max(region$y.range)
+  current <- if (position == "top") r1 else r0
+
+  has_title <- has_line <- has_tick <- has_text <- TRUE
+  ## build axis line
   if (inherits(line.gp, "element_blank")) {
     has_line <- FALSE
   } else {
     line <- ArcSegmentsGrob(x = region$x.range[1],
-                            y = if (position == "top") max(region$y.range) else min(region$y.range),
+                            y = if (position == "top") r1 else r0,
                             xend = region$x.range[2],
-                            yend = if (position == "top") max(region$y.range) else min(region$y.range),
+                            yend = if (position == "top") r1 else r0,
                             colour = line.gp$colour %||% "black",
                             linewidth = line.gp$linewidth %||% 0.5,
                             linetype = line.gp$linetype %||% 1,
                             lineend = line.gp$lineend %||% "butt",
                             arrow = if (line.gp$arrow) grid::arrow() else NULL,
-                            steps = steps
-    )
+                            arc = TRUE,
+                            steps = steps)
   }
 
+  ## build axis ticks
   if (inherits(tick.gp, "element_blank") || is.null(coord$x$breaks)) {
     has_tick <- FALSE
-    ticks.length <- 0
-  } else {
-    if (!is.unit(ticks.length)) {
-      ticks.length <- unit(ticks.length, "mm")
-    }
-    ticks.length <- convert_height(ticks.length, "native", TRUE)
-    tick <- cartesian2polar(data = data_frame0(x = coord$x$breaks,
-                                               xend = coord$x$breaks),
-                            coord = coord,
-                            region = region,
-                            clip = FALSE,
-                            na.rm = TRUE)
     if (position == "top") {
-      tick$y <- max(region$y.range)
-      tick$yend <- max(region$y.range) + ticks.length
+      current <- current + one_mm
     } else {
-      tick$y <- min(region$y.range)
-      tick$yend <- min(region$y.range) - ticks.length
+      current <- current - one_mm
     }
-    tick <- ArcSegmentsGrob(x = tick$x,
-                            y = tick$y,
-                            xend = tick$xend,
-                            yend = tick$yend,
+  } else {
+    xs <- scales::rescale(coord$x$breaks, to = region$x.range, from = coord$x$range)
+    tick <- ArcSegmentsGrob(x = xs,
+                            y = if (position == "top") r1 else r0,
+                            xend = xs,
+                            yend = if (position == "top") r1 + ticks.length else r0 - ticks.length,
                             colour = tick.gp$colour %||% "black",
                             linewidth = tick.gp$linewidth %||% 0.5,
                             linetype = tick.gp$linetype %||% 1,
                             lineend = tick.gp$lineend %||% "butt",
                             arrow = if (tick.gp$arrow) grid::arrow() else NULL,
-                            steps = steps
-    )
+                            arc = FALSE)
+    if (position == "top") {
+      current <- if (ticks.length < 0) current + one_mm else current + ticks.length + one_mm
+    } else {
+      current <- if (ticks.length < 0) current - one_mm else current - ticks.length - one_mm
+    }
   }
 
+  ## build axis labels
   if (inherits(text.gp, "element_blank") || is.null(coord$x$breaks)) {
     has_text <- FALSE
   } else {
-    one_mm <- convert_height(unit(1, "mm"), "native", TRUE)
-    label <- cartesian2polar(data = data_frame0(x = coord$x$breaks,
-                                                label = coord$x$labels),
-                             coord = coord,
-                             region = region,
-                             clip = FALSE,
-                             na.rm = TRUE)
-    if (position == "top") {
-      if (ticks.length <= 0){
-        label$y <- max(region$y.range) + one_mm
-      } else {
-        label$y <- max(region$y.range) + ticks.length + one_mm
-      }
-      label$angle <- text_angle(label$x, "clockwise")
-      label$hjust <- 0
-      label$vjust <- 0.5
-    } else {
-      if (ticks.length <= 0){
-        label$y <- min(region$y.range) - one_mm
-      } else {
-        label$y <- min(region$y.range) - ticks.length - one_mm
-      }
-      label$angle <- text_angle(label$x, "clockwise")
-      label$hjust <- 1
-      label$vjust <- 0.5
-    }
+    xs <- scales::rescale(coord$x$breaks, to = region$x.range, from = coord$x$range)
 
-    label <- ArcTextGrob(label = label$label,
-                         x = label$x,
-                         y = label$y,
-                         angle = label$angle,
-                         hjust = label$hjust,
-                         vjust = label$vjust,
+    label <- ArcTextGrob(label = coord$x$labels,
+                         x = xs,
+                         y = current,
+                         angle = "clockwise",
+                         hjust = if (position == "top") 0 else 1,
+                         vjust = 0.5,
                          colour = text.gp$colour %||% "grey35",
-                         size = text.gp$size %||% 3,
+                         size = (text.gp$size %||% 7.5)/.pt,
                          family = text.gp$family %||% "",
                          fontface = text.gp$face %||% 1,
                          lineheight = text.gp$lineheight %||% 1.2,
-                         parse = if (is.expression(label$label)) TRUE else FALSE,
+                         parse = if (is.expression(coord$x$labels)) TRUE else FALSE,
                          auto_adjust = FALSE)
+
+    gp <- gpar(fontsize = text.gp$size %||% 7.5,
+               fontfamily = text.gp$family %||% "",
+               fontface = text.gp$face %||% 1,
+               lineheight = text.gp$lineheight %||% 1.2)
+    width <- text_width(coord$x$labels, "native", gp = gp)
+    current <- if (position == "top") current + max(width) + one_mm else current - max(width) - one_mm
   }
 
-  grid::setChildren(x, grid::gList(if (has_line) line,
-                                   if (has_tick) tick,
-                                   if (has_text) label))
+  ## build axis title
+  if (inherits(title.gp, "element_blank") || is.null(title)) {
+    has_title <- FALSE
+  } else {
+    title <- ArcBannerTextGrob(label = title,
+                               x = region$mid_x,
+                               y = current,
+                               hjust = 0.5,
+                               vjust = if (position == "top") 0 else 1,
+                               colour = title.gp$colour %||% "black",
+                               size = (title.gp$size %||% 11)/.pt,
+                               family = title.gp$family %||% "",
+                               fontface = title.gp$face %||% 1,
+                               lineheight = title.gp$lineheight %||% 1.2)
+  }
+
+  grid::gTree(children = grid::gList(if (has_line) line,
+                                     if (has_tick) tick,
+                                     if (has_text) label,
+                                     if (has_title) title))
 }
 
-#' @export
-makeContent.ArcyAxisGrob <- function(x) {
-  coord <- x$coord
-  region <- x$region
-  position <- x$position
-  ticks.length <- x$ticks.length
-  line.gp <- x$line.gp
-  tick.gp <- x$tick.gp
-  text.gp <- x$text.gp
-
-  has_line <- has_tick <- has_text <- TRUE
+#' @noRd
+.ArcyAxisGrob <- function(title = NULL,
+                          coord = PANEL(),
+                          region = CELL(),
+                          position = "left",
+                          ticks.length = 1.5,
+                          title.gp = element_text(),
+                          line.gp = element_line(),
+                          tick.gp = element_line(),
+                          text.gp = element_text(),
+                          ...) {
+  if (!is.unit(ticks.length)) {
+    ticks.length <- unit(ticks.length, "mm")
+  }
+  ticks.length <- convert_height(ticks.length, "native", TRUE)
   angle <- if (position == "left") max(region$x.range) else min(region$x.range)
+  one_mm <- convert_width(unit(1, "mm"), "native", TRUE)
+
+  current <- 0
+  has_title <- has_line <- has_tick <- has_text <- TRUE
   vp <- grid::viewport(x = 0,
                        y = 0,
                        width = unit(2, "native"),
@@ -261,6 +326,7 @@ makeContent.ArcyAxisGrob <- function(x) {
                        yscale = c(0, 1),
                        default.units = "native")
 
+  ## build axis line
   if (inherits(line.gp, "element_blank")) {
     has_line <- FALSE
   } else {
@@ -277,20 +343,16 @@ makeContent.ArcyAxisGrob <- function(x) {
                                vp = vp)
   }
 
+  ## build axis ticks
   if (inherits(tick.gp, "element_blank") || is.null(coord$y$breaks)) {
     has_tick <- FALSE
-    ticks.length <- 0
-  } else {
-    if (!is.unit(ticks.length)) {
-      ticks.length <- unit(ticks.length, "mm")
+    if (position == "right") {
+      current <- current + one_mm
+    } else {
+      current <- current - one_mm
     }
-    ticks.length <- convert_width(ticks.length, "native", TRUE)
-
-    y <- cartesian2polar(data = data_frame0(y = coord$y$breaks),
-                         coord = coord,
-                         region = region,
-                         clip = FALSE,
-                         na.rm = TRUE)$y
+  } else {
+    y <- scales::rescale(coord$y$breaks, to = region$y.range, from = coord$y$range)
     if (position == "left") {
       xend <- -ticks.length
     } else {
@@ -307,51 +369,62 @@ makeContent.ArcyAxisGrob <- function(x) {
                                arrow = if (line.gp$arrow) grid::arrow() else NULL,
                                default.units = "native",
                                vp = vp)
+    if (position == "right") {
+      current <- if (ticks.length < 0) current + one_mm else current + ticks.length + one_mm
+    } else {
+      current <- if (ticks.length < 0) current - one_mm else current - ticks.length - one_mm
+    }
   }
 
+  ## build axis labels
   if (inherits(text.gp, "element_blank") || is.null(coord$y$breaks)) {
     has_text <- FALSE
   } else {
-    one_mm <- convert_width(unit(1, "mm"), "native", TRUE)
-    y <- cartesian2polar(data = data_frame0(y = coord$y$breaks),
-                         coord = coord,
-                         region = region,
-                         clip = FALSE,
-                         na.rm = TRUE)$y
-    if (position == "left") {
-      if (ticks.length <= 0){
-        xend <- -one_mm
-      } else {
-        xend <- -ticks.length - one_mm
-      }
-
-      hjust <- 1
-    } else {
-      if (ticks.length <= 0){
-        xend <- one_mm
-      } else {
-        xend <- ticks.length + one_mm
-      }
-
-      hjust <- 0
-    }
-
+    y <- scales::rescale(coord$y$breaks, to = region$y.range, from = coord$y$range)
     label <- grid::textGrob(label = coord$y$labels,
-                            x = xend,
+                            x = current,
                             y = y,
                             rot = 0,
-                            hjust = hjust,
+                            hjust = if (position == "left") 1 else 0,
                             vjust = 0.5,
                             gp = gpar(col = text.gp$colour %||% "grey35",
-                                      fontsize = (text.gp$size %||% 3) * .pt,
+                                      fontsize = text.gp$size %||% 7.5,
                                       fontfamily = text.gp$family %||% "",
                                       fontface = text.gp$face %||% 1,
                                       lineheight = text.gp$lineheight %||% 1.2),
                             default.units = "native",
                             vp = vp)
+
+    gp <- gpar(fontsize = text.gp$size %||% 7.5,
+               fontfamily = text.gp$family %||% "",
+               fontface = text.gp$face %||% 1,
+               lineheight = text.gp$lineheight %||% 1.2)
+    width <- text_width(coord$y$labels, "native", gp = gp)
+    current <- if (position == "right") current + max(width) + one_mm else current - max(width) - one_mm
   }
 
-  grid::setChildren(x, grid::gList(if (has_line) line,
-                                   if (has_tick) tick,
-                                   if (has_text) label))
+  ## build axis title
+  if (inherits(title.gp, "element_blank") || is.null(title)) {
+    has_title <- FALSE
+  } else {
+    title <- grid::textGrob(label = title,
+                            x = current,
+                            y = region$mid_y,
+                            rot = 90,
+                            hjust = 0,
+                            vjust = if (position == "left") 0 else 1,
+                            gp = gpar(col = title.gp$colour %||% "black",
+                                      fontsize = title.gp$size %||% 11,
+                                      fontfamily = title.gp$family %||% "",
+                                      fontface = title.gp$face %||% 1,
+                                      lineheight = title.gp$lineheight %||% 1.2),
+                            default.units = "native",
+                            vp = vp)
+  }
+
+  grid::gTree(children = grid::gList(if (has_line) line,
+                                     if (has_tick) tick,
+                                     if (has_text) label,
+                                     if (has_title) title))
 }
+

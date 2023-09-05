@@ -152,8 +152,8 @@ CELL <- function(start = 360,
     }
   }
 
-  out$mid_x <- mean(start, end)
-  out$mid_y <- mean(r0, r1)
+  out$mid_x <- mean(c(start, end))
+  out$mid_y <- mean(c(r0, r1))
   out$x.range <- c(start, end)
   out$y.range <- c(r0, r1)
   out$clip <- clip

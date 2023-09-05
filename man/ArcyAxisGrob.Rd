@@ -5,10 +5,12 @@
 \title{Arc y-axis Grob}
 \usage{
 ArcyAxisGrob(
+  title = NULL,
   coord = PANEL(),
   region = CELL(),
   position = "left",
   ticks.length = 1.5,
+  title.gp = element_text(),
   line.gp = element_line(),
   tick.gp = element_line(),
   text.gp = element_text(),
@@ -16,6 +18,8 @@ ArcyAxisGrob(
 )
 }
 \arguments{
+\item{title}{charccter specifying axis title.}
+
 \item{coord}{coordinate specification, as created by `PANEL()` or extract from
 ggplot object.}
 
@@ -26,6 +30,8 @@ the drawing area.}
 
 \item{ticks.length}{a grid unit object or numeric, and numerical value
 means that the length of ticks is measured in millimeters.}
+
+\item{title.gp}{should be created by `ggplot2::element_text()`.}
 
 \item{line.gp}{should be created by `ggplot2::element_line()`.}
 
