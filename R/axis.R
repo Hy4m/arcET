@@ -293,7 +293,8 @@ makeContent.ArcyAxisGrob <- function(x) {
   grid::gTree(children = grid::gList(if (has_line) line,
                                      if (has_tick) tick,
                                      if (has_text) label,
-                                     if (has_title) title))
+                                     if (has_title) title),
+              name = "ArcxAxisGrob")
 }
 
 #' @noRd
@@ -425,6 +426,7 @@ makeContent.ArcyAxisGrob <- function(x) {
   grid::gTree(children = grid::gList(if (has_line) line,
                                      if (has_tick) tick,
                                      if (has_text) label,
-                                     if (has_title) title))
+                                     if (has_title) title),
+              name = "ArcyAxisGrob")
 }
 
