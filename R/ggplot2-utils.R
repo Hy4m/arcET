@@ -11,6 +11,9 @@ plot_theme <- getFromNamespace("plot_theme", ns = "ggplot2")
 stairstep <- getFromNamespace("stairstep", ns = "ggplot2")
 
 #' @noRd
+justify_grobs <- getFromNamespace("justify_grobs", ns = "ggplot2")
+
+#' @noRd
 translate_shape_string <- getFromNamespace("translate_shape_string", ns = "ggplot2")
 
 #' @noRd

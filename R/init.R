@@ -136,7 +136,7 @@ ArcPlot_build.ArcPlot <- function(plot,
       cell <- c(cell[1:5], cell$layers)
       class(cell) <- "gList"
       cell <- grid::gTree(children = cell, vp = vp)
-      gt <- gtable_add_grob(gt, grobs = cell, t = 5, l = 3, b = 4, r = 3,
+      gt <- gtable_add_grob(gt, grobs = cell, t = 5, l = 3, b = 5, r = 3,
                             clip = "off", name = paste(row$CellID, "panel", sep = "."))
     }
   }
@@ -159,25 +159,25 @@ ArcPlot_build.ArcPlot <- function(plot,
                                              just = c(xjust, yjust),
                                              height = guide_height,
                                              width = guide_width))
-      gt <- gtable_add_grob(gt, guides, t = 5, l = 3, b = 4, r = 3,
-                                    clip = "off", name = "guide-box")
+      gt <- gtable_add_grob(gt, guides, t = 1, l = 1, b = 8, r = 5,
+                            clip = "off", name = "guide-box")
     } else {
       if (identical(position, "bottom")) {
         gt$heights[6] <- guide_height
-        gt <- gtable_add_grob(gt, guides, t = 6, l = 3, b = 3, r = 3,
-                                      clip = "off", name = "guide-box")
+        gt <- gtable_add_grob(gt, guides, t = 6, l = 1, b = 6, r = 5,
+                              clip = "off", name = "guide-box")
       } else if (identical(position, "top")) {
         gt$heights[4] <- guide_height
-        gt <- gtable_add_grob(gt, guides, t = 4, l = 3, b = 5, r = 3,
-                                      clip = "off", name = "guide-box")
+        gt <- gtable_add_grob(gt, guides, t = 4, l = 1, b = 4, r = 5,
+                              clip = "off", name = "guide-box")
       } else if (identical(position, "left")) {
         gt$widths[2] <- guide_width
-        gt <- gtable_add_grob(gt, guides, t = 5, l = 2, b = 4, r = 4,
-                                      clip = "off", name = "guide-box")
+        gt <- gtable_add_grob(gt, guides, t = 1, l = 2, b = 8, r = 2,
+                              clip = "off", name = "guide-box")
       } else {
         gt$widths[4] <- guide_width
-        gt <- gtable_add_grob(gt, guides, t = 5, l = 4, b = 4, r = 2,
-                                      clip = "off", name = "guide-box")
+        gt <- gtable_add_grob(gt, guides, t = 1, l = 4, b = 8, r = 4,
+                              clip = "off", name = "guide-box")
       }
     }
   }
@@ -190,27 +190,43 @@ ArcPlot_build.ArcPlot <- function(plot,
     gt$heights[2] <- grobHeight(title)
 
     if (identical(plot.title.position, "panel")) {
-      gt <- gtable_add_grob(gt, title, t = 2, l = 3, b = 7, r = 3,
-                                    clip = "off", name = "title")
+      gt <- gtable_add_grob(gt, title, t = 2, l = 3, clip = "off",
+                            name = "title")
     } else {
-      gt <- gtable_add_grob(gt, title, t = 2, l = 1, b = 7, r = 5,
-                                    clip = "off", name = "title")
+      gt <- gtable_add_grob(gt, title, t = 2, l = 1, t = 2, r = 5,
+                            clip = "off", name = "title")
     }
   }
 
   subtitle <- subtitle %||% attr(plot, "subtitle")
-  plot.subtitle.position <- theme$plot.subtitle.position
+  plot.subtitle.position <- theme$plot.subtitle.position %||% theme$plot.title.position
 
   if (!is.null(subtitle)) {
     subtitle <- ggplot2::element_render(theme, "plot.subtitle", subtitle, margin_y = TRUE)
     gt$heights[3] <- grobHeight(subtitle)
 
     if (identical(plot.subtitle.position, "panel")) {
-      gt <- gtable_add_grob(gt, subtitle, t = 3, l = 3, b = 6, r = 3,
-                                    clip = "off", name = "title")
+      gt <- gtable_add_grob(gt, subtitle, t = 3, l = 3, clip = "off",
+                            name = "subtitle")
     } else {
-      gt <- gtable_add_grob(gt, subtitle, t = 3, l = 1, b = 6, r = 5,
-                                    clip = "off", name = "title")
+      gt <- gtable_add_grob(gt, subtitle, t = 3, l = 1, t = 3, r = 5,
+                            clip = "off", name = "subtitle")
+    }
+  }
+
+  caption <- caption %||% attr(plot, "caption")
+  plot.caption.position <- theme$plot.caption.position %||% theme$plot.title.position
+
+  if (!is.null(caption)) {
+    caption <- ggplot2::element_render(theme, "plot.caption", caption, margin_y = TRUE)
+    gt$heights[7] <- grobHeight(caption)
+
+    if (identical(plot.caption.position, "panel")) {
+      gt <- gtable_add_grob(gt, caption, t = 7, l = 3, clip = "off",
+                            name = "caption")
+    } else {
+      gt <- gtable_add_grob(gt, caption, t = 7, l = 1, b = 7, r = 5,
+                            clip = "off", name = "caption")
     }
   }
 
@@ -218,66 +234,58 @@ ArcPlot_build.ArcPlot <- function(plot,
   plot.tag.position <- theme$plot.tag.position
 
   if (!is.null(tag)) {
-    tag <- ggplot2::element_render(theme, "plot.tag", title, margin_y = TRUE,
+    tag <- ggplot2::element_render(theme, "plot.tag", tag, margin_y = TRUE,
                                    margin_x = TRUE)
-    tag_height <- grobHeight(tag)
-    tag_width <- grobWidth(tag)
 
     if (is.numeric(plot.tag.position)) {
-      just <- grid::valid.just(theme$legend.justification)
-      xjust <- just[1]
-      yjust <- just[2]
+      xpos <- plot.tag.position[1]
+      ypos <- plot.tag.position[2]
+      tag <- justify_grobs(tag, x = xpos, y = ypos,
+                           hjust = theme$plot.tag$hjust, vjust = theme$plot.tag$vjust,
+                           int_angle = theme$plot.tag$angle, debug = theme$plot.tag$debug)
 
-      if (is.numeric(position)) {
-        xpos <- plot.tag.position[1]
-        ypos <- plot.tag.position[2]
-        guides <- grid::editGrob(tag,
-                                 vp = viewport(x = xpos,
-                                               y = ypos,
-                                               just = c(xjust, yjust),
-                                               height = tag_height,
-                                               width = tag_width,
-                                               clip = "off"))
-        gt <- gtable_add_grob(gt, tag, t = 5, l = 3, b = 4, r = 3,
-                                      clip = "off", name = "tag")
+      gt <- gtable_add_grob(gt, tag, t = 1, l = 1, b = 8, r = 5,
+                            clip = "off", name = "tag")
+    } else {
+      tag_height <- grobHeight(tag)
+      tag_width <- grobWidth(tag)
+
+      if (plot.tag.position == "topleft") {
+        gt$heights[1] <- tag_height
+        gt$widths[1] <- tag_width
+        gt <- gtable_add_grob(gt, tag, t = 1, l = 1, clip = "off",
+                              name = "tag")
+      } else if (plot.tag.position == "top") {
+        gt$heights[1] <- tag_height
+        gt <- gtable_add_grob(gt, tag, t = 1, l = 3, clip = "off",
+                              name = "tag")
+      } else if (plot.tag.position == "topright") {
+        gt$heights[1] <- tag_height
+        gt$widths[5] <- tag_width
+        gt <- gtable_add_grob(gt, tag, t = 1, l = 5, clip = "off",
+                              name = "tag")
+      } else if (plot.tag.position == "left") {
+        gt$widths[1] <- tag_width
+        gt <- gtable_add_grob(gt, tag, t = 5, l = 1, clip = "off",
+                              name = "tag")
+      } else if (plot.tag.position == "right") {
+        gt$widths[5] <- tag_width
+        gt <- gtable_add_grob(gt, tag, t = 5, l = 5, clip = "off",
+                              name = "tag")
+      } else if (plot.tag.position == "bottomleft") {
+        gt$heights[7] <- tag_height
+        gt$widths[1] <- tag_width
+        gt <- gtable_add_grob(gt, tag, t = 7, l = 1, clip = "off",
+                              name = "tag")
+      } else if (plot.tag.position == "bottom") {
+        gt$heights[7] <- tag_height
+        gt <- gtable_add_grob(gt, tag, t = 7, l = 3, clip = "off",
+                              name = "tag")
       } else {
-        if (plot.tag.position == "topleft") {
-          gt$heights[1] <- tag_height
-          gt$widths[1] <- tag_width
-          gt <- gtable_add_grob(gt, tag, t = 1, l = 1, b = 8, r = 5,
-                                        clip = "off", name = "tag")
-        } else if (plot.tag.position == "top") {
-          gt$heights[1] <- tag_height
-          gt <- gtable_add_grob(gt, tag, t = 1, l = 3, b = 8, r = 3,
-                                        clip = "off", name = "tag")
-        } else if (plot.tag.position == "topright") {
-          gt$heights[1] <- tag_height
-          gt$widths[5] <- tag_width
-          gt <- gtable_add_grob(gt, tag, t = 1, l = 5, b = 8, r = 1,
-                                        clip = "off", name = "tag")
-        } else if (plot.tag.position == "left") {
-          gt$widths[1] <- tag_width
-          gt <- gtable_add_grob(gt, tag, t = 5, l = 1, b = 4, r = 5,
-                                        clip = "off", name = "tag")
-        } else if (plot.tag.position == "right") {
-          gt$widths[5] <- tag_width
-          gt <- gtable_add_grob(gt, tag, t = 5, l = 5, b = 4, r = 1,
-                                        clip = "off", name = "tag")
-        } else if (plot.tag.position == "bottomleft") {
-          gt$heights[7] <- tag_height
-          gt$widths[1] <- tag_width
-          gt <- gtable_add_grob(gt, tag, t = 7, l = 1, b = 2, r = 5,
-                                        clip = "off", name = "tag")
-        } else if (plot.tag.position == "bottom") {
-          gt$heights[7] <- tag_height
-          gt <- gtable_add_grob(gt, tag, t = 7, l = 3, b = 2, r = 3,
-                                        clip = "off", name = "tag")
-        } else {
-          gt$heights[7] <- tag_height
-          gt$widths[5] <- tag_width
-          gt <- gtable_add_grob(gt, tag, t = 7, l = 5, b = 2, r = 1,
-                                        clip = "off", name = "tag")
-        }
+        gt$heights[7] <- tag_height
+        gt$widths[5] <- tag_width
+        gt <- gtable_add_grob(gt, tag, t = 7, l = 5, clip = "off",
+                              name = "tag")
       }
     }
   }
@@ -318,8 +326,8 @@ CellPlot_build <- function(gg_element,
       thm$panel.background$linewidth <- thm$panel.background$linewidth/.pt
     }
     panel <- ArcPanelGrob(region = region,
-                          fill = thm$panel.background$fill %||% "grey20",
-                          colour = thm$panel.background$colour %||% NA,
+                          fill = thm$panel.background$fill %||% "white",
+                          colour = thm$panel.background$colour %||% "black",
                           linewidth = thm$panel.background$linewidth %||% 0.5,
                           linetype = thm$panel.background$linetype %||% 1)
   }
