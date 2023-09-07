@@ -412,7 +412,7 @@ makeContent.ArcyAxisGrob <- function(x) {
                             x = current,
                             y = region$mid_y,
                             rot = 90,
-                            hjust = 0,
+                            hjust = 0.5,
                             vjust = if (position == "left") 0 else 1,
                             gp = gpar(col = title.gp$colour %||% "black",
                                       fontsize = title.gp$size %||% 11,
