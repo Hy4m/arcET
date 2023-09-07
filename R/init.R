@@ -14,6 +14,8 @@ print.ArcPlot <- function(x,
     grid::grid.newpage()
   }
 
+  grDevices::recordGraphics(requireNamespace("grid", quietly = TRUE),
+                            list(), getNamespace("grid"))
   if (is.null(vp)) {
     grid::grid.draw(grobs)
   } else {

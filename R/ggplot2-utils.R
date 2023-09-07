@@ -260,6 +260,8 @@ arc_test <- function(plot = ggplot2::last_plot(),
     grid::grid.newpage()
   }
 
+  grDevices::recordGraphics(requireNamespace("grid", quietly = TRUE),
+                            list(), getNamespace("grid"))
   if (is.null(vp)) {
     grid::grid.draw(plot)
   } else {
