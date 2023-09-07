@@ -174,6 +174,7 @@ gg2coord <- function(panel_params) {
               breaks = x_breaks,
               minor_breaks = x_minor_breaks,
               labels = x_labels,
+              position = panel_params$x$position,
               range = c(0, 1),
               data.range = x_range,
               expand = NULL,
@@ -206,6 +207,7 @@ gg2coord <- function(panel_params) {
               breaks = y_breaks,
               minor_breaks = y_minor_breaks,
               labels = y_labels,
+              position = panel_params$y$position,
               range = c(0, 1),
               data.range = y_range,
               expand = NULL,
@@ -219,6 +221,8 @@ gg2coord <- function(panel_params) {
 #' @param plot a ggplot object.
 #' @param region a `CELL` object.
 #' @param ... other parameters passing to `ArcPlot_build()`.
+#' @param vp 	viewport to draw plot in.
+#' @param newpage draw new (empty) page first?
 #' @return return grob object invisibly.
 #' @rdname arc_test
 #' @author Hou Yun
