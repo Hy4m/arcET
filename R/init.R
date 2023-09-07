@@ -328,7 +328,7 @@ CellPlot_build <- function(gg_element,
     panel <- ArcPanelGrob(region = region,
                           fill = thm$panel.background$fill %||% "white",
                           colour = thm$panel.background$colour %||% "black",
-                          linewidth = thm$panel.background$linewidth %||% 0.5,
+                          linewidth = thm$panel.background$linewidth %||% 0.5/.pt,
                           linetype = thm$panel.background$linetype %||% 1)
   }
 
