@@ -62,8 +62,9 @@ plot.ArcPlot <- function(x,
 #' @param plot an ArcPlot object.
 #' @param theme a ggplot theme object.
 #' @param title plot title.
-#' @param subtitle not used
-#' @param tag not used
+#' @param subtitle plot subtitle.
+#' @param tag plot tag.
+#' @param caption plot caption.
 #' @param xlim,ylim two-length numeric vector used to set scale limits.
 #' @param ... other parameters passing to `merge_guides()`.
 #' @return grid grobs.
@@ -82,13 +83,10 @@ ArcPlot_build.ArcPlot <- function(plot,
                                   title = NULL,
                                   subtitle = NULL,
                                   tag = NULL,
+                                  caption = NULL,
                                   xlim = NULL,
                                   ylim = NULL,
                                   ...) {
-  if (nrow(plot) < 1) {
-    return(zeroGrob)
-  }
-
   theme <- theme %||% attr(plot, "theme")
   if (is.null(theme)) {
     theme <- ggplot2::theme_get()
@@ -96,275 +94,371 @@ ArcPlot_build.ArcPlot <- function(plot,
     theme <- ggplot2::theme_get() %+% theme
   }
 
-  grobs <- list()
-  legends <- list()
-
-  for (row in split(plot, 1:nrow(plot))) {
-    cli::cli_inform("Build {row$CellID} plot...")
-    region <- row$region[[1]]
-    p <- suppressWarnings(ggplot2::ggplot_build(row$plot[[1]]))
-
-    params <- tryCatch(extract_ggplot(p), error = function(e) NULL)
-    if (is.null(params)) next
-
-    thm <- params$theme
-    coord <- params$coord
-    guides <- params$guides
-    layers <- lapply(seq_along(params$data), function(ii) {
-      FUN <- tryCatch(match.fun(paste0(params$layer_name[ii], "2grob")),
-                      error = function(e) "not_implement")
-
-      if (identical(FUN, "not_implement")) {
-        cli::cli_warn(c("{.fun {paste0(params$layer_name[ii], '2grob')}} has not been implemented yet,",
-                        i = "so this layer has been omitted."))
-        zeroGrob()
-      } else {
-        rlang::inject(FUN(data = params$data[[ii]], region = region, coord = coord,
-                          trans = params$trans, !!!params$layer_params[[ii]]))
-      }
-    })
-
-    if (inherits(thm$panel.background, "element_blank")) {
-      panel <- list()
-    } else {
-      if (inherits(thm$panel.background$linewidth, "rel")) {
-        thm$panel.background$linewidth <- thm$panel.background$linewidth/.pt
-      }
-      panel <- list(ArcPanelGrob(region = region,
-                                 fill = thm$panel.background$fill %||% "grey20",
-                                 colour = thm$panel.background$colour %||% NA,
-                                 linewidth = thm$panel.background$linewidth %||% 0.5,
-                                 linetype = thm$panel.background$linetype %||% 1))
+  if (nrow(plot) < 1) {
+    xlim <- xlim %||% attr(plot, "xlim") %||% c(-1, 1)
+    ylim <- ylim %||% attr(plot, "ylim") %||% c(-1, 1)
+  } else {
+    xlim <- xlim %||% attr(plot, "xlim")
+    ylim <- ylim %||% attr(plot, "ylim")
+    if (any(is.null(xlim), is.null(ylim))) {
+      lims <- get_xy_lim(plot$region)
+      xlim <- xlim %||% lims$xlim
+      ylim <- ylim %||% lims$ylim
     }
-
-    panel.grid.major.x <- calc_element("panel.grid.major.x", thm) %||%
-      calc_element("panel.grid.major", thm) %||%
-      calc_element("panel.grid", thm)
-    panel.grid.minor.x <- calc_element("panel.grid.minor.x", thm) %||%
-      calc_element("panel.grid.minor", thm) %||%
-      calc_element("panel.grid", thm)
-    if (inherits(panel.grid.major.x$linewidth, "rel")) {
-      panel.grid.major.x$linewidth <- panel.grid.major.x$linewidth/.pt
-    }
-    if (inherits(panel.grid.minor.x$linewidth, "rel")) {
-      panel.grid.minor.x$linewidth <- panel.grid.minor.x$linewidth/.pt
-    }
-    if ((is.null(coord$x$breaks) || inherits(panel.grid.major.x, "element_blank")) &&
-        (is.null(coord$x$minor_breaks) || inherits(panel.grid.minor.x, "element_blank"))) {
-      grid_x <- list()
-    } else {
-      x_breaks <- coord$x$breaks
-      x_minor_breaks <- coord$x$minor_breaks
-      colour <- c(rep(panel.grid.major.x$colour %||% "white", length(x_breaks)),
-                  rep(panel.grid.minor.x$colour %||% "white", length(x_minor_breaks)))
-      linewidth <- c(rep(panel.grid.major.x$linewidth %||% 0.5, length(x_breaks)),
-                     rep(panel.grid.minor.x$linewidth %||% 0.25, length(x_minor_breaks)))
-      linetype <- c(rep(panel.grid.major.x$linetype %||% 1, length(x_breaks)),
-                    rep(panel.grid.minor.x$linetype %||% 1, length(x_minor_breaks)))
-      grid_x <- data_frame0(x = c(x_breaks, x_minor_breaks),
-                            colour = colour,
-                            linewidth = linewidth,
-                            linetype = linetype)
-      grid_x <- cartesian2polar(data = grid_x, coord = coord, region = region,
-                                clip = TRUE, na.rm = TRUE)
-      grid_x <- list(ArcVlineGrob(xintercept = grid_x$x,
-                                  region = region,
-                                  colour = grid_x$colour,
-                                  linewidth = grid_x$linewidth,
-                                  linetype = grid_x$linetype))
-    }
-
-    panel.grid.major.y <- calc_element("panel.grid.major.y", thm) %||%
-      calc_element("panel.grid.major", thm) %||%
-      calc_element("panel.grid", thm)
-    panel.grid.minor.y <- calc_element("panel.grid.minor.y", thm) %||%
-      calc_element("panel.grid.minor", thm) %||%
-      calc_element("panel.grid", thm)
-    if (inherits(panel.grid.major.y$linewidth, "rel")) {
-      panel.grid.major.y$linewidth <- panel.grid.major.y$linewidth/.pt
-    }
-    if (inherits(panel.grid.minor.y$linewidth, "rel")) {
-      panel.grid.minor.y$linewidth <- panel.grid.minor.y$linewidth/.pt
-    }
-    if ((is.null(coord$y$breaks) || inherits(panel.grid.major.y, "element_blank")) &&
-        (is.null(coord$y$minor_breaks) || inherits(panel.grid.minor.y, "element_blank"))) {
-      grid_y <- list()
-    } else {
-      y_breaks <- coord$y$breaks
-      y_minor_breaks <- coord$y$minor_breaks
-      colour <- c(rep(panel.grid.major.y$colour %||% "white", length(y_breaks)),
-                  rep(panel.grid.minor.y$colour %||% "white", length(y_minor_breaks)))
-      linewidth <- c(rep(panel.grid.major.y$linewidth %||% 0.5, length(y_breaks)),
-                     rep(panel.grid.minor.y$linewidth %||% 0.25, length(y_minor_breaks)))
-      linetype <- c(rep(panel.grid.major.y$linetype %||% 1, length(y_breaks)),
-                    rep(panel.grid.minor.y$linetype %||% 1, length(y_minor_breaks)))
-      grid_y <- data_frame0(y = c(y_breaks, y_minor_breaks),
-                            colour = colour,
-                            linewidth = linewidth,
-                            linetype = linetype)
-      grid_y <- cartesian2polar(data = grid_y, coord = coord, region = region,
-                                clip = TRUE, na.rm = TRUE)
-      grid_y <- list(ArcHlineGrob(yintercept = grid_y$y,
-                                  region = region,
-                                  colour = grid_y$colour,
-                                  linewidth = grid_y$linewidth,
-                                  linetype = grid_y$linetype))
-    }
-
-    if (p$layout$panel_params[[1]]$x$position == "none") {
-      xaxis <- list()
-    } else {
-      position <- p$layout$panel_params[[1]]$x$position
-      title.gp <- calc_element(paste0("axis.title.y.", position), thm) %||%
-        calc_element("axis.title.y", thm) %||%
-        calc_element("axis.title", thm)
-      line.gp <- calc_element(paste0("axis.line.x.", position), thm) %||%
-        calc_element("axis.line.x", thm) %||%
-        calc_element("axis.line", thm)
-      tick.gp <- calc_element(paste0("axis.line.x.", position), thm) %||%
-        calc_element("axis.ticks.x", thm) %||%
-        calc_element("axis.ticks", thm)
-      ticks.length <- calc_element(paste0("axis.ticks.length.x.", position), thm) %||%
-        calc_element("axis.ticks.length.x", thm) %||%
-        calc_element("axis.ticks.length", thm)
-      text.gp <- calc_element(paste0("axis.text.x.", position), thm) %||%
-        calc_element("axis.text.x", thm) %||%
-        calc_element("axis.text", thm)
-
-      xaxis <- list(ArcxAxisGrob(title = params$labels$x,
-                                 coord = coord,
-                                 region = region,
-                                 position = position,
-                                 title.gp = title.gp,
-                                 line.gp = line.gp,
-                                 tick.gp = tick.gp,
-                                 text.gp = text.gp,
-                                 ticks.length = ticks.length))
-    }
-
-    if (p$layout$panel_params[[1]]$y$position == "none") {
-      yaxis <- list()
-    } else {
-      position <- p$layout$panel_params[[1]]$y$position
-      title.gp <- calc_element(paste0("axis.title.y.", position), thm) %||%
-        calc_element("axis.title.y", thm) %||%
-        calc_element("axis.title", thm)
-      line.gp <- calc_element(paste0("axis.line.y.", position), thm) %||%
-        calc_element("axis.line.y", thm) %||%
-        calc_element("axis.line", thm)
-      tick.gp <- calc_element(paste0("axis.line.y.", position), thm) %||%
-        calc_element("axis.ticks.y", thm) %||%
-        calc_element("axis.ticks", thm)
-      ticks.length <- calc_element(paste0("axis.ticks.length.y.", position), thm) %||%
-        calc_element("axis.ticks.length.y", thm) %||%
-        calc_element("axis.ticks.length", thm)
-      text.gp <- calc_element(paste0("axis.text.y.", position), thm) %||%
-        calc_element("axis.text.y", thm) %||%
-        calc_element("axis.text", thm)
-
-      yaxis <- list(ArcyAxisGrob(title = params$labels$y,
-                                 coord = coord,
-                                 region = region,
-                                 position = position,
-                                 title.gp = title.gp,
-                                 line.gp = line.gp,
-                                 tick.gp = tick.gp,
-                                 text.gp = text.gp,
-                                 ticks.length = ticks.length))
-    }
-
-    grobs <- c(grobs, c(panel, grid_x, grid_y, xaxis, yaxis, layers))
-    if (!is.null(guides)) {
-      legends <- c(legends, list(guides))
-    }
-  }
-
-  xlim <- xlim %||% attr(plot, "xlim")
-  ylim <- ylim %||% attr(plot, "ylim")
-  if (any(is.null(xlim), is.null(ylim))) {
-    lims <- get_xy_lim(plot$region)
-    xlim <- xlim %||% lims$xlim
-    ylim <- ylim %||% lims$ylim
   }
 
   aspect_ratio <- diff(xlim)/diff(ylim)
-  gt <- gtable::gtable(widths = unit(aspect_ratio, "null"),
-                       heights = unit(1, "null"),
-                       respect = TRUE)
-  if (length(grobs) > 0) {
-    grobs <- gTree(children = do.call("gList", grobs),
-                   vp = viewport(x = unit(0.5, "npc"),
-                                 y = unit(0.5, "npc"),
-                                 xscale = xlim,
-                                 yscale = ylim))
-    gt <- gtable::gtable_add_grob(gt, grobs, t = 1, b = 1, l = 1, r = 1)
+  vp <- viewport(x = unit(0.5, "npc"),
+                 y = unit(0.5, "npc"),
+                 xscale = xlim,
+                 yscale = ylim,
+                 clip = "off")
+  widths <- unit.c(unit(c(0, 0), "cm"), unit(aspect_ratio, "null"),
+                   unit(c(0, 0), "cm"))
+  heights <- unit.c(unit(c(0, 0, 0, 0), "cm"), unit(1, "null"),
+                    unit(c(0, 0, 0), "cm"))
+  gt <- gtable(widths = widths, heights = heights, respect = TRUE)
+
+  guides <- list()
+  if (nrow(plot) >= 1) {
+    for (row in split(plot, 1:nrow(plot))) {
+      gg_element <- tryCatch(extract_ggplot(row$plot[[1]]), error = function(e) NULL)
+      ## gg_element is NULL means failure, should throw warnings?
+      if (is.null(gg_element)) next
+
+      cell <- CellPlot_build(gg_element, region = row$region[[1]], CellID = row$CellID)
+      if (!is.null(cell$guides)) {
+        guides <- c(guides, list(cell$guides))
+      }
+
+      cell <- c(cell[1:5], cell$layers)
+      class(cell) <- "gList"
+      cell <- grid::gTree(children = cell, vp = vp)
+      gt <- gtable_add_grob(gt, grobs = cell, t = 5, l = 3, b = 4, r = 3,
+                            clip = "off", name = paste(row$CellID, "panel", sep = "."))
+    }
   }
 
   position <- theme$legend.position
-  if (!identical(position, "none") && length(legends) > 0) {
-    legends <- merge_guide(legends, theme = theme, ...)
-    legend_width <- gtable::gtable_width(legends)
-    legend_height <- gtable::gtable_height(legends)
+  if (!identical(position, "none") && length(guides) > 0) {
+    guides <- merge_guide(guides, theme = theme, ...)
+    guide_width <- gtable_width(guides)
+    guide_height <- gtable_height(guides)
     just <- grid::valid.just(theme$legend.justification)
     xjust <- just[1]
     yjust <- just[2]
+
     if (is.numeric(position)) {
-      xpos <- theme$legend.position[1]
-      ypos <- theme$legend.position[2]
-      legends <- grid::editGrob(legends,
-                                vp = viewport(x = xpos,
-                                              y = ypos,
-                                              just = c(xjust, yjust),
-                                              height = legend_height,
-                                              width = legend_width))
-      gt <- gtable::gtable_add_grob(gt, legends, t = 1, b = 1, l = 1, r = 1,
+      xpos <- position[1]
+      ypos <- position[2]
+      guides <- grid::editGrob(guides,
+                               vp = viewport(x = xpos,
+                                             y = ypos,
+                                             just = c(xjust, yjust),
+                                             height = guide_height,
+                                             width = guide_width))
+      gt <- gtable_add_grob(gt, guides, t = 5, l = 3, b = 4, r = 3,
                                     clip = "off", name = "guide-box")
     } else {
       if (identical(position, "bottom")) {
-        gt <- gtable::gtable_add_rows(gt, heights = legend_height)
-        gt <- gtable::gtable_add_grob(gt, legends, clip = "off", t = -1, b = -1,
-                                      l = 1, r = 1, name = "guide-box")
-        gt <- gtable::gtable_add_rows(gt, heights = unit(0, "cm"), pos = 0)
-        gt <- gtable::gtable_add_cols(gt, widths = unit(0, "cm"), pos = 0)
-        gt <- gtable::gtable_add_cols(gt, widths = unit(0, "cm"), pos = -1)
+        gt$heights[6] <- guide_height
+        gt <- gtable_add_grob(gt, guides, t = 6, l = 3, b = 3, r = 3,
+                                      clip = "off", name = "guide-box")
       } else if (identical(position, "top")) {
-        gt <- gtable::gtable_add_rows(gt, heights = legend_height, pos = 0)
-        gt <- gtable::gtable_add_grob(gt, legends, clip = "off", t = 1, b = 1,
-                                      l = 1, r = 1, name = "guide-box")
-        gt <- gtable::gtable_add_rows(gt, heights = unit(0, "cm"), pos = -1)
-        gt <- gtable::gtable_add_cols(gt, widths = unit(0, "cm"), pos = 0)
-        gt <- gtable::gtable_add_cols(gt, widths = unit(0, "cm"), pos = -1)
+        gt$heights[4] <- guide_height
+        gt <- gtable_add_grob(gt, guides, t = 4, l = 3, b = 5, r = 3,
+                                      clip = "off", name = "guide-box")
       } else if (identical(position, "left")) {
-        gt <- gtable::gtable_add_cols(gt, widths = legend_width, pos = 0)
-        gt <- gtable::gtable_add_grob(gt, legends, clip = "off", t = 1, b = 1,
-                                      l = 1, r = 1, name = "guide-box")
-        gt <- gtable::gtable_add_rows(gt, heights = unit(0, "cm"), pos = 0)
-        gt <- gtable::gtable_add_rows(gt, heights = unit(0, "cm"), pos = -1)
-        gt <- gtable::gtable_add_cols(gt, widths = unit(0, "cm"), pos = -1)
+        gt$widths[2] <- guide_width
+        gt <- gtable_add_grob(gt, guides, t = 5, l = 2, b = 4, r = 4,
+                                      clip = "off", name = "guide-box")
       } else {
-        gt <- gtable::gtable_add_cols(gt, widths = legend_width, pos = -1)
-        gt <- gtable::gtable_add_grob(gt, legends, clip = "off", t = 1, b = 1,
-                                      l = -1, r = -1, name = "guide-box")
-        gt <- gtable::gtable_add_rows(gt, heights = unit(0, "cm"), pos = 0)
-        gt <- gtable::gtable_add_rows(gt, heights = unit(0, "cm"), pos = -1)
-        gt <- gtable::gtable_add_cols(gt, widths = unit(0, "cm"), pos = 0)
+        gt$widths[4] <- guide_width
+        gt <- gtable_add_grob(gt, guides, t = 5, l = 4, b = 4, r = 2,
+                                      clip = "off", name = "guide-box")
       }
     }
   }
 
   title <- title %||% attr(plot, "title")
+  plot.title.position <- theme$plot.title.position
+
   if (!is.null(title)) {
     title <- ggplot2::element_render(theme, "plot.title", title, margin_y = TRUE)
-    title_height <- grobHeight(title)
+    gt$heights[2] <- grobHeight(title)
 
-    gt <- gtable::gtable_add_rows(gt, heights = title_height, pos = 0)
-    gt <- gtable::gtable_add_grob(gt, title, clip = "off", t = 1, b = 1,
-                                  l = 2, r = 3, name = "title")
+    if (identical(plot.title.position, "panel")) {
+      gt <- gtable_add_grob(gt, title, t = 2, l = 3, b = 7, r = 3,
+                                    clip = "off", name = "title")
+    } else {
+      gt <- gtable_add_grob(gt, title, t = 2, l = 1, b = 7, r = 5,
+                                    clip = "off", name = "title")
+    }
+  }
+
+  subtitle <- subtitle %||% attr(plot, "subtitle")
+  plot.subtitle.position <- theme$plot.subtitle.position
+
+  if (!is.null(subtitle)) {
+    subtitle <- ggplot2::element_render(theme, "plot.subtitle", subtitle, margin_y = TRUE)
+    gt$heights[3] <- grobHeight(subtitle)
+
+    if (identical(plot.subtitle.position, "panel")) {
+      gt <- gtable_add_grob(gt, subtitle, t = 3, l = 3, b = 6, r = 3,
+                                    clip = "off", name = "title")
+    } else {
+      gt <- gtable_add_grob(gt, subtitle, t = 3, l = 1, b = 6, r = 5,
+                                    clip = "off", name = "title")
+    }
+  }
+
+  tag <- tag %||% attr(plot, "tag")
+  plot.tag.position <- theme$plot.tag.position
+
+  if (!is.null(tag)) {
+    tag <- ggplot2::element_render(theme, "plot.tag", title, margin_y = TRUE,
+                                   margin_x = TRUE)
+    tag_height <- grobHeight(tag)
+    tag_width <- grobWidth(tag)
+
+    if (is.numeric(plot.tag.position)) {
+      just <- grid::valid.just(theme$legend.justification)
+      xjust <- just[1]
+      yjust <- just[2]
+
+      if (is.numeric(position)) {
+        xpos <- plot.tag.position[1]
+        ypos <- plot.tag.position[2]
+        guides <- grid::editGrob(tag,
+                                 vp = viewport(x = xpos,
+                                               y = ypos,
+                                               just = c(xjust, yjust),
+                                               height = tag_height,
+                                               width = tag_width,
+                                               clip = "off"))
+        gt <- gtable_add_grob(gt, tag, t = 5, l = 3, b = 4, r = 3,
+                                      clip = "off", name = "tag")
+      } else {
+        if (plot.tag.position == "topleft") {
+          gt$heights[1] <- tag_height
+          gt$widths[1] <- tag_width
+          gt <- gtable_add_grob(gt, tag, t = 1, l = 1, b = 8, r = 5,
+                                        clip = "off", name = "tag")
+        } else if (plot.tag.position == "top") {
+          gt$heights[1] <- tag_height
+          gt <- gtable_add_grob(gt, tag, t = 1, l = 3, b = 8, r = 3,
+                                        clip = "off", name = "tag")
+        } else if (plot.tag.position == "topright") {
+          gt$heights[1] <- tag_height
+          gt$widths[5] <- tag_width
+          gt <- gtable_add_grob(gt, tag, t = 1, l = 5, b = 8, r = 1,
+                                        clip = "off", name = "tag")
+        } else if (plot.tag.position == "left") {
+          gt$widths[1] <- tag_width
+          gt <- gtable_add_grob(gt, tag, t = 5, l = 1, b = 4, r = 5,
+                                        clip = "off", name = "tag")
+        } else if (plot.tag.position == "right") {
+          gt$widths[5] <- tag_width
+          gt <- gtable_add_grob(gt, tag, t = 5, l = 5, b = 4, r = 1,
+                                        clip = "off", name = "tag")
+        } else if (plot.tag.position == "bottomleft") {
+          gt$heights[7] <- tag_height
+          gt$widths[1] <- tag_width
+          gt <- gtable_add_grob(gt, tag, t = 7, l = 1, b = 2, r = 5,
+                                        clip = "off", name = "tag")
+        } else if (plot.tag.position == "bottom") {
+          gt$heights[7] <- tag_height
+          gt <- gtable_add_grob(gt, tag, t = 7, l = 3, b = 2, r = 3,
+                                        clip = "off", name = "tag")
+        } else {
+          gt$heights[7] <- tag_height
+          gt$widths[5] <- tag_width
+          gt <- gtable_add_grob(gt, tag, t = 7, l = 5, b = 2, r = 1,
+                                        clip = "off", name = "tag")
+        }
+      }
+    }
   }
 
   plot.margin <- theme$plot.margin %||% margin(0.5, 0.5, 0.5, 0.5, "lines")
-  gt <- gtable::gtable_add_padding(gt, plot.margin)
+  gt <- gtable_add_padding(gt, plot.margin)
   gt
+}
+
+#' @noRd
+CellPlot_build <- function(gg_element,
+                           region = CELL(),
+                           CellID = cell_id(),
+                           ...) {
+  cli::cli_inform("Build {CellID} plot...")
+
+  thm <- gg_element$theme
+  coord <- gg_element$coord
+  guides <- gg_element$guides
+  layers <- lapply(seq_along(gg_element$data), function(ii) {
+    FUN <- tryCatch(match.fun(paste0(gg_element$layer_name[ii], "2grob")),
+                    error = function(e) "not_implement")
+
+    if (identical(FUN, "not_implement")) {
+      cli::cli_warn(c("{.fun {paste0(gg_element$layer_name[ii], '2grob')}} has not been implemented yet,",
+                      i = "so this layer has been omitted."))
+      zeroGrob()
+    } else {
+      rlang::inject(FUN(data = gg_element$data[[ii]], region = region, coord = coord,
+                        trans = gg_element$trans, !!!gg_element$layer_params[[ii]]))
+    }
+  })
+
+  if (inherits(thm$panel.background, "element_blank")) {
+    panel <- NULL
+  } else {
+    if (inherits(thm$panel.background$linewidth, "rel")) {
+      thm$panel.background$linewidth <- thm$panel.background$linewidth/.pt
+    }
+    panel <- ArcPanelGrob(region = region,
+                          fill = thm$panel.background$fill %||% "grey20",
+                          colour = thm$panel.background$colour %||% NA,
+                          linewidth = thm$panel.background$linewidth %||% 0.5,
+                          linetype = thm$panel.background$linetype %||% 1)
+  }
+
+  panel.grid.major.x <- calc_element("panel.grid.major.x", thm) %||%
+    calc_element("panel.grid.major", thm) %||%
+    calc_element("panel.grid", thm)
+  panel.grid.minor.x <- calc_element("panel.grid.minor.x", thm) %||%
+    calc_element("panel.grid.minor", thm) %||%
+    calc_element("panel.grid", thm)
+  if (inherits(panel.grid.major.x$linewidth, "rel")) {
+    panel.grid.major.x$linewidth <- panel.grid.major.x$linewidth/.pt
+  }
+  if (inherits(panel.grid.minor.x$linewidth, "rel")) {
+    panel.grid.minor.x$linewidth <- panel.grid.minor.x$linewidth/.pt
+  }
+  if ((is.null(coord$x$breaks) || inherits(panel.grid.major.x, "element_blank")) &&
+      (is.null(coord$x$minor_breaks) || inherits(panel.grid.minor.x, "element_blank"))) {
+    grid_x <- NULL
+  } else {
+    x_breaks <- coord$x$breaks
+    x_minor_breaks <- coord$x$minor_breaks
+    colour <- c(rep(panel.grid.major.x$colour %||% "white", length(x_breaks)),
+                rep(panel.grid.minor.x$colour %||% "white", length(x_minor_breaks)))
+    linewidth <- c(rep(panel.grid.major.x$linewidth %||% 0.5, length(x_breaks)),
+                   rep(panel.grid.minor.x$linewidth %||% 0.25, length(x_minor_breaks)))
+    linetype <- c(rep(panel.grid.major.x$linetype %||% 1, length(x_breaks)),
+                  rep(panel.grid.minor.x$linetype %||% 1, length(x_minor_breaks)))
+    x_breaks <- scales::rescale(c(x_breaks, x_minor_breaks), to = region$x.range,
+                                from = coord$x$range)
+
+    grid_x <- ArcVlineGrob(xintercept = x_breaks,
+                           region = region,
+                           colour = colour,
+                           linewidth = linewidth,
+                           linetype = linetype)
+  }
+
+  panel.grid.major.y <- calc_element("panel.grid.major.y", thm) %||%
+    calc_element("panel.grid.major", thm) %||%
+    calc_element("panel.grid", thm)
+  panel.grid.minor.y <- calc_element("panel.grid.minor.y", thm) %||%
+    calc_element("panel.grid.minor", thm) %||%
+    calc_element("panel.grid", thm)
+  if (inherits(panel.grid.major.y$linewidth, "rel")) {
+    panel.grid.major.y$linewidth <- panel.grid.major.y$linewidth/.pt
+  }
+  if (inherits(panel.grid.minor.y$linewidth, "rel")) {
+    panel.grid.minor.y$linewidth <- panel.grid.minor.y$linewidth/.pt
+  }
+  if ((is.null(coord$y$breaks) || inherits(panel.grid.major.y, "element_blank")) &&
+      (is.null(coord$y$minor_breaks) || inherits(panel.grid.minor.y, "element_blank"))) {
+    grid_y <- NULL
+  } else {
+    y_breaks <- coord$y$breaks
+    y_minor_breaks <- coord$y$minor_breaks
+    colour <- c(rep(panel.grid.major.y$colour %||% "white", length(y_breaks)),
+                rep(panel.grid.minor.y$colour %||% "white", length(y_minor_breaks)))
+    linewidth <- c(rep(panel.grid.major.y$linewidth %||% 0.5, length(y_breaks)),
+                   rep(panel.grid.minor.y$linewidth %||% 0.25, length(y_minor_breaks)))
+    linetype <- c(rep(panel.grid.major.y$linetype %||% 1, length(y_breaks)),
+                  rep(panel.grid.minor.y$linetype %||% 1, length(y_minor_breaks)))
+    y_breaks <- scales::rescale(c(y_breaks, y_minor_breaks), to = region$y.range,
+                                from = coord$y$range)
+
+    grid_y <- ArcHlineGrob(yintercept = y_breaks,
+                           region = region,
+                           colour = colour,
+                           linewidth = linewidth,
+                           linetype = linetype)
+  }
+
+  if (coord$x$position == "none") {
+    xaxis <- NULL
+  } else {
+    position <- coord$x$position
+    title.gp <- calc_element(paste0("axis.title.y.", position), thm) %||%
+      calc_element("axis.title.y", thm) %||%
+      calc_element("axis.title", thm)
+    line.gp <- calc_element(paste0("axis.line.x.", position), thm) %||%
+      calc_element("axis.line.x", thm) %||%
+      calc_element("axis.line", thm)
+    tick.gp <- calc_element(paste0("axis.line.x.", position), thm) %||%
+      calc_element("axis.ticks.x", thm) %||%
+      calc_element("axis.ticks", thm)
+    ticks.length <- calc_element(paste0("axis.ticks.length.x.", position), thm) %||%
+      calc_element("axis.ticks.length.x", thm) %||%
+      calc_element("axis.ticks.length", thm)
+    text.gp <- calc_element(paste0("axis.text.x.", position), thm) %||%
+      calc_element("axis.text.x", thm) %||%
+      calc_element("axis.text", thm)
+
+    xaxis <- ArcxAxisGrob(title = gg_element$labels$x,
+                          coord = coord,
+                          region = region,
+                          position = position,
+                          title.gp = title.gp,
+                          line.gp = line.gp,
+                          tick.gp = tick.gp,
+                          text.gp = text.gp,
+                          ticks.length = ticks.length)
+  }
+
+  if (coord$y$position == "none") {
+    yaxis <- NULL
+  } else {
+    position <- coord$y$position
+    title.gp <- calc_element(paste0("axis.title.y.", position), thm) %||%
+      calc_element("axis.title.y", thm) %||%
+      calc_element("axis.title", thm)
+    line.gp <- calc_element(paste0("axis.line.y.", position), thm) %||%
+      calc_element("axis.line.y", thm) %||%
+      calc_element("axis.line", thm)
+    tick.gp <- calc_element(paste0("axis.line.y.", position), thm) %||%
+      calc_element("axis.ticks.y", thm) %||%
+      calc_element("axis.ticks", thm)
+    ticks.length <- calc_element(paste0("axis.ticks.length.y.", position), thm) %||%
+      calc_element("axis.ticks.length.y", thm) %||%
+      calc_element("axis.ticks.length", thm)
+    text.gp <- calc_element(paste0("axis.text.y.", position), thm) %||%
+      calc_element("axis.text.y", thm) %||%
+      calc_element("axis.text", thm)
+
+    yaxis <- ArcyAxisGrob(title = gg_element$labels$y,
+                          coord = coord,
+                          region = region,
+                          position = position,
+                          title.gp = title.gp,
+                          line.gp = line.gp,
+                          tick.gp = tick.gp,
+                          text.gp = text.gp,
+                          ticks.length = ticks.length)
+  }
+
+  list(panel = panel,
+       grid_x = grid_x,
+       grid_y = grid_y,
+       xaxis = xaxis,
+       yaxis = yaxis,
+       layers = layers,
+       guides = guides)
 }
 
 #' @noRd
@@ -402,7 +496,7 @@ merge_guide <- function(guides,
   legend.spacing.y <- theme$legend.spacing.y %||% legend.spacing
   legend.spacing.x <- theme$legend.spacing.x %||% legend.spacing
 
-  guides <- lapply(guides, gtable::gtable_add_padding, padding = legend.box.margin)
+  guides <- lapply(guides, gtable_add_padding, padding = legend.box.margin)
 
   if (identical(legend.position, "left") || identical(legend.position, "right")) {
     if (is.null(ncol)) ncol <- 1
@@ -432,27 +526,28 @@ merge_guide <- function(guides,
   }
 
   widths <- do.call("unit.c", lapply(1:ncol, function(ii) {
-    w <- do.call("unit.c", lapply(guides[colid == ii], gtable::gtable_width))
+    w <- do.call("unit.c", lapply(guides[colid == ii], gtable_width))
     unit.pmax(w)
   }))
 
   heights <- do.call("unit.c", lapply(1:nrow, function(jj) {
-    h <- do.call("unit.c", lapply(guides[rowid == jj], gtable::gtable_height))
+    h <- do.call("unit.c", lapply(guides[rowid == jj], gtable_height))
     unit.pmax(h)
   }))
 
-  gt <- gtable::gtable(widths = widths, heights = heights, name = "guide-box")
-  gt <- gtable::gtable_add_grob(gt, guides, l = colid, t = rowid)
+  gt <- gtable(widths = widths, heights = heights, name = "guide-box")
+  gt <- gtable_add_grob(gt, guides, l = colid, t = rowid)
 
   if (identical(legend.position, "left")) {
-    gt <- gtable::gtable_add_cols(gt, widths = legend.spacing.x)
+    gt <- gtable_add_cols(gt, widths = legend.spacing.x)
   } else if (identical(legend.position, "right")) {
-    gt <- gtable::gtable_add_cols(gt, widths = legend.spacing.x, pos = 0)
+    gt <- gtable_add_cols(gt, widths = legend.spacing.x, pos = 0)
   } else if (identical(legend.position, "top")) {
-    gt <- gtable::gtable_add_rows(gt, heights = legend.spacing.y, pos = -1)
+    gt <- gtable_add_rows(gt, heights = legend.spacing.y, pos = -1)
   } else if (identical(legend.position, "bottom")) {
-    gt <- gtable::gtable_add_rows(gt, heights = legend.spacing.y, pos = -0)
+    gt <- gtable_add_rows(gt, heights = legend.spacing.y, pos = -0)
   }
 
   gt
 }
+

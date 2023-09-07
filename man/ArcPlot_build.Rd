@@ -13,6 +13,7 @@ ArcPlot_build(plot, ...)
   title = NULL,
   subtitle = NULL,
   tag = NULL,
+  caption = NULL,
   xlim = NULL,
   ylim = NULL,
   ...
@@ -27,9 +28,11 @@ ArcPlot_build(plot, ...)
 
 \item{title}{plot title.}
 
-\item{subtitle}{not used}
+\item{subtitle}{plot subtitle.}
 
-\item{tag}{not used}
+\item{tag}{plot tag.}
+
+\item{caption}{plot caption.}
 
 \item{xlim, ylim}{two-length numeric vector used to set scale limits.}
 }
