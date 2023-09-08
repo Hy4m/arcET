@@ -84,7 +84,7 @@ within_plot <- function(plot, ...) {
   dots <- rlang::dots_list(..., named = TRUE, .homonyms = "last")
 
   for (nm in names(dots)) {
-    attr(plot, ii) <- dots[[nm]]
+    attr(plot, nm) <- dots[[nm]]
   }
 
   plot
