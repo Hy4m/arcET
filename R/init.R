@@ -193,7 +193,7 @@ ArcPlot_build.ArcPlot <- function(plot,
       gt <- gtable_add_grob(gt, title, t = 2, l = 3, clip = "off",
                             name = "title")
     } else {
-      gt <- gtable_add_grob(gt, title, t = 2, l = 1, t = 2, r = 5,
+      gt <- gtable_add_grob(gt, title, t = 2, l = 1, b = 2, r = 5,
                             clip = "off", name = "title")
     }
   }
@@ -209,7 +209,7 @@ ArcPlot_build.ArcPlot <- function(plot,
       gt <- gtable_add_grob(gt, subtitle, t = 3, l = 3, clip = "off",
                             name = "subtitle")
     } else {
-      gt <- gtable_add_grob(gt, subtitle, t = 3, l = 1, t = 3, r = 5,
+      gt <- gtable_add_grob(gt, subtitle, t = 3, l = 1, b = 3, r = 5,
                             clip = "off", name = "subtitle")
     }
   }
@@ -288,6 +288,13 @@ ArcPlot_build.ArcPlot <- function(plot,
                               name = "tag")
       }
     }
+  }
+
+  if (length(attr(plot, "annotate")) > 0) {
+    annotate <- gTree(children = do.call("gList", attr(plot, "annotate")),
+                      vp = vp)
+    gt <- gtable_add_grob(gt, grobs = annotate, t = 5, l = 3, b = 5, r = 3,
+                          clip = "off", name = "annotate")
   }
 
   plot.margin <- theme$plot.margin %||% margin(0.5, 0.5, 0.5, 0.5, "lines")
