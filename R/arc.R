@@ -49,17 +49,18 @@ arcplot <- function(data = NULL, mapping = aes(), ...) {
     mapping <- mapping[setdiff(names(mapping), c("TrackID", "SectorID", "CellID"))]
   }
 
-  out <- tibble::tibble(plot = list(),
-                        region = list(),
-                        TrackID = character(0),
-                        SectorID = character(0),
-                        CellID = character(0))
+  plot <- structure(.Data = tibble(plot = list(),
+                                   region = list(),
+                                   TrackID = character(0),
+                                   SectorID = character(0),
+                                   CellID = character(0)),
+                    data = data,
+                    mapping = mapping,
+                    ids = ids,
+                    class = c("ArcPlot", "tbl_df", "tbl", "data.frame"))
+  set_current_plot(plot)
 
-  structure(.Data = out,
-            data = data,
-            mapping = mapping,
-            ids = ids,
-            class = c("ArcPlot", class(out)))
+  plot
 }
 
 #' @title Add CellPlot
@@ -112,16 +113,20 @@ init_cell <- function(plot,
   TrackID <- TrackID %||% track_id()
   SectorID <- SectorID %||% sector_id()
 
-  out <- vec_rbind0(plot, tibble::tibble(plot = list(cell),
-                                         region = list(region),
-                                         TrackID = as.character(TrackID),
-                                         SectorID = as.character(SectorID),
-                                         CellID = as.character(CellID)))
-  structure(.Data = out,
-            data = attr(plot, "data"),
-            mapping = attr(plot, "mapping"),
-            ids = attr(plot, "ids"),
-            class = c("ArcPlot", class(out)))
+  df <- vec_rbind0(plot, tibble::tibble(plot = list(cell),
+                                        region = list(region),
+                                        TrackID = as.character(TrackID),
+                                        SectorID = as.character(SectorID),
+                                        CellID = as.character(CellID)))
+  plot <- structure(.Data = df,
+                   data = attr(plot, "data"),
+                   mapping = attr(plot, "mapping"),
+                   ids = attr(plot, "ids"),
+                   class = c("ArcPlot", "tbl_df", "tbl", "data.frame"))
+
+  set_current_plot(plot)
+
+  plot
 }
 
 #' @title Get ids

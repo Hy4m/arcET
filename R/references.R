@@ -27,6 +27,7 @@ within_cell <- function(plot,
     plot$plot[[ii]] <- plot$plot[[ii]] + list2(...)
   }
 
+  set_current_plot(plot)
   plot
 }
 
@@ -50,6 +51,8 @@ within_track <- function(plot,
   for (ii in ids) {
     plot$plot[[ii]] <- plot$plot[[ii]] + list2(...)
   }
+
+  set_current_plot(plot)
 
   plot
 }
@@ -75,6 +78,8 @@ within_sector <- function(plot,
     plot$plot[[ii]] <- plot$plot[[ii]] + list2(...)
   }
 
+  set_current_plot(plot)
+
   plot
 }
 
@@ -86,6 +91,8 @@ within_plot <- function(plot, ...) {
   for (nm in names(dots)) {
     attr(plot, nm) <- dots[[nm]]
   }
+
+  set_current_plot(plot)
 
   plot
 }

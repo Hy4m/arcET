@@ -44,6 +44,8 @@ decorate_text <- function(plot,
     attr(plot, "annotate") <- c(attr(plot, "annotate"), annotate)
   }
 
+  set_current_plot(plot)
+
   plot
 }
 
@@ -82,6 +84,8 @@ decorate_label <- function(plot,
     attr(plot, "annotate") <- c(attr(plot, "annotate"), annotate)
   }
 
+  set_current_plot(plot)
+
   plot
 }
 
@@ -117,6 +121,8 @@ decorate_bannertext <- function(plot,
   } else {
     attr(plot, "annotate") <- c(attr(plot, "annotate"), annotate)
   }
+
+  set_current_plot(plot)
 
   plot
 }
@@ -158,6 +164,8 @@ decorate_rect <- function(plot,
     attr(plot, "annotate") <- c(attr(plot, "annotate"), annotate)
   }
 
+  set_current_plot(plot)
+
   plot
 }
 
@@ -196,6 +204,8 @@ decorate_polygon <- function(plot,
     attr(plot, "annotate") <- c(attr(plot, "annotate"), annotate)
   }
 
+  set_current_plot(plot)
+
   plot
 }
 
@@ -229,6 +239,8 @@ decorate_point <- function(plot,
   } else {
     attr(plot, "annotate") <- c(attr(plot, "annotate"), annotate)
   }
+
+  set_current_plot(plot)
 
   plot
 }
@@ -264,6 +276,8 @@ decorate_line <- function(plot,
     attr(plot, "annotate") <- c(attr(plot, "annotate"), annotate)
   }
 
+  set_current_plot(plot)
+
   plot
 }
 
@@ -297,6 +311,8 @@ decorate_path <- function(plot,
   } else {
     attr(plot, "annotate") <- c(attr(plot, "annotate"), annotate)
   }
+
+  set_current_plot(plot)
 
   plot
 }
@@ -338,6 +354,8 @@ decorate_segment <- function(plot,
     attr(plot, "annotate") <- c(attr(plot, "annotate"), annotate)
   }
 
+  set_current_plot(plot)
+
   plot
 }
 
@@ -370,6 +388,8 @@ decorate_hline <- function(plot,
     attr(plot, "annotate") <- c(attr(plot, "annotate"), annotate)
   }
 
+  set_current_plot(plot)
+
   plot
 }
 
@@ -401,6 +421,8 @@ decorate_vline <- function(plot,
   } else {
     attr(plot, "annotate") <- c(attr(plot, "annotate"), annotate)
   }
+
+  set_current_plot(plot)
 
   plot
 }
