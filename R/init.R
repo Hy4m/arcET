@@ -2,20 +2,16 @@
 print.ArcPlot <- function(x,
                           newpage = is.null(vp),
                           vp = NULL,
-                          verbose = FALSE,
                           ...) {
-  if (isTRUE(verbose)) {
-    NextMethod()
-  }
-
-  grobs <- ArcPlot_build(plot = x, ...)
+  set_current_plot(x)
 
   if (newpage) {
     grid::grid.newpage()
   }
+  grDevices::recordGraphics(requireNamespace("arcET", quietly = TRUE),
+                            list(), getNamespace("arcET"))
 
-  grDevices::recordGraphics(requireNamespace("grid", quietly = TRUE),
-                            list(), getNamespace("grid"))
+  grobs <- ArcPlot_build(plot = x, ...)
   if (is.null(vp)) {
     grid::grid.draw(grobs)
   } else {
@@ -90,11 +86,7 @@ ArcPlot_build.ArcPlot <- function(plot,
                                   ylim = NULL,
                                   ...) {
   theme <- theme %||% attr(plot, "theme")
-  if (is.null(theme)) {
-    theme <- ggplot2::theme_get()
-  } else {
-    theme <- ggplot2::theme_get() %+% theme
-  }
+  theme <- plot_theme(list(theme = theme), default = theme_get())
 
   if (nrow(plot) < 1) {
     xlim <- xlim %||% attr(plot, "xlim") %||% c(-1, 1)
