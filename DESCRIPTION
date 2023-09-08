@@ -31,5 +31,7 @@ Suggests:
     testthat (>= 3.0.0),
     bezier,
     hexbin,
-    magick
+    magick,
+    ragg,
+    svglite
 RoxygenNote: 7.2.1
