@@ -81,7 +81,7 @@ ArcPlot_build <- function(plot, ...) {
 #' @rdname ArcPlot_build
 #' @export
 ArcPlot_build.ArcPlot <- function(plot,
-                                  theme = theme_get(),
+                                  theme = NULL,
                                   title = NULL,
                                   subtitle = NULL,
                                   tag = NULL,

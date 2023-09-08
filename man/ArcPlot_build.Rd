@@ -9,7 +9,7 @@ ArcPlot_build(plot, ...)
 
 \method{ArcPlot_build}{ArcPlot}(
   plot,
-  theme = theme_get(),
+  theme = NULL,
   title = NULL,
   subtitle = NULL,
   tag = NULL,
