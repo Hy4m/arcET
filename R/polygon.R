@@ -407,10 +407,10 @@ ArcPanelGrob <- function(region = CELL(),
     return(zeroGrob())
   }
 
-  ArcRectGrob(xmin = region$start,
-              xmax = region$end,
-              ymin = region$r0,
-              ymax = region$r1,
+  ArcRectGrob(xmin = region$x.range[1],
+              xmax = region$x.range[2],
+              ymin = region$y.range[1],
+              ymax = region$y.range[2],
               fill = fill,
               colour = colour,
               ...)
