@@ -6,6 +6,8 @@
 #' @param colour border colour of region.
 #' @param digits integer indicating the number of decimal places.
 #' @param xn,yn number of xaxis/yaxis ticks.
+#' @param newpage logical, indicating whether a new graphics device needs to be opened.
+#' @param vp grid viewport object.
 #' @param ... other parameters passing to `ArcRectGrob()`.
 #' @return invisible grobs.
 #' @rdname show_cell
@@ -19,7 +21,8 @@ show_cell <- function(region = CELL(),
                       digits = 2,
                       xn = 7,
                       yn = 7,
-                      add = FALSE,
+                      newpage = is.null(vp),
+                      vp = NULL,
                       ...) {
   stopifnot(is_CELL(region))
 
@@ -45,10 +48,31 @@ show_cell <- function(region = CELL(),
   yaxis <- ArcyAxisGrob(coord = coord, region = region)
   panel <- ArcPanelGrob(region = region, fill = fill, colour = colour, ...)
 
-  grobs <- gTree(children = gList(panel, xaxis, yaxis))
-  if (isFALSE(add)) {
-    new_panel()
+  grobs <- gTree(children = gList(panel, xaxis, yaxis),
+                 vp = viewport(xscale = c(-1, 1), yscale = c(-1, 1)))
+  gt <- gtable(widths = unit(c(1.5, 1, 1.5), c("cm", "null", "cm")),
+               heights = unit(c(1.5, 1, 1.5), c("cm", "null", "cm")),
+               respect = TRUE)
+  gt <- gtable_add_grob(gt, grobs, t = 2, l = 2, clip = "off",
+                        name = "Cell-Region")
+  if (isTRUE(newpage)) {
+    grid::grid.newpage()
   }
-  grid.draw(grobs)
-  invisible(grobs)
+
+  grDevices::recordGraphics(requireNamespace("arcET", quietly = TRUE),
+                            list(), getNamespace("arcET"))
+  if (is.null(vp)) {
+    grid::grid.draw(gt)
+  } else {
+    if (is.character(vp)) {
+      grid::seekViewport(vp)
+    } else {
+      grid::pushViewport(vp)
+    }
+    grid::grid.draw(grobs)
+
+    grid::upViewport()
+  }
+
+  invisible(gt)
 }

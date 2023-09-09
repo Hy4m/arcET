@@ -11,7 +11,8 @@ show_cell(
   digits = 2,
   xn = 7,
   yn = 7,
-  add = FALSE,
+  newpage = is.null(vp),
+  vp = NULL,
   ...
 )
 }
@@ -26,6 +27,10 @@ the drawing area.}
 \item{digits}{integer indicating the number of decimal places.}
 
 \item{xn, yn}{number of xaxis/yaxis ticks.}
+
+\item{newpage}{logical, indicating whether a new graphics device needs to be opened.}
+
+\item{vp}{grid viewport object.}
 
 \item{...}{other parameters passing to `ArcRectGrob()`.}
 }
