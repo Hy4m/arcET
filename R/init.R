@@ -58,12 +58,6 @@ plot.ArcPlot <- function(x,
 #' @title Build ArcPlot
 #' @description Internal function used to convert ArcPlot to grobs.
 #' @param plot an ArcPlot object.
-#' @param theme a ggplot theme object.
-#' @param title plot title.
-#' @param subtitle plot subtitle.
-#' @param tag plot tag.
-#' @param caption plot caption.
-#' @param xlim,ylim two-length numeric vector used to set scale limits.
 #' @param ... other parameters passing to `merge_guides()`.
 #' @return grid grobs.
 #' @author Hou Yun
@@ -76,24 +70,15 @@ ArcPlot_build <- function(plot, ...) {
 #' @importFrom ggplot2 theme_get
 #' @rdname ArcPlot_build
 #' @export
-ArcPlot_build.ArcPlot <- function(plot,
-                                  theme = NULL,
-                                  title = NULL,
-                                  subtitle = NULL,
-                                  tag = NULL,
-                                  caption = NULL,
-                                  xlim = NULL,
-                                  ylim = NULL,
-                                  ...) {
-  theme <- theme %||% attr(plot, "theme")
-  theme <- plot_theme(list(theme = theme), default = theme_get())
+ArcPlot_build.ArcPlot <- function(plot, ...) {
+  theme <- plot_theme(plot$theme, default = theme_get())
 
-  if (nrow(plot) < 1) {
-    xlim <- xlim %||% attr(plot, "xlim") %||% c(-1, 1)
-    ylim <- ylim %||% attr(plot, "ylim") %||% c(-1, 1)
+  if (length(plot$plot) < 1) {
+    xlim <- attr(plot, "xlim") %||% c(-1, 1)
+    ylim <- attr(plot, "ylim") %||% c(-1, 1)
   } else {
-    xlim <- xlim %||% attr(plot, "xlim")
-    ylim <- ylim %||% attr(plot, "ylim")
+    xlim <- attr(plot, "xlim")
+    ylim <- attr(plot, "ylim")
     if (any(is.null(xlim), is.null(ylim))) {
       lims <- get_xy_lim(plot$region)
       xlim <- xlim %||% lims$xlim
@@ -114,23 +99,22 @@ ArcPlot_build.ArcPlot <- function(plot,
   gt <- gtable(widths = widths, heights = heights, respect = TRUE)
 
   guides <- list()
-  if (nrow(plot) >= 1) {
-    for (row in split(plot, 1:nrow(plot))) {
-      gg_element <- tryCatch(extract_ggplot(row$plot[[1]]), error = function(e) NULL)
-      ## gg_element is NULL means failure, should throw warnings?
-      if (is.null(gg_element)) next
+  for (ii in seq_len(length(plot$plot))) {
+    gg_element <- tryCatch(extract_ggplot(plot$plot[[1]]), error = function(e) NULL)
+    ## gg_element is NULL means failure, should throw warnings?
+    if (is.null(gg_element)) next
 
-      cell <- CellPlot_build(gg_element, region = row$region[[1]], CellID = row$CellID)
-      if (!is.null(cell$guides)) {
-        guides <- c(guides, list(cell$guides))
-      }
-
-      cell <- c(cell[1:5], cell$layers)
-      class(cell) <- "gList"
-      cell <- grid::gTree(children = cell, vp = vp)
-      gt <- gtable_add_grob(gt, grobs = cell, t = 5, l = 3, b = 5, r = 3,
-                            clip = "off", name = paste(row$CellID, "panel", sep = "."))
+    cell <- CellPlot_build(gg_element, region = plot$region[[ii]],
+                           CellID = plot$CellID[ii])
+    if (!is.null(cell$guides)) {
+      guides <- c(guides, list(cell$guides))
     }
+
+    cell <- c(cell[1:5], cell$layers)
+    class(cell) <- "gList"
+    cell <- grid::gTree(children = cell, vp = vp)
+    gt <- gtable_add_grob(gt, grobs = cell, t = 5, l = 3, b = 5, r = 3,
+                          clip = "off", name = paste(plot$CellID[ii], "panel", sep = "."))
   }
 
   position <- theme$legend.position
@@ -174,7 +158,7 @@ ArcPlot_build.ArcPlot <- function(plot,
     }
   }
 
-  title <- title %||% attr(plot, "title")
+  title <- plot$labels$title
   plot.title.position <- theme$plot.title.position
 
   if (!is.null(title)) {
@@ -190,7 +174,7 @@ ArcPlot_build.ArcPlot <- function(plot,
     }
   }
 
-  subtitle <- subtitle %||% attr(plot, "subtitle")
+  subtitle <- plot$labels$subtitle
   plot.subtitle.position <- theme$plot.subtitle.position %||% theme$plot.title.position
 
   if (!is.null(subtitle)) {
@@ -206,7 +190,7 @@ ArcPlot_build.ArcPlot <- function(plot,
     }
   }
 
-  caption <- caption %||% attr(plot, "caption")
+  caption <- plot$labels$caption
   plot.caption.position <- theme$plot.caption.position %||% theme$plot.title.position
 
   if (!is.null(caption)) {
@@ -222,7 +206,7 @@ ArcPlot_build.ArcPlot <- function(plot,
     }
   }
 
-  tag <- tag %||% attr(plot, "tag")
+  tag <- plot$labels$tag
   plot.tag.position <- theme$plot.tag.position
 
   if (!is.null(tag)) {
@@ -282,9 +266,8 @@ ArcPlot_build.ArcPlot <- function(plot,
     }
   }
 
-  if (length(attr(plot, "annotate")) > 0) {
-    annotate <- gTree(children = do.call("gList", attr(plot, "annotate")),
-                      vp = vp)
+  if (length(plot$annotate) > 0) {
+    annotate <- gTree(children = do.call("gList", plot$annotate), vp = vp)
     gt <- gtable_add_grob(gt, grobs = annotate, t = 5, l = 3, b = 5, r = 3,
                           clip = "off", name = "annotate")
   }
