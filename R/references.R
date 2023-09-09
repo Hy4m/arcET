@@ -4,21 +4,19 @@
 #' @param ... elements will be added.
 #' @param CellID,TrackID,SectorID character IDs indicating which element will be
 #' modified.
+#' @inheritParams base::grepl
 #' @return an modified ArcPlot object.
 #' @rdname within
 #' @author Hou Yun
 #' @export
 within_cell <- function(plot,
                         ...,
-                        CellID = NULL) {
+                        CellID = NULL,
+                        fixed = TRUE,
+                        ignore.case = FALSE) {
   stopifnot(is_ArcPlot(plot))
 
-  if (empty(plot)) {
-    return(plot)
-  }
-
-  ids <- unique(match(CellID, plot$CellID))
-
+  ids <- match_ids(CellID, plot$CellID, fixed = fixed, ignore.case = ignore.case)
   if (length(ids) < 1) {
     return(plot)
   }
@@ -35,15 +33,12 @@ within_cell <- function(plot,
 #' @export
 within_track <- function(plot,
                          ...,
-                         TrackID = NULL) {
+                         TrackID = NULL,
+                         fixed = TRUE,
+                         ignore.case = FALSE) {
   stopifnot(is_ArcPlot(plot))
 
-  if (empty(plot)) {
-    return(plot)
-  }
-
-  ids <- unique(match(TrackID, plot$TrackID))
-
+  ids <- match_ids(TrackID, plot$TrackID, fixed = fixed, ignore.case = ignore.case)
   if (length(ids) < 1) {
     return(plot)
   }
@@ -61,15 +56,12 @@ within_track <- function(plot,
 #' @export
 within_sector <- function(plot,
                           ...,
-                          SectorID = NULL) {
+                          SectorID = NULL,
+                          fixed = TRUE,
+                          ignore.case = FALSE) {
   stopifnot(is_ArcPlot(plot))
 
-  if (empty(plot)) {
-    return(plot)
-  }
-
-  ids <- unique(match(SectorID, plot$SectorID))
-
+  ids <- match_ids(SectorID, plot$SectorID, fixed = fixed, ignore.case = ignore.case)
   if (length(ids) < 1) {
     return(plot)
   }
@@ -83,16 +75,37 @@ within_sector <- function(plot,
   plot
 }
 
+#' @param title plot title.
+#' @param subtitle plot subtitle.
+#' @param tag plot tag.
+#' @param caption plot caption.
+#' @param theme a ggplot theme object.
 #' @rdname within
 #' @export
-within_plot <- function(plot, ...) {
-  dots <- rlang::dots_list(..., named = TRUE, .homonyms = "last")
+within_plot <- function(plot,
+                        title = NULL,
+                        subtitle = NULL,
+                        caption = NULL,
+                        tag = NULL,
+                        theme = NULL,
+                        ...) {
+  stopifnot(is_ArcPlot(plot))
 
+  if (!is.null(theme)) {
+    plot$theme <- plot_theme(theme, default = plot$theme)
+  }
+
+  labels <- list(title = title,
+                 subtitle = subtitle,
+                 caption = caption,
+                 tag = tag)
+  plot$labels <- utils::modifyList(plot$labels, labels[!vapply_lgl(labels, is.null)])
+
+  dots <- rlang::dots_list(..., named = TRUE, .homonyms = "last")
   for (nm in names(dots)) {
     attr(plot, nm) <- dots[[nm]]
   }
 
   set_current_plot(plot)
-
   plot
 }

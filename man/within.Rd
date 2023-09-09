@@ -7,13 +7,21 @@
 \alias{within_plot}
 \title{Modify CellPlot}
 \usage{
-within_cell(plot, ..., CellID = NULL)
+within_cell(plot, ..., CellID = NULL, fixed = TRUE, ignore.case = FALSE)
 
-within_track(plot, ..., TrackID = NULL)
+within_track(plot, ..., TrackID = NULL, fixed = TRUE, ignore.case = FALSE)
 
-within_sector(plot, ..., SectorID = NULL)
+within_sector(plot, ..., SectorID = NULL, fixed = TRUE, ignore.case = FALSE)
 
-within_plot(plot, ...)
+within_plot(
+  plot,
+  title = NULL,
+  subtitle = NULL,
+  caption = NULL,
+  tag = NULL,
+  theme = NULL,
+  ...
+)
 }
 \arguments{
 \item{plot}{an ArcPlot object.}
@@ -22,6 +30,22 @@ within_plot(plot, ...)
 
 \item{CellID, TrackID, SectorID}{character IDs indicating which element will be
 modified.}
+
+\item{fixed}{logical.  If \code{TRUE}, \code{pattern} is a string to be
+    matched as is.  Overrides all conflicting arguments.}
+
+\item{ignore.case}{if \code{FALSE}, the pattern matching is \emph{case
+      sensitive} and if \code{TRUE}, case is ignored during matching.}
+
+\item{title}{plot title.}
+
+\item{subtitle}{plot subtitle.}
+
+\item{caption}{plot caption.}
+
+\item{tag}{plot tag.}
+
+\item{theme}{a ggplot theme object.}
 }
 \value{
 an modified ArcPlot object.

@@ -379,3 +379,13 @@ modify_aes <- function(aes, aes2) {
   class(aes) <- "uneval"
   aes
 }
+
+#' @noRd
+match_ids <- function(x, y) {
+  if (is.null(x) || is.null(y) || length(x) == 0 || length(y) == 0) {
+    return(integer(0))
+  }
+
+  ids <- vctrs::vec_match(x, y)
+  unique(ids[!is.na(ids)])
+}
