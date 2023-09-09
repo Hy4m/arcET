@@ -19,11 +19,12 @@ show_cell <- function(region = CELL(),
                       digits = 2,
                       xn = 7,
                       yn = 7,
+                      add = FALSE,
                       ...) {
   stopifnot(is_CELL(region))
 
   xseq <- seq(region$x.range[1], region$x.range[2], length.out = xn) %% 360
-  x_labels <- paste0(round(xseq, digits = digits), "°")
+  x_labels <- paste0(round(xseq, digits = digits), iconv("\u00b0", to = "UTF-8"))
   yseq <- seq(region$y.range[1], region$y.range[2], length.out = yn)
   y_labels <- as.character(round(yseq, digits = digits))
   y_breaks <- if (region$r0 > region$r1) {
@@ -45,7 +46,9 @@ show_cell <- function(region = CELL(),
   panel <- ArcPanelGrob(region = region, fill = fill, colour = colour, ...)
 
   grobs <- gTree(children = gList(panel, xaxis, yaxis))
-  new_panel()
+  if (isFALSE(add)) {
+    new_panel()
+  }
   grid.draw(grobs)
   invisible(grobs)
 }

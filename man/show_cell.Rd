@@ -11,6 +11,7 @@ show_cell(
   digits = 2,
   xn = 7,
   yn = 7,
+  add = FALSE,
   ...
 )
 }
