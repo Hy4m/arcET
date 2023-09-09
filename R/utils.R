@@ -381,11 +381,23 @@ modify_aes <- function(aes, aes2) {
 }
 
 #' @noRd
-match_ids <- function(x, y) {
+match_ids <- function(x, y, fixed = TRUE, ignore.case = FALSE) {
   if (is.null(x) || is.null(y) || length(x) == 0 || length(y) == 0) {
     return(integer(0))
   }
 
-  ids <- vctrs::vec_match(x, y)
-  unique(ids[!is.na(ids)])
+  if (isTRUE(fixed)) {
+    ids <- vctrs::vec_match(x, y)
+    ids <- unique(ids[!is.na(ids)])
+  } else {
+    ids <- lapply(x, function(pattern) {
+      lgl <- grepl(pattern = pattern, x = y, ignore.case = ignore.case)
+      ifelse(is.na(lgl), FALSE, lgl)
+    })
+
+    ids <- Reduce("|", ids, init = FALSE)
+    ids <- seq_along(y)[ids]
+  }
+
+  ids
 }
