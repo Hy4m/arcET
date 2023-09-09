@@ -6,6 +6,7 @@
 #' @param label expression or character.
 #' @param CellID character IDs indicating which element will be modified.
 #' @param auto_adjust logical, if TRUE will adjust angle based on x-axis value.
+#' @inheritParams base::grepl
 #' @param ... other parameters passing `Arc*Grob()` function.
 #' @return a modified ArcPlot object.
 #' @author Hou Yun
@@ -17,35 +18,34 @@ decorate_text <- function(plot,
                           y = mid_y,
                           CellID = NULL,
                           auto_adjust = TRUE,
+                          fixed = TRUE,
+                          ignore.case = FALSE,
                           ...) {
   stopifnot(is_ArcPlot(plot))
-  if (missing(label) || empty(plot) || is.null(CellID) || !any(CellID %in% plot$CellID)) {
+
+  if (missing(label)) {
+    cli::cli_warn(c("{.arg label} is missing",
+                    i = "did you forget to set the label parameter?"))
     return(plot)
   }
 
-  x <- rlang::enquo(x)
-  y <- rlang::enquo(y)
-  ids <- match(CellID, plot$CellID)
+  ids <- match_ids(CellID, plot$CellID, fixed = fixed, ignore.case = ignore.case)
+  if (length(ids) >= 1) {
+    x <- rlang::enquo(x)
+    y <- rlang::enquo(y)
 
-  annotate <- list()
-  for (ii in ids) {
-    region <- plot$region[[ii]]
-    anno <- ArcTextGrob(label = label,
-                        x = rlang::eval_tidy(x, region),
-                        y = rlang::eval_tidy(y, region),
-                        auto_adjust = auto_adjust,
-                        ...)
-    annotate <- c(annotate, list(anno))
-  }
-
-  if (is.null(attr(plot, "annotate"))) {
-    attr(plot, "annotate") <- annotate
-  } else {
-    attr(plot, "annotate") <- c(attr(plot, "annotate"), annotate)
+    for (ii in ids) {
+      region <- plot$region[[ii]]
+      anno <- ArcTextGrob(label = label,
+                          x = rlang::eval_tidy(x, region),
+                          y = rlang::eval_tidy(y, region),
+                          auto_adjust = auto_adjust,
+                          ...)
+      plot$annotate <- c(plot$annotate, list(anno))
+    }
   }
 
   set_current_plot(plot)
-
   plot
 }
 
@@ -57,35 +57,34 @@ decorate_label <- function(plot,
                            y = mid_y,
                            CellID = NULL,
                            auto_adjust = TRUE,
+                           fixed = TRUE,
+                           ignore.case = FALSE,
                            ...) {
   stopifnot(is_ArcPlot(plot))
-  if (missing(label) || empty(plot) || is.null(CellID) || !any(CellID %in% plot$CellID)) {
+
+  if (missing(label)) {
+    cli::cli_warn(c("{.arg label} is missing",
+                    i = "did you forget to set the label parameter?"))
     return(plot)
   }
 
-  x <- rlang::enquo(x)
-  y <- rlang::enquo(y)
-  ids <- match(CellID, plot$CellID)
+  ids <- match_ids(CellID, plot$CellID, fixed = fixed, ignore.case = ignore.case)
+  if (length(ids) >= 1) {
+    x <- rlang::enquo(x)
+    y <- rlang::enquo(y)
 
-  annotate <- list()
-  for (ii in ids) {
-    region <- plot$region[[ii]]
-    anno <- ArcLabelGrob(label = label,
-                         x = rlang::eval_tidy(x, region),
-                         y = rlang::eval_tidy(y, region),
-                         auto_adjust = auto_adjust,
-                         ...)
-    annotate <- c(annotate, list(anno))
-  }
-
-  if (is.null(attr(plot, "annotate"))) {
-    attr(plot, "annotate") <- annotate
-  } else {
-    attr(plot, "annotate") <- c(attr(plot, "annotate"), annotate)
+    for (ii in ids) {
+      region <- plot$region[[ii]]
+      anno <- ArcLabelGrob(label = label,
+                           x = rlang::eval_tidy(x, region),
+                           y = rlang::eval_tidy(y, region),
+                           auto_adjust = auto_adjust,
+                           ...)
+      plot$annotate <- c(plot$annotate, list(anno))
+    }
   }
 
   set_current_plot(plot)
-
   plot
 }
 
@@ -96,34 +95,33 @@ decorate_bannertext <- function(plot,
                                 x = mid_x,
                                 y = mid_y,
                                 CellID = NULL,
+                                fixed = TRUE,
+                                ignore.case = FALSE,
                                 ...) {
   stopifnot(is_ArcPlot(plot))
-  if (missing(label) || empty(plot) || is.null(CellID) || !any(CellID %in% plot$CellID)) {
+
+  if (missing(label)) {
+    cli::cli_warn(c("{.arg label} is missing",
+                    i = "did you forget to set the label parameter?"))
     return(plot)
   }
 
-  x <- rlang::enquo(x)
-  y <- rlang::enquo(y)
-  ids <- match(CellID, plot$CellID)
+  ids <- match_ids(CellID, plot$CellID, fixed = fixed, ignore.case = ignore.case)
+  if (length(ids) >= 1) {
+    x <- rlang::enquo(x)
+    y <- rlang::enquo(y)
 
-  annotate <- list()
-  for (ii in ids) {
-    region <- plot$region[[ii]]
-    anno <- ArcBannerTextGrob(label = label,
-                              x = rlang::eval_tidy(x, region),
-                              y = rlang::eval_tidy(y, region),
-                              ...)
-    annotate <- c(annotate, list(anno))
-  }
-
-  if (is.null(attr(plot, "annotate"))) {
-    attr(plot, "annotate") <- annotate
-  } else {
-    attr(plot, "annotate") <- c(attr(plot, "annotate"), annotate)
+    for (ii in ids) {
+      region <- plot$region[[ii]]
+      anno <- ArcBannerTextGrob(label = label,
+                                x = rlang::eval_tidy(x, region),
+                                y = rlang::eval_tidy(y, region),
+                                ...)
+      plot$annotate <- c(plot$annotate, list(anno))
+    }
   }
 
   set_current_plot(plot)
-
   plot
 }
 
@@ -135,37 +133,30 @@ decorate_rect <- function(plot,
                           xmax = x.range[2],
                           ymax = y.range[2],
                           CellID = NULL,
+                          fixed = TRUE,
+                          ignore.case = FALSE,
                           ...) {
   stopifnot(is_ArcPlot(plot))
-  if (empty(plot) || is.null(CellID) || !any(CellID %in% plot$CellID)) {
-    return(plot)
-  }
 
-  xmin <- rlang::enquo(xmin)
-  ymin <- rlang::enquo(ymin)
-  xmax <- rlang::enquo(xmax)
-  ymax <- rlang::enquo(ymax)
-  ids <- match(CellID, plot$CellID)
+  ids <- match_ids(CellID, plot$CellID, fixed = fixed, ignore.case = ignore.case)
+  if (length(ids) >= 1) {
+    xmin <- rlang::enquo(xmin)
+    ymin <- rlang::enquo(ymin)
+    xmax <- rlang::enquo(xmax)
+    ymax <- rlang::enquo(ymax)
 
-  annotate <- list()
-  for (ii in ids) {
-    region <- plot$region[[ii]]
-    anno <- ArcRectGrob(xmin = rlang::eval_tidy(xmin, region),
-                        ymin = rlang::eval_tidy(ymin, region),
-                        xmax = rlang::eval_tidy(xmax, region),
-                        ymax = rlang::eval_tidy(ymax, region),
-                        ...)
-    annotate <- c(annotate, list(anno))
-  }
-
-  if (is.null(attr(plot, "annotate"))) {
-    attr(plot, "annotate") <- annotate
-  } else {
-    attr(plot, "annotate") <- c(attr(plot, "annotate"), annotate)
+    for (ii in ids) {
+      region <- plot$region[[ii]]
+      anno <- ArcRectGrob(xmin = rlang::eval_tidy(xmin, region),
+                          ymin = rlang::eval_tidy(ymin, region),
+                          xmax = rlang::eval_tidy(xmax, region),
+                          ymax = rlang::eval_tidy(ymax, region),
+                          ...)
+      plot$annotate <- c(plot$annotate, list(anno))
+    }
   }
 
   set_current_plot(plot)
-
   plot
 }
 
@@ -175,37 +166,30 @@ decorate_polygon <- function(plot,
                              x = NULL,
                              y = NULL,
                              CellID = NULL,
+                             fixed = TRUE,
+                             ignore.case = FALSE,
                              ...) {
   stopifnot(is_ArcPlot(plot))
-  if (empty(plot) || is.null(CellID) || !any(CellID %in% plot$CellID)) {
-    return(plot)
-  }
 
-  x <- rlang::enquo(x)
-  y <- rlang::enquo(y)
-  ids <- match(CellID, plot$CellID)
+  ids <- match_ids(CellID, plot$CellID, fixed = fixed, ignore.case = ignore.case)
+  if (length(ids) >= 1) {
+    x <- rlang::enquo(x)
+    y <- rlang::enquo(y)
 
-  annotate <- list()
-  for (ii in ids) {
-    region <- plot$region[[ii]]
-    xx <- rlang::eval_tidy(x, region)
-    yy <- rlang::eval_tidy(y, region)
-    if (any(is.null(xx), is.null(yy))) next
+    for (ii in ids) {
+      region <- plot$region[[ii]]
+      xx <- rlang::eval_tidy(x, region)
+      yy <- rlang::eval_tidy(y, region)
+      if (any(is.null(xx), is.null(yy))) next
 
-    anno <- ArcPolygonGrob(x = xx,
-                           y = yy,
-                           ...)
-    annotate <- c(annotate, list(anno))
-  }
-
-  if (is.null(attr(plot, "annotate"))) {
-    attr(plot, "annotate") <- annotate
-  } else {
-    attr(plot, "annotate") <- c(attr(plot, "annotate"), annotate)
+      anno <- ArcPolygonGrob(x = xx,
+                             y = yy,
+                             ...)
+      plot$annotate <- c(plot$annotate, list(anno))
+    }
   }
 
   set_current_plot(plot)
-
   plot
 }
 
@@ -215,33 +199,26 @@ decorate_point <- function(plot,
                            x = mid_x,
                            y = mid_y,
                            CellID = NULL,
+                           fixed = TRUE,
+                           ignore.case = FALSE,
                            ...) {
   stopifnot(is_ArcPlot(plot))
-  if (empty(plot) || is.null(CellID) || !any(CellID %in% plot$CellID)) {
-    return(plot)
-  }
 
-  x <- rlang::enquo(x)
-  y <- rlang::enquo(y)
-  ids <- match(CellID, plot$CellID)
+  ids <- match_ids(CellID, plot$CellID, fixed = fixed, ignore.case = ignore.case)
+  if (length(ids) >= 1) {
+    x <- rlang::enquo(x)
+    y <- rlang::enquo(y)
 
-  annotate <- list()
-  for (ii in ids) {
-    region <- plot$region[[ii]]
-    anno <- ArcPointsGrob(x = rlang::eval_tidy(x, region),
-                         y = rlang::eval_tidy(y, region),
-                         ...)
-    annotate <- c(annotate, list(anno))
-  }
-
-  if (is.null(attr(plot, "annotate"))) {
-    attr(plot, "annotate") <- annotate
-  } else {
-    attr(plot, "annotate") <- c(attr(plot, "annotate"), annotate)
+    for (ii in ids) {
+      region <- plot$region[[ii]]
+      anno <- ArcPointsGrob(x = rlang::eval_tidy(x, region),
+                            y = rlang::eval_tidy(y, region),
+                            ...)
+      plot$annotate <- c(plot$annotate, list(anno))
+    }
   }
 
   set_current_plot(plot)
-
   plot
 }
 
@@ -251,33 +228,28 @@ decorate_line <- function(plot,
                           x = x.range,
                           y = y.range,
                           CellID = NULL,
+                          fixed = TRUE,
+                          ignore.case = FALSE,
                           ...) {
   stopifnot(is_ArcPlot(plot))
-  if (empty(plot) || is.null(CellID) || !any(CellID %in% plot$CellID)) {
-    return(plot)
-  }
 
-  x <- rlang::enquo(x)
-  y <- rlang::enquo(y)
-  ids <- match(CellID, plot$CellID)
+  ids <- match_ids(CellID, plot$CellID, fixed = fixed, ignore.case = ignore.case)
+  if (length(ids) >= 1) {
+    x <- rlang::enquo(x)
+    y <- rlang::enquo(y)
 
-  annotate <- list()
-  for (ii in ids) {
-    region <- plot$region[[ii]]
-    anno <- ArcLineGrob(x = rlang::eval_tidy(x, region),
-                        y = rlang::eval_tidy(y, region),
-                        ...)
-    annotate <- c(annotate, list(anno))
-  }
-
-  if (is.null(attr(plot, "annotate"))) {
-    attr(plot, "annotate") <- annotate
-  } else {
-    attr(plot, "annotate") <- c(attr(plot, "annotate"), annotate)
+    for (ii in ids) {
+      for (ii in ids) {
+        region <- plot$region[[ii]]
+        anno <- ArcLineGrob(x = rlang::eval_tidy(x, region),
+                            y = rlang::eval_tidy(y, region),
+                            ...)
+        plot$annotate <- c(plot$annotate, list(anno))
+      }
+    }
   }
 
   set_current_plot(plot)
-
   plot
 }
 
@@ -287,33 +259,28 @@ decorate_path <- function(plot,
                           x = x.range,
                           y = y.range,
                           CellID = NULL,
+                          fixed = TRUE,
+                          ignore.case = FALSE,
                           ...) {
   stopifnot(is_ArcPlot(plot))
-  if (empty(plot) || is.null(CellID) || !any(CellID %in% plot$CellID)) {
-    return(plot)
-  }
 
-  x <- rlang::enquo(x)
-  y <- rlang::enquo(y)
-  ids <- match(CellID, plot$CellID)
+  ids <- match_ids(CellID, plot$CellID, fixed = fixed, ignore.case = ignore.case)
+  if (length(ids) >= 1) {
+    x <- rlang::enquo(x)
+    y <- rlang::enquo(y)
 
-  annotate <- list()
-  for (ii in ids) {
-    region <- plot$region[[ii]]
-    anno <- ArcPathGrob(x = rlang::eval_tidy(x, region),
-                        y = rlang::eval_tidy(y, region),
-                        ...)
-    annotate <- c(annotate, list(anno))
-  }
-
-  if (is.null(attr(plot, "annotate"))) {
-    attr(plot, "annotate") <- annotate
-  } else {
-    attr(plot, "annotate") <- c(attr(plot, "annotate"), annotate)
+    for (ii in ids) {
+      for (ii in ids) {
+        region <- plot$region[[ii]]
+        anno <- ArcLineGrob(x = rlang::eval_tidy(x, region),
+                            y = rlang::eval_tidy(y, region),
+                            ...)
+        plot$annotate <- c(plot$annotate, list(anno))
+      }
+    }
   }
 
   set_current_plot(plot)
-
   plot
 }
 
@@ -325,37 +292,32 @@ decorate_segment <- function(plot,
                              xend = x.range[2],
                              yend = x.range[2],
                              CellID = NULL,
+                             fixed = TRUE,
+                             ignore.case = FALSE,
                              ...) {
   stopifnot(is_ArcPlot(plot))
-  if (empty(plot) || is.null(CellID) || !any(CellID %in% plot$CellID)) {
-    return(plot)
-  }
 
-  x <- rlang::enquo(x)
-  y <- rlang::enquo(y)
-  xend <- rlang::enquo(xend)
-  yend <- rlang::enquo(yend)
-  ids <- match(CellID, plot$CellID)
+  ids <- match_ids(CellID, plot$CellID, fixed = fixed, ignore.case = ignore.case)
+  if (length(ids) >= 1) {
+    x <- rlang::enquo(x)
+    y <- rlang::enquo(y)
+    xend <- rlang::enquo(xend)
+    yend <- rlang::enquo(yend)
 
-  annotate <- list()
-  for (ii in ids) {
-    region <- plot$region[[ii]]
-    anno <- ArcSegmentsGrob(x = rlang::eval_tidy(x, region),
-                            y = rlang::eval_tidy(y, region),
-                            xend = rlang::eval_tidy(xend, region),
-                            yend = rlang::eval_tidy(yend, region),
-                            ...)
-    annotate <- c(annotate, list(anno))
-  }
-
-  if (is.null(attr(plot, "annotate"))) {
-    attr(plot, "annotate") <- annotate
-  } else {
-    attr(plot, "annotate") <- c(attr(plot, "annotate"), annotate)
+    for (ii in ids) {
+      for (ii in ids) {
+        region <- plot$region[[ii]]
+        anno <- ArcSegmentsGrob(x = rlang::eval_tidy(x, region),
+                                y = rlang::eval_tidy(y, region),
+                                xend = rlang::eval_tidy(xend, region),
+                                yend = rlang::eval_tidy(yend, region),
+                                ...)
+        plot$annotate <- c(plot$annotate, list(anno))
+      }
+    }
   }
 
   set_current_plot(plot)
-
   plot
 }
 
@@ -364,32 +326,25 @@ decorate_segment <- function(plot,
 decorate_hline <- function(plot,
                            yintercept = mid_y,
                            CellID = NULL,
+                           fixed = TRUE,
+                           ignore.case = FALSE,
                            ...) {
   stopifnot(is_ArcPlot(plot))
-  if (empty(plot) || is.null(CellID) || !any(CellID %in% plot$CellID)) {
-    return(plot)
-  }
 
-  yintercept <- rlang::enquo(yintercept)
-  ids <- match(CellID, plot$CellID)
+  ids <- match_ids(CellID, plot$CellID, fixed = fixed, ignore.case = ignore.case)
+  if (length(ids) >= 1) {
+    yintercept <- rlang::enquo(yintercept)
 
-  annotate <- list()
-  for (ii in ids) {
-    region <- plot$region[[ii]]
-    anno <- ArcHlineGrob(yintercept = rlang::eval_tidy(yintercept, region),
-                         region = region,
-                         ...)
-    annotate <- c(annotate, list(anno))
-  }
-
-  if (is.null(attr(plot, "annotate"))) {
-    attr(plot, "annotate") <- annotate
-  } else {
-    attr(plot, "annotate") <- c(attr(plot, "annotate"), annotate)
+    for (ii in ids) {
+      region <- plot$region[[ii]]
+      anno <- ArcHlineGrob(yintercept = rlang::eval_tidy(yintercept, region),
+                           region = region,
+                           ...)
+      plot$annotate <- c(plot$annotate, list(anno))
+    }
   }
 
   set_current_plot(plot)
-
   plot
 }
 
@@ -398,32 +353,25 @@ decorate_hline <- function(plot,
 decorate_vline <- function(plot,
                            xintercept = mid_x,
                            CellID = NULL,
+                           fixed = TRUE,
+                           ignore.case = FALSE,
                            ...) {
   stopifnot(is_ArcPlot(plot))
-  if (empty(plot) || is.null(CellID) || !any(CellID %in% plot$CellID)) {
-    return(plot)
-  }
 
-  xintercept <- rlang::enquo(xintercept)
-  ids <- match(CellID, plot$CellID)
+  ids <- match_ids(CellID, plot$CellID, fixed = fixed, ignore.case = ignore.case)
+  if (length(ids) >= 1) {
+    xintercept <- rlang::enquo(xintercept)
 
-  annotate <- list()
-  for (ii in ids) {
-    region <- plot$region[[ii]]
-    anno <- ArcVlineGrob(xintercept = rlang::eval_tidy(xintercept, region),
-                         region = region,
-                         ...)
-    annotate <- c(annotate, list(anno))
-  }
-
-  if (is.null(attr(plot, "annotate"))) {
-    attr(plot, "annotate") <- annotate
-  } else {
-    attr(plot, "annotate") <- c(attr(plot, "annotate"), annotate)
+    for (ii in ids) {
+      region <- plot$region[[ii]]
+      anno <- ArcVlineGrob(xintercept = rlang::eval_tidy(xintercept, region),
+                           region = region,
+                           ...)
+      plot$annotate <- c(plot$annotate, list(anno))
+    }
   }
 
   set_current_plot(plot)
-
   plot
 }
 

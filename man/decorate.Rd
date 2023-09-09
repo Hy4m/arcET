@@ -21,6 +21,8 @@ decorate_text(
   y = mid_y,
   CellID = NULL,
   auto_adjust = TRUE,
+  fixed = TRUE,
+  ignore.case = FALSE,
   ...
 )
 
@@ -31,10 +33,21 @@ decorate_label(
   y = mid_y,
   CellID = NULL,
   auto_adjust = TRUE,
+  fixed = TRUE,
+  ignore.case = FALSE,
   ...
 )
 
-decorate_bannertext(plot, label, x = mid_x, y = mid_y, CellID = NULL, ...)
+decorate_bannertext(
+  plot,
+  label,
+  x = mid_x,
+  y = mid_y,
+  CellID = NULL,
+  fixed = TRUE,
+  ignore.case = FALSE,
+  ...
+)
 
 decorate_rect(
   plot,
@@ -43,16 +56,50 @@ decorate_rect(
   xmax = x.range[2],
   ymax = y.range[2],
   CellID = NULL,
+  fixed = TRUE,
+  ignore.case = FALSE,
   ...
 )
 
-decorate_polygon(plot, x = NULL, y = NULL, CellID = NULL, ...)
+decorate_polygon(
+  plot,
+  x = NULL,
+  y = NULL,
+  CellID = NULL,
+  fixed = TRUE,
+  ignore.case = FALSE,
+  ...
+)
 
-decorate_point(plot, x = mid_x, y = mid_y, CellID = NULL, ...)
+decorate_point(
+  plot,
+  x = mid_x,
+  y = mid_y,
+  CellID = NULL,
+  fixed = TRUE,
+  ignore.case = FALSE,
+  ...
+)
 
-decorate_line(plot, x = x.range, y = y.range, CellID = NULL, ...)
+decorate_line(
+  plot,
+  x = x.range,
+  y = y.range,
+  CellID = NULL,
+  fixed = TRUE,
+  ignore.case = FALSE,
+  ...
+)
 
-decorate_path(plot, x = x.range, y = y.range, CellID = NULL, ...)
+decorate_path(
+  plot,
+  x = x.range,
+  y = y.range,
+  CellID = NULL,
+  fixed = TRUE,
+  ignore.case = FALSE,
+  ...
+)
 
 decorate_segment(
   plot,
@@ -61,12 +108,28 @@ decorate_segment(
   xend = x.range[2],
   yend = x.range[2],
   CellID = NULL,
+  fixed = TRUE,
+  ignore.case = FALSE,
   ...
 )
 
-decorate_hline(plot, yintercept = mid_y, CellID = NULL, ...)
+decorate_hline(
+  plot,
+  yintercept = mid_y,
+  CellID = NULL,
+  fixed = TRUE,
+  ignore.case = FALSE,
+  ...
+)
 
-decorate_vline(plot, xintercept = mid_x, CellID = NULL, ...)
+decorate_vline(
+  plot,
+  xintercept = mid_x,
+  CellID = NULL,
+  fixed = TRUE,
+  ignore.case = FALSE,
+  ...
+)
 }
 \arguments{
 \item{plot}{an ArcPlot object.}
@@ -80,6 +143,12 @@ decorate_vline(plot, xintercept = mid_x, CellID = NULL, ...)
 \item{CellID}{character IDs indicating which element will be modified.}
 
 \item{auto_adjust}{logical, if TRUE will adjust angle based on x-axis value.}
+
+\item{fixed}{logical.  If \code{TRUE}, \code{pattern} is a string to be
+    matched as is.  Overrides all conflicting arguments.}
+
+\item{ignore.case}{if \code{FALSE}, the pattern matching is \emph{case
+      sensitive} and if \code{TRUE}, case is ignored during matching.}
 
 \item{...}{other parameters passing `Arc*Grob()` function.}
 }
