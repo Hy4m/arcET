@@ -7,34 +7,12 @@
 \usage{
 ArcPlot_build(plot, ...)
 
-\method{ArcPlot_build}{ArcPlot}(
-  plot,
-  theme = NULL,
-  title = NULL,
-  subtitle = NULL,
-  tag = NULL,
-  caption = NULL,
-  xlim = NULL,
-  ylim = NULL,
-  ...
-)
+\method{ArcPlot_build}{ArcPlot}(plot, ...)
 }
 \arguments{
 \item{plot}{an ArcPlot object.}
 
 \item{...}{other parameters passing to `merge_guides()`.}
-
-\item{theme}{a ggplot theme object.}
-
-\item{title}{plot title.}
-
-\item{subtitle}{plot subtitle.}
-
-\item{tag}{plot tag.}
-
-\item{caption}{plot caption.}
-
-\item{xlim, ylim}{two-length numeric vector used to set scale limits.}
 }
 \value{
 grid grobs.

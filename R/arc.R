@@ -49,15 +49,19 @@ arcplot <- function(data = NULL, mapping = aes(), ...) {
     mapping <- mapping[setdiff(names(mapping), c("TrackID", "SectorID", "CellID"))]
   }
 
-  plot <- structure(.Data = tibble(plot = list(),
-                                   region = list(),
-                                   TrackID = character(0),
-                                   SectorID = character(0),
-                                   CellID = character(0)),
-                    data = data,
-                    mapping = mapping,
-                    ids = ids,
-                    class = c("ArcPlot", "tbl_df", "tbl", "data.frame"))
+  plot <- structure(.Data = list(plot = list(),
+                                 region = list(),
+                                 TrackID = character(0),
+                                 SectorID = character(0),
+                                 CellID = character(0),
+                                 annotate = list(),
+                                 theme = theme_get(),
+                                 labels = list(),
+                                 data = data,
+                                 mapping = mapping,
+                                 ids = ids),
+
+                    class = "ArcPlot")
   set_current_plot(plot)
 
   plot
@@ -95,15 +99,25 @@ init_cell <- function(plot,
                      x = "You've supplied a {.cls {class(region)[1]}} object."))
   }
 
+  if (!is.null(TrackID) && length(TrackID) != 1) {
+    cli::cli_abort("`TrackID` must be NULL or one-length character.")
+  }
+  if (!is.null(SectorID) && length(SectorID) != 1) {
+    cli::cli_abort("`SectorID` must be NULL or one-length character.")
+  }
+  if (!is.null(CellID) && length(CellID) != 1) {
+    cli::cli_abort("`CellID` must be NULL or one-length character.")
+  }
+
   if (!inherits(data, "ggplot")) {
     data <- get_data(plot = plot, CellID = CellID, TrackID = TrackID,
                      SectorID = SectorID)
-    if (inherit.aes) {
+    if (isTRUE(inherit.aes)) {
       mapping <- modify_aes(plot$mapping, mapping)
     }
     cell <- tryCatch(ggplot(data = data, mapping = mapping),
                      error = function(e) {
-                       cli::cli_abort("{.arg data} must be a `ggplot` or `dataframe` object.")
+                       cli::cli_abort("{.arg data} must be a `ggplot` or `data.frame` object.")
                      })
   } else {
     cell <- data
@@ -113,16 +127,11 @@ init_cell <- function(plot,
   TrackID <- TrackID %||% track_id()
   SectorID <- SectorID %||% sector_id()
 
-  df <- vec_rbind0(plot, tibble::tibble(plot = list(cell),
-                                        region = list(region),
-                                        TrackID = as.character(TrackID),
-                                        SectorID = as.character(SectorID),
-                                        CellID = as.character(CellID)))
-  plot <- structure(.Data = df,
-                   data = attr(plot, "data"),
-                   mapping = attr(plot, "mapping"),
-                   ids = attr(plot, "ids"),
-                   class = c("ArcPlot", "tbl_df", "tbl", "data.frame"))
+  plot$plot <- c(plot$plot, list(cell))
+  plot$region <- c(plot$region, list(region))
+  plot$TrackID <- c(plot$TrackID, as.character(TrackID))
+  plot$SectorID <- c(plot$SectorID, as.character(SectorID))
+  plot$CellID <- c(plot$CellID, as.character(CellID))
 
   set_current_plot(plot)
 
@@ -195,8 +204,8 @@ get_data <- function(plot,
                      CellID = NULL,
                      TrackID = NULL,
                      SectorID = NULL) {
-  data <- attr(plot, "data")
-  ids <- attr(plot, "ids")
+  data <- plot$data
+  ids <- plot$ids
   if (empty(data) || empty(ids)) {
     return(NULL)
   }
