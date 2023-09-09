@@ -31,7 +31,6 @@ This is a basic example which shows you how to solve a common problem:
 ``` r
 library(arcET)
 library(ggplot2)
-library(grid)
 
 ## ggplot2 plot
 ggplot(mtcars, aes(wt, mpg)) + geom_point()
@@ -46,6 +45,29 @@ arc_test()
 ```
 
 <img src="man/figures/README-example-2.png" width="100%" />
+
+``` r
+library(arcET)
+library(ggplot2)
+
+## ggplot2 plot
+p <- ggplot(mtcars, aes(wt, mpg)) + geom_point()
+
+arcplot() |>
+    init_cell(p, region = CELL(180, 0, 0.5)) |>
+    within_plot(title = "wt vs mpg",
+                xlim = c(-1.05, 1.05),
+                ylim = c(-0.05, 1.05)) |>
+    decorate_bannertext(label = "Bannertext annotation has done",
+                        y = max(y.range) + 0.01,
+                        vjust = 0,
+                        colour = "red",
+                        CellID = "CellID",
+                        fixed = FALSE)
+#> Build CellID_2 plot...
+```
+
+<img src="man/figures/README-example2-1.png" width="100%" />
 
 ## Notes
 
