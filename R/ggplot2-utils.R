@@ -17,15 +17,6 @@ justify_grobs <- getFromNamespace("justify_grobs", ns = "ggplot2")
 translate_shape_string <- getFromNamespace("translate_shape_string", ns = "ggplot2")
 
 #' @noRd
-parse_dpi <- getFromNamespace("parse_dpi", ns = "ggplot2")
-
-#' @noRd
-plot_dev <- getFromNamespace("plot_dev", ns = "ggplot2")
-
-#' @noRd
-plot_dim <- getFromNamespace("plot_dim", ns = "ggplot2")
-
-#' @noRd
 x_aes <- c("x", "xmin", "xmax", "xend", "xintercept", "xmin_final",
            "xmax_final", "xlower", "xmiddle", "xupper", "x0")
 
