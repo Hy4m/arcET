@@ -166,7 +166,7 @@ print.CELL <- function(x, ...) {
   cli::cli_inform("  start -> {x$start} (in degree)")
   cli::cli_inform("  end -> {x$end} (in degree)")
   cli::cli_inform("  r0 -> {x$r0} (in [0, 1])")
-  cli::cli_inform("  r0 -> {x$r1} (in [0, 1])")
+  cli::cli_inform("  r1 -> {x$r1} (in [0, 1])")
   cli::cli_inform("  direct -> {x$direct} ('clockwise' or 'reverse.clockwise')")
   cli::cli_inform("  x.range -> [{x$x.range[1]}, {x$x.range[2]}]")
   cli::cli_inform("  y.range -> [{x$y.range[1]}, {x$y.range[2]}]")
