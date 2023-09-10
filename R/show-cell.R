@@ -47,8 +47,19 @@ show_cell <- function(region = CELL(),
   xaxis <- ArcxAxisGrob(coord = coord, region = region)
   yaxis <- ArcyAxisGrob(coord = coord, region = region)
   panel <- ArcPanelGrob(region = region, fill = fill, colour = colour, ...)
-
-  grobs <- gTree(children = gList(panel, xaxis, yaxis),
+  direct_x <- ArcSegmentsGrob(x = region$x.range[1],
+                              xend = region$x.range[2],
+                              y = min(region$y.range),
+                              yend = min(region$y.range),
+                              colour = "red",
+                              arrow = grid::arrow(length = unit(0.3, "cm")))
+  direct_y <- ArcSegmentsGrob(x = min(region$x.range),
+                              xend = min(region$x.range),
+                              y = region$y.range[1],
+                              yend = region$y.range[2],
+                              colour = "red",
+                              arrow = grid::arrow(length = unit(0.3, "cm")))
+  grobs <- gTree(children = gList(panel, xaxis, yaxis, direct_x, direct_y),
                  vp = viewport(xscale = c(-1, 1), yscale = c(-1, 1)))
   gt <- gtable(widths = unit(c(1.5, 1, 1.5), c("cm", "null", "cm")),
                heights = unit(c(1.5, 1, 1.5), c("cm", "null", "cm")),
