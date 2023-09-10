@@ -41,7 +41,7 @@ arcplot <- function(data = NULL, mapping = aes(), ...) {
           uniq <- vctrs::vec_unique(ids)
 
           if (anyDuplicated(uniq$CellID)) {
-            cli::cli_abort("Any `CellID` must have a unique `TrackID` and `SectorID`.")
+            cli::cli_abort("Each `CellID` must have a unique `TrackID` and `SectorID`.")
           }
         }
       }
