@@ -33,14 +33,32 @@ current_plot <- function() .store$get()
 #' to export ArcPlot object.
 #' @param filename file name to create on disk.
 #' @param plot an ArcPlot object.
-#' @param ... other parameters passing to `ggsave()`.
+#' @inheritParams ggplot2::ggsave
 #' @export
 #' @keywords internal
 arcsave <- function(filename,
                     plot = current_plot(),
+                    device = NULL,
+                    path = NULL,
+                    scale = 1,
+                    width = NA,
+                    height = NA,
+                    units = c("in", "cm", "mm", "px"),
+                    dpi = 300,
+                    limitsize = TRUE,
+                    bg = NULL,
                     ...) {
   ggplot2::ggsave(filename = filename,
                   plot = plot,
+                  device = device,
+                  path = path,
+                  scale = scale,
+                  width = width,
+                  height = height,
+                  units = units,
+                  dpi = dpi,
+                  limitsize = limitsize,
+                  bg = bg,
                   ...)
 }
 
