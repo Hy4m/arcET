@@ -55,6 +55,7 @@ Other transform:
 \code{\link{GeomPath2grob}()},
 \code{\link{GeomPoint2grob}()},
 \code{\link{GeomPolygon2grob}()},
+\code{\link{GeomRoundcol2grob}()},
 \code{\link{GeomText2grob}()}
 }
 \author{

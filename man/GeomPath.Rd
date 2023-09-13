@@ -218,6 +218,7 @@ Other transform:
 \code{\link{GeomLinerange2grob}()},
 \code{\link{GeomPoint2grob}()},
 \code{\link{GeomPolygon2grob}()},
+\code{\link{GeomRoundcol2grob}()},
 \code{\link{GeomText2grob}()},
 \code{\link{GeomViolin2grob}()}
 }

@@ -1,3 +1,4 @@
+#' @importFrom utils getFromNamespace
 #' @noRd
 flip_data <- getFromNamespace("flip_data", ns = "ggplot2")
 
@@ -17,6 +18,15 @@ justify_grobs <- getFromNamespace("justify_grobs", ns = "ggplot2")
 translate_shape_string <- getFromNamespace("translate_shape_string", ns = "ggplot2")
 
 #' @noRd
+check_linewidth <- getFromNamespace("check_linewidth", ns = "ggplot2")
+
+#' @noRd
+ggname <- function (prefix, grob) {
+  grob$name <- grid::grobName(grob, prefix)
+  grob
+}
+
+#' @noRd
 x_aes <- c("x", "xmin", "xmax", "xend", "xintercept", "xmin_final",
            "xmax_final", "xlower", "xmiddle", "xupper", "x0")
 
@@ -31,7 +41,7 @@ all_aes <- c("adj", "alpha", "angle", "bg", "cex", "col", "color",
              "pch", "radius", "sample", "shape", "size", "srt", "upper",
              "vjust", "weight", "width", "x", "xend", "xmax", "xmin",
              "xintercept", "y", "yend", "ymax", "ymin", "yintercept", "z",
-             "family", "fontface", "lineheight", "outside", "image")
+             "family", "fontface", "lineheight", "outside")
 
 #' Extract ggplot elements
 #' @description Internal function to extract ggplot elements.
@@ -127,7 +137,13 @@ extract_params <- function(layer, ...) {
 #' @export
 extract_params.default <- function(layer, ...) {
   out <- layer$computed_geom_params
-  out[setdiff(names(out), all_aes)]
+  clss <- class(layer$geom)[1]
+  if (clss %in% c("GeomRoundrect", "GeomRoundtile", "GeomRoundbar",
+                  "GeomRoundcol", "GeomRoundpolygon", "GeomShape")) {
+    out[setdiff(names(out), all_aes[all_aes != "radius"])]
+  } else {
+    out[setdiff(names(out), all_aes)]
+  }
 }
 
 #' @rdname extract_ggplot
