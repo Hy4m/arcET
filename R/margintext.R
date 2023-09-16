@@ -1,10 +1,10 @@
-#' Arc MarginText Grob
+#' @title Arc MarginText Grob
+#'
 #' @description These functions can draw margin text on polar coordinate.
 #' @param label expression or character.
 #' @param x numeric vector (in degree) specifying x-values.
 #' @param y positive numeric vector (in radius) specifying y-values.
 #' @param colour color of text.
-#' @param angle angle of text.
 #' @param alpha transparency of text.
 #' @param size font size of text.
 #' @param family font family of text.
@@ -16,7 +16,7 @@
 #' @param margin a grid unit object specifying top and bottom text margin.
 #' @param length length of link, should be a grid unit object.
 #' @param tick.length tick length of link, should be a grid unit object or character
-#' ratio (such as "10%").
+#' ratio.
 #' @param line.gp other parameters of link, see \code{?grid::gpar} for details.
 #' @param upper,lower the upper and lower limits of allowable adjustments.
 #' @param ... not used.
@@ -134,7 +134,6 @@ ArcMarginHtextGrob <- function(label,
               lower = lower,
               cl = "ArcMarginHtextGrob")
 }
-
 
 #' @export
 makeContent.ArcMarginHtextGrob <- function(x) {
@@ -312,13 +311,14 @@ makeContent.ArcMarginVtextGrob <- function(x) {
   grid::setChildren(x, grid::gList(line, text))
 }
 
-#' MarginText Grob
+#' @title MarginText Grob
+#'
 #' @description These functions can draw margin text on cartesian coordinate.
+#'
 #' @param label expression or character.
 #' @param x numeric vector (in degree) specifying x-values.
 #' @param y positive numeric vector (in radius) specifying y-values.
 #' @param colour color of text.
-#' @param angle angle of text.
 #' @param alpha transparency of text.
 #' @param size font size of text.
 #' @param family font family of text.
@@ -330,7 +330,7 @@ makeContent.ArcMarginVtextGrob <- function(x) {
 #' @param margin a grid unit object specifying top and bottom text margin.
 #' @param length length of link, should be a grid unit object.
 #' @param tick.length tick length of link, should be a grid unit object or character
-#' ratio (such as "10%").
+#' ratio.
 #' @param line.gp other parameters of link, see \code{?grid::gpar} for details.
 #' @param ... not used.
 #' @return a grob object.

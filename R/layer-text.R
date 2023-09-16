@@ -51,7 +51,6 @@ layer_banner_text <- function(mapping = NULL,
 #' @param region a CELL object (created by `CELL()` function) used to set
 #' the drawing area.
 #' @param ... other parameters passing to `Arc*Grob()` function.
-#' @param flipped_aes TRUE means that coordinates are inherit `CoordFlip`.
 #' @inheritParams ggplot2::geom_text
 #' @inheritParams ggplot2::geom_label
 #' @param clip logical. Allows points to overflow outside the drawing area when

@@ -75,15 +75,13 @@ ArcMarginHtextGrob(
 \item{length}{length of link, should be a grid unit object.}
 
 \item{tick.length}{tick length of link, should be a grid unit object or character
-ratio (such as "10%").}
+ratio.}
 
 \item{line.gp}{other parameters of link, see \code{?grid::gpar} for details.}
 
 \item{upper, lower}{the upper and lower limits of allowable adjustments.}
 
 \item{...}{not used.}
-
-\item{angle}{angle of text.}
 }
 \value{
 a grob object.

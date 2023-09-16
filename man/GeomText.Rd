@@ -68,8 +68,6 @@ a warning. If \code{TRUE}, missing values are silently removed.}
 \item{label.r}{Radius of rounded corners. Defaults to 0.15 lines.}
 
 \item{label.size}{Size of label border, in mm.}
-
-\item{flipped_aes}{TRUE means that coordinates are inherit `CoordFlip`.}
 }
 \value{
 a grid grob object.
