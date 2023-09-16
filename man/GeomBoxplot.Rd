@@ -72,6 +72,7 @@ Other transform:
 \code{\link{GeomBar2grob}()},
 \code{\link{GeomBlank2grob}()},
 \code{\link{GeomLinerange2grob}()},
+\code{\link{GeomMarginVtext2grob}()},
 \code{\link{GeomPath2grob}()},
 \code{\link{GeomPoint2grob}()},
 \code{\link{GeomPolygon2grob}()},

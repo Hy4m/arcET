@@ -6,6 +6,7 @@
 #' @importFrom grid setChildren gList resolveVJust convertHeight convertWidth
 #' @importFrom gtable gtable gtable_add_grob gtable_width gtable_height gtable_add_padding
 #' @importFrom gtable gtable_add_cols gtable_add_rows
+#' @importFrom scales alpha
 #' @noRd
 NULL
 

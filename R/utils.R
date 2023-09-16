@@ -304,74 +304,6 @@ safe_mode <- function(x, zero = FALSE) {
 }
 
 #' @noRd
-adjust_margin <- function(x, height, upper = NULL, lower = NULL, arc = FALSE) {
-  if (length(x) <= 1) {
-    return(x)
-  }
-
-  if (is.null(upper)) {
-    if (isTRUE(arc)) {
-      upper <- 360
-    } else {
-      upper <- 1
-    }
-  }
-  if (is.null(lower)) {
-    if (isTRUE(arc)) {
-      lower <- 0
-    } else {
-      lower <- 0
-    }
-  }
-
-  if (sum(height) > (upper - lower)) {
-    if (isTRUE(arc)) {
-      height <- height/sum(height)*(upper - lower)
-    } else {
-      upper <- upper + (sum(height) - upper + lower)/2
-      lower <- lower - (sum(height) - upper + lower)/2
-    }
-  }
-
-  n <- length(x)
-  top <- c(upper, x[-n]) - x - c(height[1]/2, (height[-n] + height[-1])/2)
-  less_than_zero <- top < 0
-  top_new <- ifelse(less_than_zero, top, 0)
-  x <- x + cumsum(top_new)
-  top[less_than_zero] <- 0
-
-  space_t <- upper - x[1] - height[1]/2
-  space_b <- x[n] - lower - height[n]/2
-  if (space_b < 0) {
-    if (space_t >= -space_b) {
-      x <- x - space_b
-    } else {
-      space <- cumsum(top)
-      id <- which(space > -space_b)
-      if (empty(id)) {
-        x[1:n] <- x[1:n] + space
-      } else {
-        id <- id[1]
-        if (id == 1) {
-          x[2:n] <- x[2:n] - space_b
-        } else {
-          space[id] <- -space_b
-          x[1:id] <- x[1:id] + space[1:id]
-
-          if (id == n) {
-            x[n] <- x[n] - space_b
-          } else {
-            x[(id + 1):n] <- x[(id + 1):n] - space_b
-          }
-        }
-      }
-    }
-  }
-
-  x
-}
-
-#' @noRd
 modify_aes <- function(aes, aes2) {
   aes <- as.list(aes)
   aes2 <- as.list(aes2)
@@ -401,3 +333,4 @@ match_ids <- function(x, y, fixed = TRUE, ignore.case = FALSE) {
 
   ids
 }
+

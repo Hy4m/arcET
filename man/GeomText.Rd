@@ -4,8 +4,6 @@
 \alias{GeomText2grob}
 \alias{GeomLabel2grob}
 \alias{GeomBannerText2grob}
-\alias{GeomMarginVtext2grob}
-\alias{GeomMarginHtext2grob}
 \title{Convert Layer to Grob}
 \usage{
 GeomText2grob(
@@ -39,28 +37,6 @@ GeomBannerText2grob(
   coord = PANEL(),
   region = CELL(),
   ...,
-  clip = FALSE,
-  na.rm = FALSE
-)
-
-GeomMarginVtext2grob(
-  data,
-  trans = NULL,
-  coord = PANEL(),
-  region = CELL(),
-  ...,
-  flipped_aes = FALSE,
-  clip = FALSE,
-  na.rm = FALSE
-)
-
-GeomMarginHtext2grob(
-  data,
-  trans = NULL,
-  coord = PANEL(),
-  region = CELL(),
-  ...,
-  flipped_aes = FALSE,
   clip = FALSE,
   na.rm = FALSE
 )
@@ -107,6 +83,7 @@ Other transform:
 \code{\link{GeomBlank2grob}()},
 \code{\link{GeomBoxplot2grob}()},
 \code{\link{GeomLinerange2grob}()},
+\code{\link{GeomMarginVtext2grob}()},
 \code{\link{GeomPath2grob}()},
 \code{\link{GeomPoint2grob}()},
 \code{\link{GeomPolygon2grob}()},

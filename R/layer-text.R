@@ -42,48 +42,6 @@ layer_banner_text <- function(mapping = NULL,
         params = rlang::list2(na.rm = na.rm, ...))
 }
 
-#' @rdname layer_text
-#' @export
-layer_margin_vtext <- function(mapping = NULL,
-                               data = NULL,
-                               stat = "identity",
-                               position = "identity",
-                               ...,
-                               na.rm = FALSE,
-                               show.legend = FALSE,
-                               inherit.aes = TRUE)
-{
-  layer(data = data,
-        mapping = mapping,
-        stat = stat,
-        geom = GeomMarginVtext,
-        position = position,
-        show.legend = show.legend,
-        inherit.aes = inherit.aes,
-        params = rlang::list2(na.rm = na.rm, ...))
-}
-
-#' @rdname layer_text
-#' @export
-layer_margin_htext <- function(mapping = NULL,
-                               data = NULL,
-                               stat = "identity",
-                               position = "identity",
-                               ...,
-                               na.rm = FALSE,
-                               show.legend = FALSE,
-                               inherit.aes = TRUE)
-{
-  layer(data = data,
-        mapping = mapping,
-        stat = stat,
-        geom = GeomMarginHtext,
-        position = position,
-        show.legend = show.legend,
-        inherit.aes = inherit.aes,
-        params = rlang::list2(na.rm = na.rm, ...))
-}
-
 #' Convert Layer to Grob
 #' @description Convert a ggplot layer to arc grob.
 #' @param data data frame object, which is extract from a ggplot object.
@@ -98,7 +56,6 @@ layer_margin_htext <- function(mapping = NULL,
 #' @inheritParams ggplot2::geom_label
 #' @param clip logical. Allows points to overflow outside the drawing area when
 #' `clip` is FALSE.
-#' @inheritParams ggplot2::geom_hex
 #' @return a grid grob object.
 #' @family transform
 #' @author Hou Yun
@@ -191,62 +148,6 @@ GeomBannerText2grob <- function(data,
   data <- cartesian2polar(data, coord = coord, region = region,
                           clip = clip, na.rm = na.rm)
   exec(ArcBannerTextGrob, !!!data, ...)
-}
-
-#' @rdname GeomText
-#' @export
-GeomMarginVtext2grob <- function(data,
-                                 trans = NULL,
-                                 coord = PANEL(),
-                                 region = CELL(),
-                                 ...,
-                                 flipped_aes = FALSE,
-                                 clip = FALSE,
-                                 na.rm = FALSE) {
-  if (empty(data)) {
-    return(zeroGrob)
-  }
-
-  data <- trans(data)
-  data <- cartesian2polar(data, coord = coord, region = region,
-                          clip = clip, na.rm = na.rm)
-  if (isTRUE(flipped_aes)) {
-    upper <- max(region$x.range)
-    lower <- min(region$x.range)
-    exec(ArcMarginHtextGrob, !!!data, ..., upper = upper, lower = lower)
-  } else {
-    upper <- max(region$y.range)
-    lower <- min(region$y.range)
-    exec(ArcMarginVtextGrob, !!!data, ..., upper = upper, lower = lower)
-  }
-}
-
-#' @rdname GeomText
-#' @export
-GeomMarginHtext2grob <- function(data,
-                                 trans = NULL,
-                                 coord = PANEL(),
-                                 region = CELL(),
-                                 ...,
-                                 flipped_aes = FALSE,
-                                 clip = FALSE,
-                                 na.rm = FALSE) {
-  if (empty(data)) {
-    return(zeroGrob)
-  }
-
-  data <- trans(data)
-  data <- cartesian2polar(data, coord = coord, region = region,
-                          clip = clip, na.rm = na.rm)
-  if (isTRUE(flipped_aes)) {
-    upper <- max(region$y.range)
-    lower <- min(region$y.range)
-    exec(ArcMarginVtextGrob, !!!data, ..., upper = upper, lower = lower)
-  } else {
-    upper <- max(region$x.range)
-    lower <- min(region$x.range)
-    exec(ArcMarginHtextGrob, !!!data, ..., upper = upper, lower = lower)
-  }
 }
 
 #' @rdname arcET-extensions
@@ -390,68 +291,3 @@ makeContent.LabelGrob <- function (x)
   setChildren(x, gList(r, t))
 }
 
-#' @rdname arcET-extensions
-#' @format NULL
-#' @usage NULL
-#' @export
-GeomMarginVtext <- ggproto(
-  "GeomMarginVtext", GeomText,
-  default_aes = aes(colour = "black", size = 3.88, alpha = NA,
-                    family = "", fontface = 1, lineheight = 1.2),
-  require_aes = c("x", "y", "label"),
-  draw_panel = function (data, panel_params, coord, parse = FALSE, na.rm = FALSE,
-                         sides = "r", length = unit(1, "cm"), tick.length = "10%") {
-    if (empty(data)) {
-      return(zeroGrob())
-    }
-
-    if (!coord$is_linear()) {
-      cli::cli_abort("{.fun geom_margin_vtext} just support for linear coordinate.")
-    }
-
-    sides <- match.arg(sides, c("r", "l"))
-    data <- coord$transform(data, panel_params = panel_params)
-    data <- data[setdiff(names(data), c("group", "PANEL"))]
-    if (inherits(coord, "CoordFlip")) {
-      sides <- switch (sides, "r" = "t", "l" = "b")
-      exec(MarginHtextGrob, !!!data, parse = parse, sides = sides,
-           length = length, tick.length = tick.length)
-    } else {
-      exec(MarginVtextGrob, !!!data, parse = parse, sides = sides,
-           length = length, tick.length = tick.length)
-    }
-  }
-)
-
-#' @rdname arcET-extensions
-#' @format NULL
-#' @usage NULL
-#' @export
-GeomMarginHtext <- ggproto(
-  "GeomMarginHtext", GeomText,
-  default_aes = aes(colour = "black", size = 3.88, alpha = NA,
-                    family = "", fontface = 1, lineheight = 1.2),
-  require_aes = c("x", "y", "label"),
-  draw_panel = function (data, panel_params, coord, parse = FALSE, na.rm = FALSE,
-                         sides = "t", length = unit(1, "cm"), tick.length = "10%") {
-    if (empty(data)) {
-      return(zeroGrob())
-    }
-
-    if (!coord$is_linear()) {
-      cli::cli_abort("{.fun geom_margin_htext} just support for linear coordinate.")
-    }
-
-    sides <- match.arg(sides, c("t", "b"))
-    data <- coord$transform(data, panel_params = panel_params)
-    data <- data[setdiff(names(data), c("group", "PANEL"))]
-    if (inherits(coord, "CoordFlip")) {
-      sides <- switch (sides, "t" = "r", "b" = "l")
-      exec(MarginVtextGrob, !!!data, parse = parse, sides = sides,
-           length = length, tick.length = tick.length)
-    } else {
-      exec(MarginHtextGrob, !!!data, parse = parse, sides = sides,
-           length = length, tick.length = tick.length)
-    }
-  }
-)
