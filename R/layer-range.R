@@ -129,7 +129,7 @@ GeomPointrange2grob <- function(data,
                               region = region,
                               clip = clip,
                               na.rm = na.rm)
-    grid::gList(g_line, g_point)
+    gTree(children = gList(g_line, g_point))
   }
 }
 
@@ -269,6 +269,6 @@ GeomCrossbar2grob <- function(data,
   box <- cartesian2polar(box, coord = coord, region = region,
                          clip = clip, na.rm = na.rm)
 
-  grid::gList(exec(ArcPolygonGrob, !!!box, ...),
-              exec(ArcSegmentsGrob, !!!middle, ...))
+  gTree(children = gList(exec(ArcPolygonGrob, !!!box, ...),
+                         exec(ArcSegmentsGrob, !!!middle, ...)))
 }

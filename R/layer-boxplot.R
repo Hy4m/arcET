@@ -135,5 +135,5 @@ GeomBoxplot2grob <- function(data,
     outliers <- exec(ArcPointsGrob, !!!outliers)
   }
 
-  grid::gList(box, whiskers, if (has_outliers) outliers)
+  gTree(children = gList(box, whiskers, if (has_outliers) outliers))
 }

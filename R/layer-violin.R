@@ -94,5 +94,5 @@ GeomViolin2grob <- function(data,
     }
   }
 
-  grid::gList(violin, if (has_segment) segs)
+  gTree(children = gList(violin, if (has_segment) segs))
 }
