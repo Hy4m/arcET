@@ -100,7 +100,7 @@ ArcPlot_build.ArcPlot <- function(plot, ...) {
 
   guides <- list()
   for (ii in seq_len(length(plot$plot))) {
-    gg_element <- tryCatch(extract_ggplot(plot$plot[[1]]), error = function(e) NULL)
+    gg_element <- tryCatch(extract_ggplot(plot$plot[[ii]]), error = function(e) NULL)
     ## gg_element is NULL means failure, should throw warnings?
     if (is.null(gg_element)) next
 
