@@ -243,26 +243,6 @@ get_data <- function(plot,
   out
 }
 
-#' @export
-reset_ids <- function(id = c("all", "CellID", "TrackID", "SectorID")) {
-  id <- match.arg(id)
-  if (id == "all") {
-    options(arcET.cell.id = NULL)
-    options(arcET.track.id = NULL)
-    options(arcET.sector.id = NULL)
-  } else {
-    if (id == "CellID") {
-      options(arcET.cell.id = NULL)
-    } else if (id == "TrackID") {
-      options(arcET.track.id = NULL)
-    } else {
-      options(arcET.sector.id = NULL)
-    }
-  }
-
-  invisible()
-}
-
 #' @noRd
 is_ArcPlot <- function(x) {
   inherits(x, "ArcPlot")
