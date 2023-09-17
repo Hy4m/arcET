@@ -152,6 +152,7 @@ Other transform:
 \code{\link{GeomMarginVtext2grob}()},
 \code{\link{GeomPath2grob}()},
 \code{\link{GeomPoint2grob}()},
+\code{\link{GeomRichText2grob}()},
 \code{\link{GeomRoundcol2grob}()},
 \code{\link{GeomText2grob}()},
 \code{\link{GeomViolin2grob}()}

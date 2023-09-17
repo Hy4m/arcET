@@ -154,28 +154,3 @@ N_steps <- function(x0, y0, x1, y1, steps = 0.01, simplify = FALSE) {
   out
 }
 
-#' @noRd
-rotate_points <- function(data, angle = 0) {
-  if (empty(data)) {
-    return(data)
-  }
-
-  n <- nrow(data)
-  angle <- rep_len(angle, n)
-  pos <- data[, c("x", "y"), drop = FALSE]
-  extra <- data[, setdiff(names(data), c("x", "y")), drop = FALSE]
-
-  pos <- lapply(1:n, function(ii) {
-    rot <- radian(angle[ii])
-    trans <- matrix(c(cos(rot), -sin(rot), sin(rot), cos(rot)),
-                    nrow = 2, byrow = TRUE)
-    t(trans %*% t(pos[ii, , drop = FALSE]))
-  })
-
-  pos <- Reduce("rbind", pos)
-  colnames(pos) <- c("x", "y")
-  pos <- tibble::as_tibble(pos)
-
-  cbind(pos, extra)
-}
-
