@@ -28,7 +28,8 @@ Imports:
     vctrs
 Suggests: 
     testthat (>= 3.0.0),
-    bezier,
     hexbin,
-    ggforce
+    ggforce,
+    ggtext,
+    gridtext
 RoxygenNote: 7.2.1
