@@ -1,3 +1,5 @@
+## FIX ME: link aesthetic mapping is broken
+
 #' @title Arc MarginText Grob
 #'
 #' @description These functions can draw margin text on polar coordinate.
@@ -34,7 +36,7 @@ ArcMarginVtextGrob <- function(label,
                                fontface = 1,
                                lineheight = 1.2,
                                parse = FALSE,
-                               sides = "l",
+                               sides = "r",
                                margin = unit(1, "pt"),
                                length = unit(1, "cm"),
                                tick.length = "10%",
@@ -80,6 +82,7 @@ ArcMarginVtextGrob <- function(label,
               cl = "ArcMarginVtextGrob")
 }
 
+## TODO: add sides parameter
 #' @rdname ArcMarginTextGrob
 #' @export
 ArcMarginHtextGrob <- function(label,

@@ -11,6 +11,15 @@ geom_margin_vtext(
   stat = "identity",
   position = "identity",
   ...,
+  parse = FALSE,
+  margin = unit(1, "pt"),
+  sides = "r",
+  length = unit(1, "cm"),
+  tick.length = "10\%",
+  link.colour = NULL,
+  link.linetype = NULL,
+  link.linewidth = NULL,
+  link.alpha = NULL,
   na.rm = FALSE,
   show.legend = FALSE,
   inherit.aes = TRUE
@@ -22,6 +31,15 @@ geom_margin_htext(
   stat = "identity",
   position = "identity",
   ...,
+  parse = FALSE,
+  margin = unit(1, "pt"),
+  sides = "r",
+  length = unit(1, "cm"),
+  tick.length = "10\%",
+  link.colour = NULL,
+  link.linetype = NULL,
+  link.linewidth = NULL,
+  link.alpha = NULL,
   na.rm = FALSE,
   show.legend = FALSE,
   inherit.aes = TRUE
@@ -61,6 +79,20 @@ a call to a position adjustment function. Cannot be jointly specified with
 often aesthetics, used to set an aesthetic to a fixed value, like
 \code{colour = "red"} or \code{size = 3}. They may also be parameters
 to the paired geom/stat.}
+
+\item{parse}{logical, if TRUE will parse text to expression.}
+
+\item{margin}{a grid unit object specifying top and bottom text margin.}
+
+\item{sides}{position of margin text. `sides` must be one of "l" or "r" for
+`MarginVtextGrob()`, and must be one of "t" or "b" for `MarginHtextGrob()`.}
+
+\item{length}{length of link, should be a grid unit object.}
+
+\item{tick.length}{tick length of link, should be a grid unit object or character
+ratio.}
+
+\item{link.colour, link.linetype, link.linewidth, link.alpha}{aesthetic of link lines.}
 
 \item{na.rm}{If \code{FALSE}, the default, missing values are removed with
 a warning. If \code{TRUE}, missing values are silently removed.}

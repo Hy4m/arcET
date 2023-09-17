@@ -16,7 +16,7 @@ ArcMarginVtextGrob(
   fontface = 1,
   lineheight = 1.2,
   parse = FALSE,
-  sides = "l",
+  sides = "r",
   margin = unit(1, "pt"),
   length = unit(1, "cm"),
   tick.length = "10\%",

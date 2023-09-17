@@ -11,6 +11,10 @@ GeomMarginVtext2grob(
   coord = PANEL(),
   region = CELL(),
   ...,
+  link.colour = NULL,
+  link.linetype = NULL,
+  link.linewidth = NULL,
+  link.alpha = NULL,
   flipped_aes = FALSE,
   clip = FALSE,
   na.rm = FALSE
@@ -22,6 +26,10 @@ GeomMarginHtext2grob(
   coord = PANEL(),
   region = CELL(),
   ...,
+  link.colour = NULL,
+  link.linetype = NULL,
+  link.linewidth = NULL,
+  link.alpha = NULL,
   flipped_aes = FALSE,
   clip = FALSE,
   na.rm = FALSE
@@ -39,6 +47,8 @@ ggplot object.}
 the drawing area.}
 
 \item{...}{other parameters passing to `Arc*Grob()` function.}
+
+\item{link.colour, link.linetype, link.linewidth, link.alpha}{aesthetic of link lines.}
 
 \item{flipped_aes}{TRUE means that coordinates are inherit `CoordFlip`.}
 
