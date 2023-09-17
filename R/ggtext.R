@@ -62,16 +62,21 @@ decorate_richtext <- function(plot,
                               y = mid_y,
                               CellID = NULL,
                               auto_adjust = TRUE,
+                              pos = 0,
                               fixed = TRUE,
                               ignore.case = FALSE,
                               ...) {
   stopifnot(is_ArcPlot(plot))
 
   if (missing(label)) {
-    cli::cli_warn(c("{.arg label} is missing",
-                    i = "did you forget to set the label parameter?"))
-    return(plot)
+    cli::cli_abort(c("{.arg label} is missing",
+                     i = "did you forget to set the label parameter?"))
   }
+
+  if (!is.numeric(pos) || length(pos) != 1) {
+    cli::cli_abort("{.arg pos} must be one of -1 or 0")
+  }
+  pos <- if (pos < 0) -1 else 0
 
   ids <- match_ids(CellID, plot$CellID, fixed = fixed, ignore.case = ignore.case)
   if (length(ids) >= 1) {
@@ -85,7 +90,9 @@ decorate_richtext <- function(plot,
                                y = rlang::eval_tidy(y, region),
                                auto_adjust = auto_adjust,
                                ...)
-      plot$annotate <- c(plot$annotate, list(anno))
+
+      plot$annotate$anno <- c(plot$annotate$anno, list(anno))
+      plot$annotate$pos <- c(plot$annotate$pos, pos)
     }
   }
 

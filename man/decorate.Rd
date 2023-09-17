@@ -22,6 +22,7 @@ decorate_text(
   y = mid_y,
   CellID = NULL,
   auto_adjust = TRUE,
+  pos = 0,
   fixed = TRUE,
   ignore.case = FALSE,
   ...
@@ -34,6 +35,7 @@ decorate_label(
   y = mid_y,
   CellID = NULL,
   auto_adjust = TRUE,
+  pos = 0,
   fixed = TRUE,
   ignore.case = FALSE,
   ...
@@ -45,6 +47,7 @@ decorate_bannertext(
   x = mid_x,
   y = mid_y,
   CellID = NULL,
+  pos = 0,
   fixed = TRUE,
   ignore.case = FALSE,
   ...
@@ -57,6 +60,7 @@ decorate_rect(
   xmax = x.range[2],
   ymax = y.range[2],
   CellID = NULL,
+  pos = 0,
   fixed = TRUE,
   ignore.case = FALSE,
   ...
@@ -67,6 +71,7 @@ decorate_polygon(
   x = NULL,
   y = NULL,
   CellID = NULL,
+  pos = 0,
   fixed = TRUE,
   ignore.case = FALSE,
   ...
@@ -77,6 +82,7 @@ decorate_point(
   x = mid_x,
   y = mid_y,
   CellID = NULL,
+  pos = 0,
   fixed = TRUE,
   ignore.case = FALSE,
   ...
@@ -87,6 +93,7 @@ decorate_line(
   x = x.range,
   y = y.range,
   CellID = NULL,
+  pos = 0,
   fixed = TRUE,
   ignore.case = FALSE,
   ...
@@ -97,6 +104,7 @@ decorate_path(
   x = x.range,
   y = y.range,
   CellID = NULL,
+  pos = 0,
   fixed = TRUE,
   ignore.case = FALSE,
   ...
@@ -109,6 +117,7 @@ decorate_segment(
   xend = x.range[2],
   yend = x.range[2],
   CellID = NULL,
+  pos = 0,
   fixed = TRUE,
   ignore.case = FALSE,
   ...
@@ -118,6 +127,7 @@ decorate_hline(
   plot,
   yintercept = mid_y,
   CellID = NULL,
+  pos = 0,
   fixed = TRUE,
   ignore.case = FALSE,
   ...
@@ -127,6 +137,7 @@ decorate_vline(
   plot,
   xintercept = mid_x,
   CellID = NULL,
+  pos = 0,
   fixed = TRUE,
   ignore.case = FALSE,
   ...
@@ -139,6 +150,7 @@ decorate_richtext(
   y = mid_y,
   CellID = NULL,
   auto_adjust = TRUE,
+  pos = 0,
   fixed = TRUE,
   ignore.case = FALSE,
   ...
@@ -156,6 +168,9 @@ decorate_richtext(
 \item{CellID}{character IDs indicating which element will be modified.}
 
 \item{auto_adjust}{logical, if TRUE will adjust angle based on x-axis value.}
+
+\item{pos}{annotates will be added to the below (`pos = 0`) or above (`pos = -1`) of
+CellPlot.}
 
 \item{fixed}{logical.  If \code{TRUE}, \code{pattern} is a string to be
     matched as is.  Overrides all conflicting arguments.}

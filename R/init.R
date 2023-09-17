@@ -33,12 +33,15 @@ plot.ArcPlot <- function(x,
                          newpage = is.null(vp),
                          vp = NULL,
                          ...) {
-  grobs <- ArcPlot_build(plot = x, ...)
+  set_current_plot(x)
 
   if (newpage) {
     grid::grid.newpage()
   }
+  grDevices::recordGraphics(requireNamespace("arcET", quietly = TRUE),
+                            list(), getNamespace("arcET"))
 
+  grobs <- ArcPlot_build(plot = x, ...)
   if (is.null(vp)) {
     grid::grid.draw(grobs)
   } else {
@@ -266,10 +269,21 @@ ArcPlot_build.ArcPlot <- function(plot, ...) {
     }
   }
 
-  if (length(plot$annotate) > 0) {
-    annotate <- gTree(children = do.call("gList", plot$annotate), vp = vp)
-    gt <- gtable_add_grob(gt, grobs = annotate, t = 5, l = 3, b = 5, r = 3,
-                          clip = "off", name = "annotate")
+  if (length(plot$annotate$anno) > 0) {
+    anno_bottom <- plot$annotate$anno[plot$annotate$pos < 0]
+    anno_top <- plot$annotate$anno[plot$annotate$pos >= 0]
+
+    if (length(anno_bottom) > 0) {
+      anno_bottom <- gTree(children = do.call("gList", anno_bottom), vp = vp)
+      gt <- gtable_add_grob(gt, grobs = anno_bottom, t = 5, l = 3, b = 5, r = 3,
+                            z = -Inf, clip = "off", name = "annotate-bottom")
+    }
+
+    if (length(anno_top) > 0) {
+      anno_top <- gTree(children = do.call("gList", anno_top), vp = vp)
+      gt <- gtable_add_grob(gt, grobs = anno_top, t = 5, l = 3, b = 5, r = 3,
+                            z = Inf, clip = "off", name = "annotate-top")
+    }
   }
 
   plot.margin <- theme$plot.margin %||% margin(0.5, 0.5, 0.5, 0.5, "lines")

@@ -5,6 +5,8 @@
 #' @param y,yend,ymin,ymax,yintercept positive numeric vector (in radius) specifying y-values.
 #' @param label expression or character.
 #' @param CellID character IDs indicating which element will be modified.
+#' @param pos annotates will be added to the below (`pos = 0`) or above (`pos = -1`) of
+#' CellPlot.
 #' @param auto_adjust logical, if TRUE will adjust angle based on x-axis value.
 #' @inheritParams base::grepl
 #' @param ... other parameters passing `Arc*Grob()` function.
@@ -18,16 +20,21 @@ decorate_text <- function(plot,
                           y = mid_y,
                           CellID = NULL,
                           auto_adjust = TRUE,
+                          pos = 0,
                           fixed = TRUE,
                           ignore.case = FALSE,
                           ...) {
   stopifnot(is_ArcPlot(plot))
 
   if (missing(label)) {
-    cli::cli_warn(c("{.arg label} is missing",
+    cli::cli_abort(c("{.arg label} is missing",
                     i = "did you forget to set the label parameter?"))
-    return(plot)
   }
+
+  if (!is.numeric(pos) || length(pos) != 1) {
+    cli::cli_abort("{.arg pos} must be one of -1 or 0")
+  }
+  pos <- if (pos < 0) -1 else 0
 
   ids <- match_ids(CellID, plot$CellID, fixed = fixed, ignore.case = ignore.case)
   if (length(ids) >= 1) {
@@ -41,7 +48,8 @@ decorate_text <- function(plot,
                           y = rlang::eval_tidy(y, region),
                           auto_adjust = auto_adjust,
                           ...)
-      plot$annotate <- c(plot$annotate, list(anno))
+      plot$annotate$anno <- c(plot$annotate$anno, list(anno))
+      plot$annotate$pos <- c(plot$annotate$pos, pos)
     }
   }
 
@@ -57,16 +65,21 @@ decorate_label <- function(plot,
                            y = mid_y,
                            CellID = NULL,
                            auto_adjust = TRUE,
+                           pos = 0,
                            fixed = TRUE,
                            ignore.case = FALSE,
                            ...) {
   stopifnot(is_ArcPlot(plot))
 
   if (missing(label)) {
-    cli::cli_warn(c("{.arg label} is missing",
-                    i = "did you forget to set the label parameter?"))
-    return(plot)
+    cli::cli_abort(c("{.arg label} is missing",
+                     i = "did you forget to set the label parameter?"))
   }
+
+  if (!is.numeric(pos) || length(pos) != 1) {
+    cli::cli_abort("{.arg pos} must be one of -1 or 0")
+  }
+  pos <- if (pos < 0) -1 else 0
 
   ids <- match_ids(CellID, plot$CellID, fixed = fixed, ignore.case = ignore.case)
   if (length(ids) >= 1) {
@@ -80,7 +93,8 @@ decorate_label <- function(plot,
                            y = rlang::eval_tidy(y, region),
                            auto_adjust = auto_adjust,
                            ...)
-      plot$annotate <- c(plot$annotate, list(anno))
+      plot$annotate$anno <- c(plot$annotate$anno, list(anno))
+      plot$annotate$pos <- c(plot$annotate$pos, pos)
     }
   }
 
@@ -95,16 +109,21 @@ decorate_bannertext <- function(plot,
                                 x = mid_x,
                                 y = mid_y,
                                 CellID = NULL,
+                                pos = 0,
                                 fixed = TRUE,
                                 ignore.case = FALSE,
                                 ...) {
   stopifnot(is_ArcPlot(plot))
 
   if (missing(label)) {
-    cli::cli_warn(c("{.arg label} is missing",
+    cli::cli_abort(c("{.arg label} is missing",
                     i = "did you forget to set the label parameter?"))
-    return(plot)
   }
+
+  if (!is.numeric(pos) || length(pos) != 1) {
+    cli::cli_abort("{.arg pos} must be one of -1 or 0")
+  }
+  pos <- if (pos < 0) -1 else 0
 
   ids <- match_ids(CellID, plot$CellID, fixed = fixed, ignore.case = ignore.case)
   if (length(ids) >= 1) {
@@ -117,7 +136,8 @@ decorate_bannertext <- function(plot,
                                 x = rlang::eval_tidy(x, region),
                                 y = rlang::eval_tidy(y, region),
                                 ...)
-      plot$annotate <- c(plot$annotate, list(anno))
+      plot$annotate$anno <- c(plot$annotate$anno, list(anno))
+      plot$annotate$pos <- c(plot$annotate$pos, pos)
     }
   }
 
@@ -133,10 +153,16 @@ decorate_rect <- function(plot,
                           xmax = x.range[2],
                           ymax = y.range[2],
                           CellID = NULL,
+                          pos = 0,
                           fixed = TRUE,
                           ignore.case = FALSE,
                           ...) {
   stopifnot(is_ArcPlot(plot))
+
+  if (!is.numeric(pos) || length(pos) != 1) {
+    cli::cli_abort("{.arg pos} must be one of -1 or 0")
+  }
+  pos <- if (pos < 0) -1 else 0
 
   ids <- match_ids(CellID, plot$CellID, fixed = fixed, ignore.case = ignore.case)
   if (length(ids) >= 1) {
@@ -152,7 +178,8 @@ decorate_rect <- function(plot,
                           xmax = rlang::eval_tidy(xmax, region),
                           ymax = rlang::eval_tidy(ymax, region),
                           ...)
-      plot$annotate <- c(plot$annotate, list(anno))
+      plot$annotate$anno <- c(plot$annotate$anno, list(anno))
+      plot$annotate$pos <- c(plot$annotate$pos, pos)
     }
   }
 
@@ -166,10 +193,16 @@ decorate_polygon <- function(plot,
                              x = NULL,
                              y = NULL,
                              CellID = NULL,
+                             pos = 0,
                              fixed = TRUE,
                              ignore.case = FALSE,
                              ...) {
   stopifnot(is_ArcPlot(plot))
+
+  if (!is.numeric(pos) || length(pos) != 1) {
+    cli::cli_abort("{.arg pos} must be one of -1 or 0")
+  }
+  pos <- if (pos < 0) -1 else 0
 
   ids <- match_ids(CellID, plot$CellID, fixed = fixed, ignore.case = ignore.case)
   if (length(ids) >= 1) {
@@ -182,10 +215,10 @@ decorate_polygon <- function(plot,
       yy <- rlang::eval_tidy(y, region)
       if (any(is.null(xx), is.null(yy))) next
 
-      anno <- ArcPolygonGrob(x = xx,
-                             y = yy,
-                             ...)
-      plot$annotate <- c(plot$annotate, list(anno))
+      anno <- ArcPolygonGrob(x = xx, y = yy, ...)
+
+      plot$annotate$anno <- c(plot$annotate$anno, list(anno))
+      plot$annotate$pos <- c(plot$annotate$pos, pos)
     }
   }
 
@@ -199,10 +232,16 @@ decorate_point <- function(plot,
                            x = mid_x,
                            y = mid_y,
                            CellID = NULL,
+                           pos = 0,
                            fixed = TRUE,
                            ignore.case = FALSE,
                            ...) {
   stopifnot(is_ArcPlot(plot))
+
+  if (!is.numeric(pos) || length(pos) != 1) {
+    cli::cli_abort("{.arg pos} must be one of -1 or 0")
+  }
+  pos <- if (pos < 0) -1 else 0
 
   ids <- match_ids(CellID, plot$CellID, fixed = fixed, ignore.case = ignore.case)
   if (length(ids) >= 1) {
@@ -214,7 +253,9 @@ decorate_point <- function(plot,
       anno <- ArcPointsGrob(x = rlang::eval_tidy(x, region),
                             y = rlang::eval_tidy(y, region),
                             ...)
-      plot$annotate <- c(plot$annotate, list(anno))
+
+      plot$annotate$anno <- c(plot$annotate$anno, list(anno))
+      plot$annotate$pos <- c(plot$annotate$pos, pos)
     }
   }
 
@@ -228,10 +269,16 @@ decorate_line <- function(plot,
                           x = x.range,
                           y = y.range,
                           CellID = NULL,
+                          pos = 0,
                           fixed = TRUE,
                           ignore.case = FALSE,
                           ...) {
   stopifnot(is_ArcPlot(plot))
+
+  if (!is.numeric(pos) || length(pos) != 1) {
+    cli::cli_abort("{.arg pos} must be one of -1 or 0")
+  }
+  pos <- if (pos < 0) -1 else 0
 
   ids <- match_ids(CellID, plot$CellID, fixed = fixed, ignore.case = ignore.case)
   if (length(ids) >= 1) {
@@ -239,13 +286,13 @@ decorate_line <- function(plot,
     y <- rlang::enquo(y)
 
     for (ii in ids) {
-      for (ii in ids) {
-        region <- plot$region[[ii]]
-        anno <- ArcLineGrob(x = rlang::eval_tidy(x, region),
-                            y = rlang::eval_tidy(y, region),
-                            ...)
-        plot$annotate <- c(plot$annotate, list(anno))
-      }
+      region <- plot$region[[ii]]
+      anno <- ArcLineGrob(x = rlang::eval_tidy(x, region),
+                          y = rlang::eval_tidy(y, region),
+                          ...)
+
+      plot$annotate$anno <- c(plot$annotate$anno, list(anno))
+      plot$annotate$pos <- c(plot$annotate$pos, pos)
     }
   }
 
@@ -259,10 +306,16 @@ decorate_path <- function(plot,
                           x = x.range,
                           y = y.range,
                           CellID = NULL,
+                          pos = 0,
                           fixed = TRUE,
                           ignore.case = FALSE,
                           ...) {
   stopifnot(is_ArcPlot(plot))
+
+  if (!is.numeric(pos) || length(pos) != 1) {
+    cli::cli_abort("{.arg pos} must be one of -1 or 0")
+  }
+  pos <- if (pos < 0) -1 else 0
 
   ids <- match_ids(CellID, plot$CellID, fixed = fixed, ignore.case = ignore.case)
   if (length(ids) >= 1) {
@@ -270,13 +323,13 @@ decorate_path <- function(plot,
     y <- rlang::enquo(y)
 
     for (ii in ids) {
-      for (ii in ids) {
-        region <- plot$region[[ii]]
-        anno <- ArcLineGrob(x = rlang::eval_tidy(x, region),
-                            y = rlang::eval_tidy(y, region),
-                            ...)
-        plot$annotate <- c(plot$annotate, list(anno))
-      }
+      region <- plot$region[[ii]]
+      anno <- ArcLineGrob(x = rlang::eval_tidy(x, region),
+                          y = rlang::eval_tidy(y, region),
+                          ...)
+
+      plot$annotate$anno <- c(plot$annotate$anno, list(anno))
+      plot$annotate$pos <- c(plot$annotate$pos, pos)
     }
   }
 
@@ -292,10 +345,16 @@ decorate_segment <- function(plot,
                              xend = x.range[2],
                              yend = x.range[2],
                              CellID = NULL,
+                             pos = 0,
                              fixed = TRUE,
                              ignore.case = FALSE,
                              ...) {
   stopifnot(is_ArcPlot(plot))
+
+  if (!is.numeric(pos) || length(pos) != 1) {
+    cli::cli_abort("{.arg pos} must be one of -1 or 0")
+  }
+  pos <- if (pos < 0) -1 else 0
 
   ids <- match_ids(CellID, plot$CellID, fixed = fixed, ignore.case = ignore.case)
   if (length(ids) >= 1) {
@@ -305,15 +364,15 @@ decorate_segment <- function(plot,
     yend <- rlang::enquo(yend)
 
     for (ii in ids) {
-      for (ii in ids) {
-        region <- plot$region[[ii]]
-        anno <- ArcSegmentsGrob(x = rlang::eval_tidy(x, region),
-                                y = rlang::eval_tidy(y, region),
-                                xend = rlang::eval_tidy(xend, region),
-                                yend = rlang::eval_tidy(yend, region),
-                                ...)
-        plot$annotate <- c(plot$annotate, list(anno))
-      }
+      region <- plot$region[[ii]]
+      anno <- ArcSegmentsGrob(x = rlang::eval_tidy(x, region),
+                              y = rlang::eval_tidy(y, region),
+                              xend = rlang::eval_tidy(xend, region),
+                              yend = rlang::eval_tidy(yend, region),
+                              ...)
+
+      plot$annotate$anno <- c(plot$annotate$anno, list(anno))
+      plot$annotate$pos <- c(plot$annotate$pos, pos)
     }
   }
 
@@ -326,10 +385,16 @@ decorate_segment <- function(plot,
 decorate_hline <- function(plot,
                            yintercept = mid_y,
                            CellID = NULL,
+                           pos = 0,
                            fixed = TRUE,
                            ignore.case = FALSE,
                            ...) {
   stopifnot(is_ArcPlot(plot))
+
+  if (!is.numeric(pos) || length(pos) != 1) {
+    cli::cli_abort("{.arg pos} must be one of -1 or 0")
+  }
+  pos <- if (pos < 0) -1 else 0
 
   ids <- match_ids(CellID, plot$CellID, fixed = fixed, ignore.case = ignore.case)
   if (length(ids) >= 1) {
@@ -340,7 +405,9 @@ decorate_hline <- function(plot,
       anno <- ArcHlineGrob(yintercept = rlang::eval_tidy(yintercept, region),
                            region = region,
                            ...)
-      plot$annotate <- c(plot$annotate, list(anno))
+
+      plot$annotate$anno <- c(plot$annotate$anno, list(anno))
+      plot$annotate$pos <- c(plot$annotate$pos, pos)
     }
   }
 
@@ -353,10 +420,16 @@ decorate_hline <- function(plot,
 decorate_vline <- function(plot,
                            xintercept = mid_x,
                            CellID = NULL,
+                           pos = 0,
                            fixed = TRUE,
                            ignore.case = FALSE,
                            ...) {
   stopifnot(is_ArcPlot(plot))
+
+  if (!is.numeric(pos) || length(pos) != 1) {
+    cli::cli_abort("{.arg pos} must be one of -1 or 0")
+  }
+  pos <- if (pos < 0) -1 else 0
 
   ids <- match_ids(CellID, plot$CellID, fixed = fixed, ignore.case = ignore.case)
   if (length(ids) >= 1) {
@@ -367,7 +440,9 @@ decorate_vline <- function(plot,
       anno <- ArcVlineGrob(xintercept = rlang::eval_tidy(xintercept, region),
                            region = region,
                            ...)
-      plot$annotate <- c(plot$annotate, list(anno))
+
+      plot$annotate$anno <- c(plot$annotate$anno, list(anno))
+      plot$annotate$pos <- c(plot$annotate$pos, pos)
     }
   }
 
