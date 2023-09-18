@@ -313,14 +313,6 @@ CellPlot_build <- function(gg_element,
     }
   })
 
-  ## build panel border
-  panel.border <- calc_element("panel.border", thm)
-  border <- arc_element_grob(panel.border,
-                             xmin  = region$x.range[1],
-                             xmax = region$x.range[2],
-                             ymin  = region$y.range[1],
-                             ymax = region$y.range[2])
-
   ## build panel background
   panel.background <- calc_element("panel.background", thm)
   panel <- arc_element_grob(panel.background,
@@ -328,6 +320,14 @@ CellPlot_build <- function(gg_element,
                             xmax = region$x.range[2],
                             ymin  = region$y.range[1],
                             ymax = region$y.range[2])
+
+  ## build panel border
+  panel.border <- calc_element("panel.border", thm)
+  border <- arc_element_grob(panel.border,
+                             xmin  = region$x.range[1],
+                             xmax = region$x.range[2],
+                             ymin  = region$y.range[1],
+                             ymax = region$y.range[2])
 
   ## build panel grid
   x.major <- coord$x$breaks
@@ -399,8 +399,8 @@ CellPlot_build <- function(gg_element,
                           ticks.length = ticks.length)
   }
 
-  list(border = border,
-       panel = panel,
+  list(panel = panel,
+       border = border,
        guide_grid = guide_grid,
        xaxis = xaxis,
        yaxis = yaxis,

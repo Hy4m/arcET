@@ -266,7 +266,7 @@ arc_element_grob.element_line <- function(element,
                                           linejoin = "round",
                                           linemitre = 10,
                                           steps = 0.01,
-                                          simplify = TRUE,
+                                          simplify = FALSE,
                                           ...,
                                           size) {
   if (!missing(size)) {
@@ -317,11 +317,11 @@ arc_element_grob.element_rect <- function(element,
                                           fill = NULL,
                                           linewidth = NULL,
                                           linetype = NULL,
-                                          lineend = NULL,
+                                          lineend = "butt",
                                           linejoin = "round",
                                           linemitre = 10,
                                           steps = 0.01,
-                                          simplify = TRUE,
+                                          simplify = FALSE,
                                           ...,
                                           size) {
   if (!missing(size)) {
@@ -332,13 +332,11 @@ arc_element_grob.element_rect <- function(element,
   gp <- gpar(col = colour,
              fill = fill,
              lwd = len0_null(linewidth),
-             lty = linetype,
-             lineend = lineend)
+             lty = linetype)
   element_gp <- gpar(col = element$colour,
                      fill = element$fill,
                      lwd = len0_null(element$linewidth),
-                     lty = element$linetype,
-                     lineend = element$lineend)
+                     lty = element$linetype)
 
   gp <- unclass(modify_list(element_gp, gp))
   gp <- rename(gp, "colour" = "col", "linewidth" = "lwd", "linetype" = "lty")
@@ -349,6 +347,7 @@ arc_element_grob.element_rect <- function(element,
        xmax = xmax,
        ymax = ymax,
        !!!gp,
+       lineend = lineend,
        linejoin = linejoin,
        linemitre = linemitre,
        steps = steps,
