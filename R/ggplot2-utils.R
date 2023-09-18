@@ -21,6 +21,9 @@ translate_shape_string <- getFromNamespace("translate_shape_string", ns = "ggplo
 check_linewidth <- getFromNamespace("check_linewidth", ns = "ggplot2")
 
 #' @noRd
+parse_safe <- getFromNamespace("parse_safe", "ggplot2")
+
+#' @noRd
 ggname <- function (prefix, grob) {
   grob$name <- grid::grobName(grob, prefix)
   grob
@@ -235,64 +238,162 @@ gg2coord <- function(panel_params) {
   structure(list(x = x, y = y), class = "PANEL")
 }
 
-#' @title Test function
-#' @description Helper funtion used to quickly preview the results of the conversion.
-#' @param plot a ggplot object.
-#' @param region a `CELL` object.
-#' @param ... other parameters passing to `ArcPlot_build()`.
-#' @param vp 	viewport to draw plot in.
-#' @param newpage draw new (empty) page first?
-#' @return return grob object invisibly.
-#' @rdname arc_test
-#' @author Hou Yun
+## modify from ggplot2::element_grob()
+#' Create arc grob from theme element
+#'
+#' @param element Theme element, i.e. `element_rect` or similar.
+#' @param ... Other arguments to control specific of rendering. This is
+#'   usually at least position. See the source code for individual methods.
+#' @keywords internal
 #' @export
-#' @examples
-#' if (FALSE) { # Not Run
-#'   library(ggplot2)
-#'   library(grid)
-#'   library(arcET)
-#'   ggplot(mtcars, aes(wt, mpg)) + geom_point()
-#'   arc_test()
-#' }
-arc_test <- function(plot = ggplot2::last_plot(),
-                     region = NULL,
-                     ...,
-                     vp = NULL,
-                     newpage = is.null(vp)) {
-  if (!inherits(plot, "ggplot")) {
-    cli::cli_abort("{.arg plot} must be a ggplot object.")
-  }
-  if (!inherits(plot$facet, "FacetNull")) {
-    cli::cli_abort("Facet's plot has not be implemented yet.")
-  }
+arc_element_grob <- function(element, ...) {
+  UseMethod("arc_element_grob")
+}
 
-  clss <- class(plot)[1]
-  region <- region %||% CELL(120, 60, 0.4)
-  plot <- init_cell(arcplot(), data = plot, region = region)
+#' @export
+arc_element_grob.element_blank <- function(element, ...) zeroGrob()
 
-  plot <- tryCatch(ArcPlot_build(plot, ...),
-                   error = function(e) {
-                     cli::cli_abort("Connot convert {.cls {clss}} to arcplot...")
-                   })
-
-  if (newpage) {
-    grid::grid.newpage()
+#' @export
+arc_element_grob.element_line <- function(element,
+                                          x = 360,
+                                          y = 0.5,
+                                          xend = 0,
+                                          yend = 0.5,
+                                          colour = NULL,
+                                          linewidth = NULL,
+                                          linetype = NULL,
+                                          lineend = NULL,
+                                          linejoin = "round",
+                                          linemitre = 10,
+                                          steps = 0.01,
+                                          simplify = TRUE,
+                                          ...,
+                                          size) {
+  if (!missing(size)) {
+    linewidth <- size
   }
 
-  grDevices::recordGraphics(requireNamespace("grid", quietly = TRUE),
-                            list(), getNamespace("grid"))
-  if (is.null(vp)) {
-    grid::grid.draw(plot)
+  # The gp settings can override element_gp
+  gp <- gpar(col = colour,
+             fill = colour,
+             lwd = len0_null(linewidth),
+             lty = linetype,
+             lineend = lineend)
+  element_gp <- gpar(col = element$colour,
+                     fill = element$colour,
+                     lwd = len0_null(element$linewidth),
+                     lty = element$linetype,
+                     lineend = element$lineend)
+  gp <- unclass(modify_list(element_gp, gp))
+  gp <- rename(gp, "colour" = "col", "linewidth" = "lwd", "linetype" = "lty")
+
+  arrow <- if (is.logical(element$arrow) && !element$arrow) {
+    NULL
   } else {
-    if (is.character(vp)) {
-      grid::seekViewport(vp)
-    } else {
-      grid::pushViewport(vp)
-    }
-    grid::grid.draw(plot)
-
-    grid::upViewport()
+    element$arrow
   }
 
-  invisible(plot)
+  exec(ArcSegmentsGrob,
+       x = x,
+       y = y,
+       xend = xend,
+       yend = yend,
+       !!!gp,
+       arrow = arrow,
+       linejoin = linejoin,
+       linemitre = linemitre,
+       steps = steps,
+       simplify = simplify,
+       ...)
+}
+
+#' @export
+arc_element_grob.element_rect <- function(element,
+                                          xmin = 120,
+                                          ymin = 0.5,
+                                          xmax = 60,
+                                          ymax = 1,
+                                          colour = NULL,
+                                          fill = NULL,
+                                          linewidth = NULL,
+                                          linetype = NULL,
+                                          lineend = NULL,
+                                          linejoin = "round",
+                                          linemitre = 10,
+                                          steps = 0.01,
+                                          simplify = TRUE,
+                                          ...,
+                                          size) {
+  if (!missing(size)) {
+    linewidth <- size
+  }
+
+  # The gp settings can override element_gp
+  gp <- gpar(col = colour,
+             fill = fill,
+             lwd = len0_null(linewidth),
+             lty = linetype,
+             lineend = lineend)
+  element_gp <- gpar(col = element$colour,
+                     fill = element$fill,
+                     lwd = len0_null(element$linewidth),
+                     lty = element$linetype,
+                     lineend = element$lineend)
+
+  gp <- unclass(modify_list(element_gp, gp))
+  gp <- rename(gp, "colour" = "col", "linewidth" = "lwd", "linetype" = "lty")
+
+  exec(ArcRectGrob,
+       xmin = xmin,
+       ymin = ymin,
+       xmax = xmax,
+       ymax = ymax,
+       !!!gp,
+       linejoin = linejoin,
+       linemitre = linemitre,
+       steps = steps,
+       simplify = simplify,
+       ...)
+}
+
+#' @noRd
+arc_guide_grid <- function(theme,
+                           x.minor = NULL,
+                           x.major = NULL,
+                           y.minor = NULL,
+                           y.major = NULL,
+                           region = CELL()) {
+  x.minor <- setdiff(x.minor, x.major)
+  y.minor <- setdiff(y.minor, y.major)
+  x.range <- region$x.range
+  y.range <- region$y.range
+
+  panel.grid.minor.y <- calc_element("panel.grid.minor.y", theme)
+  panel.grid.major.y <- calc_element("panel.grid.major.y", theme)
+  panel.grid.minor.x <- calc_element("panel.grid.minor.x", theme)
+  panel.grid.major.x <- calc_element("panel.grid.major.x", theme)
+
+  grob <- grid::gTree(
+    children = gList(if (length(y.minor) > 0) arc_element_grob(panel.grid.minor.y,
+                                                               x = x.range[1],
+                                                               xend = x.range[2],
+                                                               y = y.minor,
+                                                               yend = y.minor),
+                     if (length(x.minor) > 0) arc_element_grob(panel.grid.minor.x,
+                                                               x = x.minor,
+                                                               xend = x.minor,
+                                                               y = y.range[1],
+                                                               yend = y.range[2]),
+                     if (length(y.major) > 0) arc_element_grob(panel.grid.major.y,
+                                                               x = x.range[1],
+                                                               xend = x.range[2],
+                                                               y = y.major,
+                                                               yend = y.major),
+                     if (length(x.major) > 0) arc_element_grob(panel.grid.major.x,
+                                                               x = x.major,
+                                                               xend = x.major,
+                                                               y = y.range[1],
+                                                               yend = y.range[2])),
+    name = "grill"
+  )
 }
