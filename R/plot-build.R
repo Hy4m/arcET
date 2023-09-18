@@ -33,8 +33,6 @@ plot.ArcPlot <- function(x,
                          newpage = is.null(vp),
                          vp = NULL,
                          ...) {
-  set_current_plot(x)
-
   if (newpage) {
     grid::grid.newpage()
   }
@@ -95,10 +93,10 @@ ArcPlot_build.ArcPlot <- function(plot, ...) {
                  xscale = xlim,
                  yscale = ylim,
                  clip = "off")
-  widths <- unit.c(unit(c(0, 0), "cm"), unit(aspect_ratio, "null"),
-                   unit(c(0, 0), "cm"))
-  heights <- unit.c(unit(c(0, 0, 0, 0), "cm"), unit(1, "null"),
-                    unit(c(0, 0, 0), "cm"))
+  widths <- unit(c(0, 0, aspect_ratio, 0, 0),
+                 c("cm", "cm", "null", "cm", "cm"))
+  heights <- unit(c(0, 0, 0, 0, 1, 0, 0, 0),
+                  c("cm", "cm", "cm", "cm", "null", "cm", "cm", "cm"))
   gt <- gtable(widths = widths, heights = heights, respect = TRUE)
 
   guides <- list()
@@ -113,7 +111,7 @@ ArcPlot_build.ArcPlot <- function(plot, ...) {
       guides <- c(guides, list(cell$guides))
     }
 
-    cell <- c(cell[1:6], cell$layers)
+    cell <- c(cell[1:5], cell$layers)
     class(cell) <- "gList"
     cell <- grid::gTree(children = cell, vp = vp)
     gt <- gtable_add_grob(gt, grobs = cell, t = 5, l = 3, b = 5, r = 3,
@@ -165,7 +163,7 @@ ArcPlot_build.ArcPlot <- function(plot, ...) {
   plot.title.position <- theme$plot.title.position
 
   if (!is.null(title)) {
-    title <- ggplot2::element_render(theme, "plot.title", title, margin_y = TRUE)
+    title <- element_render(theme, "plot.title", title, margin_y = TRUE)
     gt$heights[2] <- grobHeight(title)
 
     if (identical(plot.title.position, "panel")) {
@@ -181,7 +179,7 @@ ArcPlot_build.ArcPlot <- function(plot, ...) {
   plot.subtitle.position <- theme$plot.subtitle.position %||% theme$plot.title.position
 
   if (!is.null(subtitle)) {
-    subtitle <- ggplot2::element_render(theme, "plot.subtitle", subtitle, margin_y = TRUE)
+    subtitle <- element_render(theme, "plot.subtitle", subtitle, margin_y = TRUE)
     gt$heights[3] <- grobHeight(subtitle)
 
     if (identical(plot.subtitle.position, "panel")) {
@@ -197,7 +195,7 @@ ArcPlot_build.ArcPlot <- function(plot, ...) {
   plot.caption.position <- theme$plot.caption.position %||% theme$plot.title.position
 
   if (!is.null(caption)) {
-    caption <- ggplot2::element_render(theme, "plot.caption", caption, margin_y = TRUE)
+    caption <- element_render(theme, "plot.caption", caption, margin_y = TRUE)
     gt$heights[7] <- grobHeight(caption)
 
     if (identical(plot.caption.position, "panel")) {
@@ -213,7 +211,7 @@ ArcPlot_build.ArcPlot <- function(plot, ...) {
   plot.tag.position <- theme$plot.tag.position
 
   if (!is.null(tag)) {
-    tag <- ggplot2::element_render(theme, "plot.tag", tag, margin_y = TRUE,
+    tag <- element_render(theme, "plot.tag", tag, margin_y = TRUE,
                                    margin_x = TRUE)
 
     if (is.numeric(plot.tag.position)) {
@@ -315,96 +313,49 @@ CellPlot_build <- function(gg_element,
     }
   })
 
-  if (inherits(thm$panel.border, "element_blank")) {
-    border <- NULL
-  } else {
-    panel.border <- calc_element("panel.border", thm)
-    if (inherits(panel.border$linewidth, "rel")) {
-      panel.border$linewidth <- panel.border$linewidth/.pt
-    }
-    border <- ArcPanelGrob(region = region,
-                           fill = panel.border$fill %||% NA,
-                           colour = panel.border$colour %||% "grey20",
-                           linewidth = panel.border$linewidth %||% 0.5,
-                           linetype = panel.border$linetype %||% 1)
+  ## build panel border
+  panel.border <- calc_element("panel.border", thm)
+  border <- arc_element_grob(panel.border,
+                             xmin  = region$x.range[1],
+                             xmax = region$x.range[2],
+                             ymin  = region$y.range[1],
+                             ymax = region$y.range[2])
+
+  ## build panel background
+  panel.background <- calc_element("panel.background", thm)
+  panel <- arc_element_grob(panel.background,
+                            xmin  = region$x.range[1],
+                            xmax = region$x.range[2],
+                            ymin  = region$y.range[1],
+                            ymax = region$y.range[2])
+
+  ## build panel grid
+  x.major <- coord$x$breaks
+  x.minor <- coord$x$minor_breaks
+  y.major <- coord$y$breaks
+  y.minor <- coord$y$minor_breaks
+
+  if (length(x.major) > 0) {
+    x.major <- scales::rescale(x.major, to = region$x.range, from = coord$x$range)
+  }
+  if (length(x.minor) > 0) {
+    x.minor <- scales::rescale(x.minor, to = region$x.range, from = coord$x$range)
+  }
+  if (length(y.major) > 0) {
+    y.major <- scales::rescale(y.major, to = region$y.range, from = coord$y$range)
+  }
+  if (length(y.minor) > 0) {
+    y.minor <- scales::rescale(y.minor, to = region$y.range, from = coord$y$range)
   }
 
-  if (inherits(thm$panel.background, "element_blank")) {
-    panel <- NULL
-  } else {
-    panel.background <- calc_element("panel.background", thm)
-    if (inherits(panel.background$linewidth, "rel")) {
-      panel.background$linewidth <- panel.background$linewidth/.pt
-    }
-    panel <- ArcPanelGrob(region = region,
-                          fill = panel.background$fill %||% "white",
-                          colour = panel.background$colour %||% NA,
-                          linewidth = panel.background$linewidth %||% 0.5,
-                          linetype = panel.background$linetype %||% 1)
-  }
+  guide_grid <- arc_guide_grid(theme = thm,
+                               x.minor = x.minor,
+                               x.major = x.major,
+                               y.minor = y.minor,
+                               y.major = y.major,
+                               region = region)
 
-  ## FIX ME: we should build major and minor grid separately
-
-  panel.grid.major.x <- calc_element("panel.grid.major.x", thm)
-  panel.grid.minor.x <- calc_element("panel.grid.minor.x", thm)
-  if (inherits(panel.grid.major.x$linewidth, "rel")) {
-    panel.grid.major.x$linewidth <- panel.grid.major.x$linewidth/.pt
-  }
-  if (inherits(panel.grid.minor.x$linewidth, "rel")) {
-    panel.grid.minor.x$linewidth <- panel.grid.minor.x$linewidth/.pt
-  }
-  if ((is.null(coord$x$breaks) || inherits(panel.grid.major.x, "element_blank")) &&
-      (is.null(coord$x$minor_breaks) || inherits(panel.grid.minor.x, "element_blank"))) {
-    grid_x <- NULL
-  } else {
-    x_breaks <- coord$x$breaks
-    x_minor_breaks <- coord$x$minor_breaks
-    colour <- c(rep(panel.grid.major.x$colour %||% "white", length(x_breaks)),
-                rep(panel.grid.minor.x$colour %||% "white", length(x_minor_breaks)))
-    linewidth <- c(rep(panel.grid.major.x$linewidth %||% 0.5, length(x_breaks)),
-                   rep(panel.grid.minor.x$linewidth %||% 0.25, length(x_minor_breaks)))
-    linetype <- c(rep(panel.grid.major.x$linetype %||% 1, length(x_breaks)),
-                  rep(panel.grid.minor.x$linetype %||% 1, length(x_minor_breaks)))
-    x_breaks <- scales::rescale(c(x_breaks, x_minor_breaks), to = region$x.range,
-                                from = coord$x$range)
-
-    grid_x <- ArcVlineGrob(xintercept = x_breaks,
-                           region = region,
-                           colour = colour,
-                           linewidth = linewidth,
-                           linetype = linetype)
-  }
-
-  panel.grid.major.y <- calc_element("panel.grid.major.y", thm)
-  panel.grid.minor.y <- calc_element("panel.grid.minor.y", thm)
-  if (inherits(panel.grid.major.y$linewidth, "rel")) {
-    panel.grid.major.y$linewidth <- panel.grid.major.y$linewidth/.pt
-  }
-  if (inherits(panel.grid.minor.y$linewidth, "rel")) {
-    panel.grid.minor.y$linewidth <- panel.grid.minor.y$linewidth/.pt
-  }
-  if ((is.null(coord$y$breaks) || inherits(panel.grid.major.y, "element_blank")) &&
-      (is.null(coord$y$minor_breaks) || inherits(panel.grid.minor.y, "element_blank"))) {
-    grid_y <- NULL
-  } else {
-    y_breaks <- coord$y$breaks
-    y_minor_breaks <- coord$y$minor_breaks
-    colour <- c(rep(panel.grid.major.y$colour %||% "white", length(y_breaks)),
-                rep(panel.grid.minor.y$colour %||% "white", length(y_minor_breaks)))
-    linewidth <- c(rep(panel.grid.major.y$linewidth %||% 0.5, length(y_breaks)),
-                   rep(panel.grid.minor.y$linewidth %||% 0.25, length(y_minor_breaks)))
-    linetype <- c(rep(panel.grid.major.y$linetype %||% 1, length(y_breaks)),
-                  rep(panel.grid.minor.y$linetype %||% 1, length(y_minor_breaks)))
-    y_breaks <- scales::rescale(c(y_breaks, y_minor_breaks), to = region$y.range,
-                                from = coord$y$range)
-
-    grid_y <- ArcHlineGrob(yintercept = y_breaks,
-                           region = region,
-                           colour = colour,
-                           linewidth = linewidth,
-                           linetype = linetype)
-  }
-
+  ## build x-axis guide
   if (coord$x$position == "none") {
     xaxis <- NULL
   } else {
@@ -426,6 +377,7 @@ CellPlot_build <- function(gg_element,
                           ticks.length = ticks.length)
   }
 
+  ## build x-axis guide
   if (coord$y$position == "none") {
     yaxis <- NULL
   } else {
@@ -449,8 +401,7 @@ CellPlot_build <- function(gg_element,
 
   list(border = border,
        panel = panel,
-       grid_x = grid_x,
-       grid_y = grid_y,
+       guide_grid = guide_grid,
        xaxis = xaxis,
        yaxis = yaxis,
        layers = layers,
@@ -460,9 +411,9 @@ CellPlot_build <- function(gg_element,
 #' @noRd
 get_xy_lim <- function(regions) {
   df <- lapply_dfr(regions, function(x) {
-    polar2cartesian(data_frame0(x = c(seq(x$x.range[1], x$x.range[2], length.out = 100),
-                                      seq(x$x.range[1], x$x.range[2], length.out = 100)),
-                                y = rep(x$y.range, each = 100)))
+    polar2cartesian(data_frame0(x = c(seq(x$x.range[1], x$x.range[2], length.out = 200),
+                                      seq(x$x.range[1], x$x.range[2], length.out = 200)),
+                                y = rep(x$y.range, each = 200)))
   })
 
   list(xlim = range(df$x) + c(-0.01, 0.01) * diff(range(df$x)),
