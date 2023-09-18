@@ -54,20 +54,6 @@ empty <- function(x) {
 }
 
 #' @noRd
-rand_chr <- function (n, max_len = 10, min_len = 2, lambda = 5)
-{
-  ll <- stats::rpois(n, lambda)
-  ll <- ifelse(ll > max_len, ll %% max_len, ll)
-  ll <- ifelse(ll < min_len, min_len, ll)
-  vapply_chr(ll, function(n) {
-    paste(sample(letters, n, TRUE), collapse = "")
-  })
-}
-
-#' @noRd
-parse_safe <- getFromNamespace("parse_safe", "ggplot2")
-
-#' @noRd
 exchange <- function(x, y, env = parent.frame()) {
   x_name <- rlang::as_name(rlang::enquo(x))
   y_name <- rlang::as_name(rlang::enquo(y))
@@ -88,17 +74,6 @@ count_by_group <- function(data) {
     stats::ave(seq_len(nrow(data)), data$group, data$subgroup,
                FUN = length)
   }
-}
-
-#' @noRd
-pretty2 <- function (x) {
-  if (length(x) < 2) {
-    x <- rep(x, 2)
-  }
-
-  rng <- range(x, na.rm = TRUE)
-  bb <- pretty(x)
-  bb[bb >= rng[1] & bb <= rng[2]]
 }
 
 #' @noRd
@@ -249,58 +224,9 @@ vec_cbind0 <- function(...,
                    .error_call = .error_call)
 }
 
-
-#' @noRd
-normalize <- function (data) {
-  if (empty(data)) {
-    return(data)
-  }
-
-  x <- data$x
-  y <- data$y
-  rng_x <- range(x, na.rm = TRUE)
-  rng_y <- range(y, na.rm = TRUE)
-  if (any(is.infinite(rng_x), is.infinite(rng_y))) {
-    cli::cli_warn("Contain infinite value.")
-    return(data)
-  }
-
-  if (diff(rng_x) == 0) {
-    x <- 0.5
-    y <- scales::rescale(y, c(0, 1), rng_y)
-  } else if (diff(rng_y) == 0) {
-    x <- scales::rescale(x, c(0, 1), rng_x)
-    y <- 0.5
-  } else {
-    ratio <- diff(rng_x)/diff(rng_y)
-    if (ratio > 1) {
-      x <- scales::rescale(x, c(0, 1), rng_x)
-      y <- scales::rescale(y, c(0, 1)/ratio, rng_y)
-    } else {
-      x <- scales::rescale(x, c(0, 1) * ratio, rng_x)
-      y <- scales::rescale(y, c(0, 1), rng_y)
-    }
-  }
-
-  data_frame0(x = x, y = y, data[setdiff(names(data), c("x", "y"))])
-}
-
 #' @noRd
 identical0 <- function(x, y) {
   abs(x - y) < 10^(-16)
-}
-
-diff_degree <- function(x, y) {
-  (x %% 360) - (y %% 360)
-}
-
-#' @noRd
-safe_mode <- function(x, zero = FALSE) {
-  if (isTRUE(zero)) {
-    x %% 360
-  } else {
-    ifelse(x == 360, x, x %% 360)
-  }
 }
 
 #' @noRd
@@ -334,3 +260,16 @@ match_ids <- function(x, y, fixed = TRUE, ignore.case = FALSE) {
   ids
 }
 
+#' @noRd
+len0_null <- function(x) {
+  if (length(x) == 0) NULL else x
+}
+
+#' @noRd
+modify_list <- function(x, y) {
+  for (ii in names(y)) {
+    x[[ii]] <- y[[ii]]
+  }
+
+  x
+}
