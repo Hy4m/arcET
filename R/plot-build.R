@@ -99,14 +99,17 @@ ArcPlot_build.ArcPlot <- function(plot, ...) {
                   c("cm", "cm", "cm", "cm", "null", "cm", "cm", "cm"))
   gt <- gtable(widths = widths, heights = heights, respect = TRUE)
 
+  n <- length(plot$plot)
   guides <- list()
-  for (ii in seq_len(length(plot$plot))) {
+  for (ii in seq_len(n)) {
     gg_element <- tryCatch(extract_ggplot(plot$plot[[ii]]), error = function(e) NULL)
     ## gg_element is NULL means failure, should throw warnings?
     if (is.null(gg_element)) next
 
-    cell <- CellPlot_build(gg_element, region = plot$region[[ii]],
-                           CellID = plot$CellID[ii])
+    cell <- CellPlot_build(gg_element,
+                           region = plot$region[[ii]],
+                           CellID = plot$CellID[ii],
+                           process = paste(ii, n, sep = "/"))
     if (!is.null(cell$guides)) {
       guides <- c(guides, list(cell$guides))
     }
@@ -293,8 +296,9 @@ ArcPlot_build.ArcPlot <- function(plot, ...) {
 CellPlot_build <- function(gg_element,
                            region = CELL(),
                            CellID = cell_id(),
+                           process = NULL,
                            ...) {
-  cli::cli_inform("Build {CellID} plot...")
+  cli::cli_inform("Build {CellID} plot......[{process}]")
 
   thm <- gg_element$theme
   coord <- gg_element$coord
