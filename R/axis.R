@@ -1,4 +1,4 @@
-## TODO: can add title?
+## TODO: clean and speedup
 #' Arc x-axis Grob
 #' @description These functions can draw x-axis on polar coordinate.
 #'
