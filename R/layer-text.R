@@ -1,36 +1,20 @@
-#' @title Text Layer
-#' @description These functions are an encapsulation of relative functions in
-#' the ggplot2 package, and the only difference is that these functions do
-#' not add legends by default.
-#'
-#' @param ... extra parameters passing to `geom_*()` function.
-#' @inheritParams ggplot2::geom_text
-#' @return a gg layer object.
-#' @family layer
-#' @rdname layer_text
+#' @title Banner Text
+#' @description The margin text geom is used to create banner text. In contrast
+#' to `geom_text()`, `geom_banner_text()` automatically arc when it's converted
+#' to ArcPlot.
+#'  @inheritParams ggplot2::geom_text
+#' @return a ggplot layer object.
+#' @rdname geom_banner_text
 #' @author Hou Yun
 #' @export
-layer_text <- function(..., show.legend = FALSE) {
-  ggplot2::geom_text(..., show.legend = show.legend)
-}
-
-#' @rdname layer_text
-#' @export
-layer_label <- function(..., show.legend = FALSE) {
-  ggplot2::geom_label(..., show.legend = show.legend)
-}
-
-#' @rdname layer_text
-#' @importFrom ggplot2 layer ggproto
-#' @export
-layer_banner_text <- function(mapping = NULL,
-                              data = NULL,
-                              stat = "identity",
-                              position = "identity",
-                              ...,
-                              na.rm = FALSE,
-                              show.legend = FALSE,
-                              inherit.aes = TRUE)
+geom_banner_text <- function(mapping = NULL,
+                             data = NULL,
+                             stat = "identity",
+                             position = "identity",
+                             ...,
+                             na.rm = FALSE,
+                             show.legend = FALSE,
+                             inherit.aes = TRUE)
 {
   layer(data = data,
         mapping = mapping,
