@@ -206,6 +206,11 @@ makeContent.ArcyAxisGrob <- function(x) {
   if (inherits(line.gp, "element_blank")) {
     has_line <- FALSE
   } else {
+    line.arrow <- if (is.logical(line.gp$arrow) && !line.gp$arrow) {
+      NULL
+    } else {
+      line.gp$arrow
+    }
     line <- ArcSegmentsGrob(x = region$x.range[1],
                             y = if (position == "top") r1 else r0,
                             xend = region$x.range[2],
@@ -214,7 +219,7 @@ makeContent.ArcyAxisGrob <- function(x) {
                             linewidth = line.gp$linewidth %||% 0.5,
                             linetype = line.gp$linetype %||% 1,
                             lineend = line.gp$lineend %||% "butt",
-                            arrow = if (line.gp$arrow) grid::arrow() else NULL,
+                            arrow = line.arrow,
                             arc = TRUE,
                             steps = steps)
   }
@@ -367,7 +372,7 @@ makeContent.ArcyAxisGrob <- function(x) {
                                          lwd = (tick.gp$linewidth %||% 0.5) * .pt,
                                          lty = tick.gp$linetype %||% 1,
                                          lineend = tick.gp$lineend %||% "butt"),
-                               arrow = if (line.gp$arrow) grid::arrow() else NULL,
+                               arrow = if (tick.gp$arrow) grid::arrow() else NULL,
                                default.units = "native",
                                vp = vp)
     if (position == "right") {

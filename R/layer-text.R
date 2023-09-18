@@ -2,7 +2,9 @@
 #' @description The margin text geom is used to create banner text. In contrast
 #' to `geom_text()`, `geom_banner_text()` automatically arc when it's converted
 #' to ArcPlot.
-#'  @inheritParams ggplot2::geom_text
+#'
+#' @inheritParams ggplot2::geom_text
+#'
 #' @return a ggplot layer object.
 #' @rdname geom_banner_text
 #' @author Hou Yun

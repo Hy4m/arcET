@@ -113,7 +113,7 @@ ArcPlot_build.ArcPlot <- function(plot, ...) {
       guides <- c(guides, list(cell$guides))
     }
 
-    cell <- c(cell[1:5], cell$layers)
+    cell <- c(cell[1:6], cell$layers)
     class(cell) <- "gList"
     cell <- grid::gTree(children = cell, vp = vp)
     gt <- gtable_add_grob(gt, grobs = cell, t = 5, l = 3, b = 5, r = 3,
@@ -315,25 +315,38 @@ CellPlot_build <- function(gg_element,
     }
   })
 
+  if (inherits(thm$panel.border, "element_blank")) {
+    border <- NULL
+  } else {
+    panel.border <- calc_element("panel.border", thm)
+    if (inherits(panel.border$linewidth, "rel")) {
+      panel.border$linewidth <- panel.border$linewidth/.pt
+    }
+    border <- ArcPanelGrob(region = region,
+                           fill = panel.border$fill %||% NA,
+                           colour = panel.border$colour %||% "grey20",
+                           linewidth = panel.border$linewidth %||% 0.5,
+                           linetype = panel.border$linetype %||% 1)
+  }
+
   if (inherits(thm$panel.background, "element_blank")) {
     panel <- NULL
   } else {
-    if (inherits(thm$panel.background$linewidth, "rel")) {
-      thm$panel.background$linewidth <- thm$panel.background$linewidth/.pt
+    panel.background <- calc_element("panel.background", thm)
+    if (inherits(panel.background$linewidth, "rel")) {
+      panel.background$linewidth <- panel.background$linewidth/.pt
     }
     panel <- ArcPanelGrob(region = region,
-                          fill = thm$panel.background$fill %||% "white",
-                          colour = thm$panel.background$colour %||% "black",
-                          linewidth = thm$panel.background$linewidth %||% 0.5/.pt,
-                          linetype = thm$panel.background$linetype %||% 1)
+                          fill = panel.background$fill %||% "white",
+                          colour = panel.background$colour %||% NA,
+                          linewidth = panel.background$linewidth %||% 0.5,
+                          linetype = panel.background$linetype %||% 1)
   }
 
-  panel.grid.major.x <- calc_element("panel.grid.major.x", thm) %||%
-    calc_element("panel.grid.major", thm) %||%
-    calc_element("panel.grid", thm)
-  panel.grid.minor.x <- calc_element("panel.grid.minor.x", thm) %||%
-    calc_element("panel.grid.minor", thm) %||%
-    calc_element("panel.grid", thm)
+  ## FIX ME: we should build major and minor grid separately
+
+  panel.grid.major.x <- calc_element("panel.grid.major.x", thm)
+  panel.grid.minor.x <- calc_element("panel.grid.minor.x", thm)
   if (inherits(panel.grid.major.x$linewidth, "rel")) {
     panel.grid.major.x$linewidth <- panel.grid.major.x$linewidth/.pt
   }
@@ -362,12 +375,8 @@ CellPlot_build <- function(gg_element,
                            linetype = linetype)
   }
 
-  panel.grid.major.y <- calc_element("panel.grid.major.y", thm) %||%
-    calc_element("panel.grid.major", thm) %||%
-    calc_element("panel.grid", thm)
-  panel.grid.minor.y <- calc_element("panel.grid.minor.y", thm) %||%
-    calc_element("panel.grid.minor", thm) %||%
-    calc_element("panel.grid", thm)
+  panel.grid.major.y <- calc_element("panel.grid.major.y", thm)
+  panel.grid.minor.y <- calc_element("panel.grid.minor.y", thm)
   if (inherits(panel.grid.major.y$linewidth, "rel")) {
     panel.grid.major.y$linewidth <- panel.grid.major.y$linewidth/.pt
   }
@@ -400,21 +409,11 @@ CellPlot_build <- function(gg_element,
     xaxis <- NULL
   } else {
     position <- coord$x$position
-    title.gp <- calc_element(paste0("axis.title.y.", position), thm) %||%
-      calc_element("axis.title.y", thm) %||%
-      calc_element("axis.title", thm)
-    line.gp <- calc_element(paste0("axis.line.x.", position), thm) %||%
-      calc_element("axis.line.x", thm) %||%
-      calc_element("axis.line", thm)
-    tick.gp <- calc_element(paste0("axis.line.x.", position), thm) %||%
-      calc_element("axis.ticks.x", thm) %||%
-      calc_element("axis.ticks", thm)
-    ticks.length <- calc_element(paste0("axis.ticks.length.x.", position), thm) %||%
-      calc_element("axis.ticks.length.x", thm) %||%
-      calc_element("axis.ticks.length", thm)
-    text.gp <- calc_element(paste0("axis.text.x.", position), thm) %||%
-      calc_element("axis.text.x", thm) %||%
-      calc_element("axis.text", thm)
+    title.gp <- calc_element(paste0("axis.title.y.", position), thm)
+    line.gp <- calc_element(paste0("axis.line.x.", position), thm)
+    tick.gp <- calc_element(paste0("axis.ticks.x.", position), thm)
+    ticks.length <- calc_element(paste0("axis.ticks.length.x.", position), thm)
+    text.gp <- calc_element(paste0("axis.text.x.", position), thm)
 
     xaxis <- ArcxAxisGrob(title = gg_element$labels$x,
                           coord = coord,
@@ -431,21 +430,11 @@ CellPlot_build <- function(gg_element,
     yaxis <- NULL
   } else {
     position <- coord$y$position
-    title.gp <- calc_element(paste0("axis.title.y.", position), thm) %||%
-      calc_element("axis.title.y", thm) %||%
-      calc_element("axis.title", thm)
-    line.gp <- calc_element(paste0("axis.line.y.", position), thm) %||%
-      calc_element("axis.line.y", thm) %||%
-      calc_element("axis.line", thm)
-    tick.gp <- calc_element(paste0("axis.line.y.", position), thm) %||%
-      calc_element("axis.ticks.y", thm) %||%
-      calc_element("axis.ticks", thm)
-    ticks.length <- calc_element(paste0("axis.ticks.length.y.", position), thm) %||%
-      calc_element("axis.ticks.length.y", thm) %||%
-      calc_element("axis.ticks.length", thm)
-    text.gp <- calc_element(paste0("axis.text.y.", position), thm) %||%
-      calc_element("axis.text.y", thm) %||%
-      calc_element("axis.text", thm)
+    title.gp <- calc_element(paste0("axis.title.y.", position), thm)
+    line.gp <- calc_element(paste0("axis.line.y.", position), thm)
+    tick.gp <- calc_element(paste0("axis.ticks.y.", position), thm)
+    ticks.length <- calc_element(paste0("axis.ticks.length.y.", position), thm)
+    text.gp <- calc_element(paste0("axis.text.y.", position), thm)
 
     yaxis <- ArcyAxisGrob(title = gg_element$labels$y,
                           coord = coord,
@@ -458,7 +447,8 @@ CellPlot_build <- function(gg_element,
                           ticks.length = ticks.length)
   }
 
-  list(panel = panel,
+  list(border = border,
+       panel = panel,
        grid_x = grid_x,
        grid_y = grid_y,
        xaxis = xaxis,

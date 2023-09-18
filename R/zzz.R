@@ -1,6 +1,7 @@
 #' Import
 #' @importFrom ggplot2 aes GeomText Geom calc_element %+% margin resolution ggplot
 #' @importFrom ggplot2 element_blank GeomPolygon GeomBar GeomTile GeomCol GeomRect
+#' @importFrom ggplot2 ggproto layer
 #' @importFrom rlang exec current_env list2
 #' @importFrom grid polylineGrob gTree grid.draw segmentsGrob viewport
 #' @importFrom grid setChildren gList resolveVJust convertHeight convertWidth
