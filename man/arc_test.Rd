@@ -17,7 +17,7 @@ arc_test(
 
 \item{region}{a `CELL` object.}
 
-\item{...}{other parameters passing to `ArcPlot_build()`.}
+\item{...}{not used.}
 
 \item{vp}{viewport to draw plot in.}
 

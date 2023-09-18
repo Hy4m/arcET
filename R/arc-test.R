@@ -2,7 +2,7 @@
 #' @description Helper funtion used to quickly preview the results of the conversion.
 #' @param plot a ggplot object.
 #' @param region a `CELL` object.
-#' @param ... other parameters passing to `ArcPlot_build()`.
+#' @param ... not used.
 #' @param vp 	viewport to draw plot in.
 #' @param newpage draw new (empty) page first?
 #' @return return grob object invisibly.
@@ -32,7 +32,7 @@ arc_test <- function(plot = ggplot2::last_plot(),
   region <- region %||% CELL(120, 60, 0.4)
   plot <- init_cell(arcplot(), data = plot, region = region)
 
-  plot <- tryCatch(ArcPlot_build(plot, ...),
+  plot <- tryCatch(ArcPlot_build(plot),
                    error = function(e) {
                      cli::cli_abort("Connot convert {.cls {clss}} to arcplot...")
                    })
@@ -41,8 +41,8 @@ arc_test <- function(plot = ggplot2::last_plot(),
     grid::grid.newpage()
   }
 
-  grDevices::recordGraphics(requireNamespace("grid", quietly = TRUE),
-                            list(), getNamespace("grid"))
+  grDevices::recordGraphics(requireNamespace("arcET", quietly = TRUE),
+                            list(), getNamespace("arcET"))
   if (is.null(vp)) {
     grid::grid.draw(plot)
   } else {
