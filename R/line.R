@@ -35,8 +35,8 @@ ArcPathGrob <- function(x = c(0, 20, 70),
                         linejoin = "round",
                         linemitre = 10,
                         arc = TRUE,
-                        steps = 0.01,
-                        simplify = FALSE,
+                        steps = 0.005,
+                        simplify = TRUE,
                         ...) {
   data <- data_frame0(x = x,
                       y = y,
@@ -46,13 +46,17 @@ ArcPathGrob <- function(x = c(0, 20, 70),
                       alpha = alpha,
                       group = group)
 
-  ## modify from GeomPath$draw_panel
-  if (!anyDuplicated(data$group)) {
-    cli::cli_inform(c("{.fn {ArcPathGrob}}: Each group consists of only one observation.",
-                      i = "Do you need to adjust the {.field group} parameter?"))
+  if (empty(data)) {
+    return(zeroGrob())
   }
+
+  ## only check x, y and group?
+  check_required(c("x", "y", "colour", "linewidth", "linetype", "alpha", "group"),
+                 data = data,
+                 reason = "for `ArcPathGrob()`")
+
   data <- data[count_by_group(data) >= 2, , drop = FALSE]
-  if (nrow(data) < 2) {
+  if (empty(data)) {
     return(zeroGrob())
   }
 
@@ -151,8 +155,8 @@ ArcSegmentsGrob <- function(x = 30,
                             linejoin = "round",
                             linemitre = 10,
                             arc = TRUE,
-                            steps = 0.01,
-                            simplify = FALSE,
+                            steps = 0.005,
+                            simplify = TRUE,
                             ...) {
   data <- data_frame0(x = x,
                       y = y,
@@ -162,6 +166,16 @@ ArcSegmentsGrob <- function(x = 30,
                       linewidth = linewidth,
                       linetype = linetype,
                       alpha = alpha)
+
+  ## if any vars is zero or all vars is NULL, will return empty data
+  if (empty(data)) {
+    return(zeroGrob())
+  }
+
+  ## only check x, y and group?
+  check_required(c("x", "y", "xend", "yend", "colour", "linewidth", "linetype", "alpha"),
+                 data = data,
+                 reason = "for `ArcSegmentsGrob()`")
   data <- segments2path(data)
 
   exec(ArcPathGrob, !!!data,
@@ -436,76 +450,6 @@ makeContent.RugGrob <- function(x) {
   }
   grid::setChildren(x, grid::gList(if (!empty(vertical)) vertical,
                                    if (!empty(horizon)) horizon))
-}
-
-#' @noRd
-#' @importFrom ggplot2 element_line
-#' @importFrom ggplot2 element_text
-ArcPanelgridGrob <- function(x_breaks = NULL,
-                             y_breaks = NULL,
-                             x_minor_breaks = NULL,
-                             y_minor_breaks = NULL,
-                             x.major.gp = element_line(),
-                             x.minor.gp = element_line(),
-                             y.major.gp = element_line(),
-                             y.minor.gp = element_line(),
-                             region = CELL(),
-                             steps = 0.01,
-                             ...) {
-  if (!is.null(x_breaks)) {
-    xmajor <- ArcVlineGrob(
-      xintercept = x_breaks,
-      colour = x.major.gp$colour %||% "grey60",
-      linewidth = (x.major.gp$linewidth %||% x.major.gp$size %||% 0.5) / .pt,
-      linetype = x.major.gp$linetype %||% 1,
-      lineend = x.major.gp$lineend %||% "butt",
-      region = region,
-      steps = steps
-    )
-  }
-
-  if (!is.null(x_minor_breaks)) {
-    xminor <- ArcVlineGrob(
-      xintercept = x_minor_breaks,
-      colour = x.minor.gp$colour %||% "grey60",
-      linewidth = (x.minor.gp$linewidth %||% x.minor.gp$size %||% 0.25) / .pt,
-      linetype = x.minor.gp$linetype %||% 1,
-      lineend = x.minor.gp$lineend %||% "butt",
-      region = region,
-      steps = steps
-    )
-  }
-
-  if (!is.null(y_breaks)) {
-    ymajor <- ArcHlineGrob(
-      yintercept = y_breaks,
-      colour = y.major.gp$colour %||% "grey60",
-      linewidth = (y.major.gp$linewidth %||% y.major.gp$size %||% 0.5) / .pt,
-      linetype = y.major.gp$linetype %||% 1,
-      lineend = y.major.gp$lineend %||% "butt",
-      region = region,
-      simplify = TRUE
-    )
-  }
-
-  if (!is.null(y_minor_breaks)) {
-    yminor <- ArcVlineGrob(
-      yintercept = y_minor_breaks,
-      colour = y.minor.gp$colour %||% "grey60",
-      linewidth = (y.minor.gp$linewidth %||% y.minor.gp$size %||% 0.25) / .pt,
-      linetype = y.minor.gp$linetype %||% 1,
-      lineend = y.minor.gp$lineend %||% "butt",
-      region = region,
-      simplify = TRUE
-    )
-  }
-
-  grid::gList(
-    if (!is.null(x_breaks)) xmajor,
-    if (!is.null(x_minor_breaks)) xminor,
-    if (!is.null(y_breaks)) ymajor,
-    if (!is.null(y_minor_breaks)) yminor
-  )
 }
 
 #' @noRd
