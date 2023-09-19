@@ -185,7 +185,7 @@ makeContent.ArcyAxisGrob <- function(x) {
                           coord = PANEL(),
                           region = CELL(),
                           position = "left",
-                          ticks.length = 1.5,
+                          ticks.length = unit(2.75, "pt"),
                           title.gp = element_text(),
                           line.gp = element_line(),
                           tick.gp = element_line(),
@@ -215,7 +215,7 @@ makeContent.ArcyAxisGrob <- function(x) {
                             y = if (position == "top") r1 else r0,
                             xend = region$x.range[2],
                             yend = if (position == "top") r1 else r0,
-                            colour = line.gp$colour %||% "black",
+                            colour = line.gp$colour %||% "grey20",
                             linewidth = line.gp$linewidth %||% 0.5,
                             linetype = line.gp$linetype %||% 1,
                             lineend = line.gp$lineend %||% "butt",
@@ -234,15 +234,21 @@ makeContent.ArcyAxisGrob <- function(x) {
     }
   } else {
     xs <- scales::rescale(coord$x$breaks, to = region$x.range, from = coord$x$range)
+    tick.arrow <- if (is.logical(tick.gp$arrow) && !tick.gp$arrow) {
+      NULL
+    } else {
+      tick.gp$arrow
+    }
+
     tick <- ArcSegmentsGrob(x = xs,
                             y = if (position == "top") r1 else r0,
                             xend = xs,
                             yend = if (position == "top") r1 + ticks.length else r0 - ticks.length,
-                            colour = tick.gp$colour %||% "black",
+                            colour = tick.gp$colour %||% "grey20",
                             linewidth = tick.gp$linewidth %||% 0.5,
                             linetype = tick.gp$linetype %||% 1,
                             lineend = tick.gp$lineend %||% "butt",
-                            arrow = if (tick.gp$arrow) grid::arrow() else NULL,
+                            arrow = tick.arrow,
                             arc = FALSE)
     if (position == "top") {
       current <- if (ticks.length < 0) current + one_mm else current + ticks.length + one_mm
@@ -263,15 +269,15 @@ makeContent.ArcyAxisGrob <- function(x) {
                          angle = "clockwise",
                          hjust = if (position == "top") 0 else 1,
                          vjust = 0.5,
-                         colour = text.gp$colour %||% "grey35",
-                         size = (text.gp$size %||% 7.5)/.pt,
+                         colour = text.gp$colour %||% "grey30",
+                         size = (text.gp$size %||% 8.8)/.pt,
                          family = text.gp$family %||% "",
                          fontface = text.gp$face %||% 1,
                          lineheight = text.gp$lineheight %||% 1.2,
                          parse = if (is.expression(coord$x$labels)) TRUE else FALSE,
                          auto_adjust = FALSE)
 
-    gp <- gpar(fontsize = text.gp$size %||% 7.5,
+    gp <- gpar(fontsize = text.gp$size %||% 8.8,
                fontfamily = text.gp$family %||% "",
                fontface = text.gp$face %||% 1,
                lineheight = text.gp$lineheight %||% 1.2)
@@ -307,7 +313,7 @@ makeContent.ArcyAxisGrob <- function(x) {
                           coord = PANEL(),
                           region = CELL(),
                           position = "left",
-                          ticks.length = 1.5,
+                          ticks.length = unit(2.75, "pt"),
                           title.gp = element_text(),
                           line.gp = element_line(),
                           tick.gp = element_line(),
@@ -336,15 +342,20 @@ makeContent.ArcyAxisGrob <- function(x) {
   if (inherits(line.gp, "element_blank")) {
     has_line <- FALSE
   } else {
+    line.arrow <- if (is.logical(line.gp$arrow) && !line.gp$arrow) {
+      NULL
+    } else {
+      line.gp$arrow
+    }
     line <- grid::segmentsGrob(x0 = 0,
                                y0 = region$y.range[1],
                                x1 = 0,
                                y1 = region$y.range[2],
-                               gp = gpar(col = line.gp$colour %||% "black",
+                               gp = gpar(col = line.gp$colour %||% "grey20",
                                          lwd = (line.gp$linewidth %||% 0.5) * .pt,
                                          lty = line.gp$linetype %||% 1,
                                          lineend = line.gp$lineend %||% "butt"),
-                               arrow = if (line.gp$arrow) grid::arrow() else NULL,
+                               arrow = line.arrow,
                                default.units = "native",
                                vp = vp)
   }
@@ -359,6 +370,11 @@ makeContent.ArcyAxisGrob <- function(x) {
     }
   } else {
     y <- scales::rescale(coord$y$breaks, to = region$y.range, from = coord$y$range)
+    tick.arrow <- if (is.logical(tick.gp$arrow) && !tick.gp$arrow) {
+      NULL
+    } else {
+      tick.gp$arrow
+    }
     if (position == "left") {
       xend <- -ticks.length
     } else {
@@ -368,11 +384,11 @@ makeContent.ArcyAxisGrob <- function(x) {
                                y0 = y,
                                x1 = xend,
                                y1 = y,
-                               gp = gpar(col = tick.gp$colour %||% "black",
+                               gp = gpar(col = tick.gp$colour %||% "grey20",
                                          lwd = (tick.gp$linewidth %||% 0.5) * .pt,
                                          lty = tick.gp$linetype %||% 1,
                                          lineend = tick.gp$lineend %||% "butt"),
-                               arrow = if (tick.gp$arrow) grid::arrow() else NULL,
+                               arrow = tick.arrow,
                                default.units = "native",
                                vp = vp)
     if (position == "right") {
@@ -394,14 +410,14 @@ makeContent.ArcyAxisGrob <- function(x) {
                             hjust = if (position == "left") 1 else 0,
                             vjust = 0.5,
                             gp = gpar(col = text.gp$colour %||% "grey35",
-                                      fontsize = text.gp$size %||% 7.5,
+                                      fontsize = text.gp$size %||% 8.8,
                                       fontfamily = text.gp$family %||% "",
                                       fontface = text.gp$face %||% 1,
                                       lineheight = text.gp$lineheight %||% 1.2),
                             default.units = "native",
                             vp = vp)
 
-    gp <- gpar(fontsize = text.gp$size %||% 7.5,
+    gp <- gpar(fontsize = text.gp$size %||% 8.8,
                fontfamily = text.gp$family %||% "",
                fontface = text.gp$face %||% 1,
                lineheight = text.gp$lineheight %||% 1.2)
