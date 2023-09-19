@@ -9,7 +9,7 @@ pieces_data <- function(data,
       n <- nrow(d)
       if (n < 2) return(d)
       len <- N_steps(d$x[-n], d$y[-n], d$x[-1], d$y[-1],
-                     steps = steps, simplify = TRUE)
+                     steps = steps, simplify = simplify)
 
       data_frame0(x = c(unlist(mapply(interp, d$x[-n], d$x[-1],
                                       len, SIMPLIFY = FALSE)), d$x[n]),
@@ -24,7 +24,7 @@ pieces_data <- function(data,
         if (n < 2) return(edge)
 
         len <- N_steps(edge$x[-n], edge$y[-n], edge$x[-1], edge$y[-1],
-                       steps = steps, simplify = TRUE)
+                       steps = steps, simplify = simplify)
         data_frame0(x = c(unlist(mapply(interp, edge$x[-n], edge$x[-1],
                                         len, SIMPLIFY = FALSE)), edge$x[n]),
                     y = c(unlist(mapply(interp, edge$y[-n], edge$y[-1],
