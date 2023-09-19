@@ -143,7 +143,7 @@ GeomArea2grob <- function(data,
     g_line <- NULL
   }
 
-  grid::gList(g_poly, g_line)
+  gTree(children = gList(g_poly, g_line))
 }
 
 
@@ -200,7 +200,7 @@ GeomRibbon2grob <- function(data,
     g_line <- NULL
   }
 
-  grid::gList(g_poly, g_line)
+  gTree(children = gList(g_poly, g_line))
 }
 
 #' @rdname GeomPolygon
@@ -255,7 +255,7 @@ GeomDensity2grob <- function(data,
     g_line <- NULL
   }
 
-  grid::gList(g_poly, g_line)
+  gTree(children = gList(g_poly, g_line))
 }
 
 #' @rdname GeomPolygon
