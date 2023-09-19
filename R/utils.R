@@ -20,20 +20,20 @@ euclid_dist2 <- function(x, y, xend, yend) {
                       y = y,
                       xend = xend,
                       yend = yend)
-  vapply(split(data, seq_len(nrow(data))), function(d) {
-    if (!stats::complete.cases(d)) {
-      return(NA)
-    }
+  vapply_dbl(split(data, seq_len(nrow(data))), function(d) {
     if (identical0(d$x, d$xend) && identical0(d$y, d$yend)) {
       0
     } else if (identical0(d$y, d$yend)) {
       radian(abs(d$x - d$xend)) * abs(d$y)
     } else {
-      xs <- seq(d$x, d$xend, length.out = 200)
+      temp <- xs <- seq(d$x, d$xend, length.out = 200)
       ys <- seq(d$y, d$yend, length.out = 200)
+
+      xs <- cos(radian(temp)) * ys
+      ys <- sin(radian(temp)) * ys
       sum(euclid_dist(xs[-200], ys[-200], xs[-1], ys[-1]))
     }
-  }, numeric(1), USE.NAMES = FALSE)
+  })
 }
 
 #' @noRd
@@ -272,4 +272,14 @@ modify_list <- function(x, y) {
   }
 
   x
+}
+
+#' @noRd
+check_required <- function(needness,
+                           data = NULL,
+                           reason = NULL) {
+  if (!all(needness %in% names(data))) {
+    cli::cli_abort(c("Require {.var {needness}} {reason}",
+                     "the fellowing required variables is missing: {.var {setdiff(needness, names(data))}}."))
+  }
 }
