@@ -295,8 +295,9 @@ GeomSmooth2grob <- function(data,
 
   ribbon <- transform(ribbon, colour = NA)
   path <- transform(data, alpha = NA)
-  grid::gList(if (has_ribbon) exec(ArcRibbonGrob, !!!ribbon, ...),
-              exec(ArcPathGrob, !!!path, ...))
+
+  gTree(children = gList(if (has_ribbon) exec(ArcRibbonGrob, !!!ribbon, ...),
+                         exec(ArcPathGrob, !!!path, ...)))
 }
 
 #' @rdname GeomPath
