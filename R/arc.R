@@ -139,67 +139,6 @@ init_cell <- function(plot,
   plot
 }
 
-#' @title Get ids
-#' @description Helper functions used to generate "CellID", "TrackID" and "SectorID".
-#' @param id if "all" will reset all id's index.
-#' @return `*_id()` return a character vector.
-#' @rdname IDs
-#' @author Hou Yun
-#' @export
-#' @examples
-#' cell_id()
-#' ## increment 1
-#' cell_id()
-#'
-#' ## reset
-#' reset_ids()
-#' cell_id()
-cell_id <- function() {
-  old <- getOption("arcET.cell.id", 0)
-  new <- old + 1
-  options(arcET.cell.id = new)
-  paste0("CellID_", new)
-}
-
-#' @rdname IDs
-#' @export
-track_id <- function() {
-  old <- getOption("arcET.track.id", 0)
-  new <- old + 1
-  options(arcET.track.id = new)
-  paste0("TrackID_", new)
-}
-
-#' @rdname IDs
-#' @export
-sector_id <- function() {
-  old <- getOption("arcET.sector.id", 0)
-  new <- old + 1
-  options(arcET.sector.id = new)
-  paste0("SectorID_", new)
-}
-
-#' @rdname IDs
-#' @export
-reset_ids <- function(id = c("all", "CellID", "TrackID", "SectorID")) {
-  id <- match.arg(id)
-  if (id == "all") {
-    options(arcET.cell.id = NULL)
-    options(arcET.track.id = NULL)
-    options(arcET.sector.id = NULL)
-  } else {
-    if (id == "CellID") {
-      options(arcET.cell.id = NULL)
-    } else if (id == "TrackID") {
-      options(arcET.track.id = NULL)
-    } else {
-      options(arcET.sector.id = NULL)
-    }
-  }
-
-  invisible()
-}
-
 #' @noRd
 get_data <- function(plot,
                      CellID = NULL,
