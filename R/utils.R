@@ -226,7 +226,7 @@ vec_cbind0 <- function(...,
 
 #' @noRd
 identical0 <- function(x, y) {
-  abs(x - y) < 10^(-16)
+  abs(x - y) < 10^(-4)
 }
 
 #' @noRd
