@@ -19,8 +19,8 @@ ArcPolygonGrob(
   linejoin = "round",
   linemitre = 10,
   arc = TRUE,
-  steps = 0.01,
-  simplify = FALSE,
+  steps = 0.005,
+  simplify = TRUE,
   ...
 )
 }

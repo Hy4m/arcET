@@ -41,8 +41,8 @@ ArcPolygonGrob <- function(x = c(30, 150, 150, 30),
                            linejoin = "round",
                            linemitre = 10,
                            arc = TRUE,
-                           steps = 0.01,
-                           simplify = FALSE,
+                           steps = 0.005,
+                           simplify = TRUE,
                            ...) {
   data <- data_frame0(x = x,
                       y = y,
@@ -437,7 +437,6 @@ add_endpoint <- function(data) {
   if (empty(data)) {
     return(data)
   }
-
   if (!"subgroup" %in% names(data)) {
     data <- lapply_dfr(split(data, data$group), function(df) {
       if (!identical(df[1, c("x", "y"), drop = FALSE],
