@@ -21,7 +21,6 @@
 #' @return a grob object.
 #' @rdname ArcPathGrob
 #' @author Hou Yun
-#' @importFrom vctrs vec_unique
 #' @export
 ArcPathGrob <- function(x = c(0, 20, 70),
                         y = c(0.2, 0.5, 1),
@@ -113,8 +112,93 @@ ArcPathGrob <- function(x = c(0, 20, 70),
 
 #' @rdname ArcPathGrob
 #' @export
-ArcLineGrob <- function(...) {
-  ArcPathGrob(...)
+ArcLineGrob <- function(x = c(0, 20, 70),
+                        y = c(0.2, 0.5, 1),
+                        colour = "black",
+                        linewidth = 0.5,
+                        linetype = 1,
+                        alpha = NA,
+                        group = 1L,
+                        arrow = NULL,
+                        lineend = "butt",
+                        linejoin = "round",
+                        linemitre = 10,
+                        arc = TRUE,
+                        steps = 0.005,
+                        simplify = TRUE,
+                        ...) {
+  data <- data_frame0(x = x,
+                      y = y,
+                      colour = colour,
+                      linewidth = linewidth,
+                      linetype = linetype,
+                      alpha = alpha,
+                      group = group)
+
+  if (empty(data)) {
+    return(zeroGrob())
+  }
+
+  ## only check x, y and group?
+  check_required(c("x", "y", "colour", "linewidth", "linetype", "alpha", "group"),
+                 data = data,
+                 reason = "for `ArcLineGrob()`")
+
+  data <- data[count_by_group(data) >= 2, , drop = FALSE]
+  if (empty(data)) {
+    return(zeroGrob())
+  }
+
+  data <- data[order(data$group, data$x), , drop = FALSE]
+  if (isTRUE(arc)) {
+    data <- pieces_data(data, steps = steps, simplify = simplify)
+  }
+  data <- polar2cartesian(data)
+  data <- data[order(data$group), , drop = FALSE]
+
+  aes <- c("alpha", "colour", "linewidth", "linetype")
+  attr <- lapply_dfr(split(data, data$group), function(df) {
+    linetype <- vec_unique(df$linetype)
+    data_frame0(solid = identical(linetype, 1) || identical(linetype, "solid"),
+                constant = nrow(vec_unique(df[, names(df) %in% aes])) == 1)
+  })
+  solid_lines <- all(attr$solid)
+  constant <- all(attr$constant)
+  if (!solid_lines && !constant) {
+    cli::cli_abort("{.fn {ArcPathGrob}} can't have varying {.field colour}, {.field linewidth}, and/or {.field alpha} along the line when {.field linetype} isn't solid")
+  }
+  n <- nrow(data)
+  group_diff <- data$group[-1] != data$group[-n]
+  start <- c(TRUE, group_diff)
+  end <- c(group_diff, TRUE)
+  if (!constant) {
+    segmentsGrob(x0 = data$x[!end],
+                 y0 = data$y[!end],
+                 x1 = data$x[!start],
+                 y1 = data$y[!start],
+                 default.units = "native",
+                 arrow = arrow,
+                 gp = gpar(col = alpha(data$colour, data$alpha)[!end],
+                           fill = alpha(data$colour, data$alpha)[!end],
+                           lwd = data$linewidth[!end] * .pt,
+                           lty = data$linetype[!end],
+                           lineend = lineend,
+                           linejoin = linejoin,
+                           linemitre = linemitre))
+  } else {
+    polylineGrob(x = data$x,
+                 y = data$y,
+                 id = match(data$group, vec_unique(data$group)),
+                 default.units = "native",
+                 arrow = arrow,
+                 gp = gpar(col = alpha(data$colour, data$alpha)[start],
+                           fill = alpha(data$colour, data$alpha)[start],
+                           lwd = data$linewidth[start] * .pt,
+                           lty = data$linetype[start],
+                           lineend = lineend,
+                           linejoin = linejoin,
+                           linemitre = linemitre))
+  }
 }
 
 #' Arc Path Grob

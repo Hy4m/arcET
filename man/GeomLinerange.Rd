@@ -103,10 +103,11 @@ Other transform:
 \code{\link{GeomBoxplot2grob}()},
 \code{\link{GeomMarginVtext2grob}()},
 \code{\link{GeomPath2grob}()},
+\code{\link{GeomPathArcET2grob}()},
 \code{\link{GeomPoint2grob}()},
 \code{\link{GeomPolygon2grob}()},
 \code{\link{GeomRichText2grob}()},
-\code{\link{GeomRoundcol2grob}()},
+\code{\link{GeomRoundcolArcET2grob}()},
 \code{\link{GeomText2grob}()},
 \code{\link{GeomViolin2grob}()}
 }

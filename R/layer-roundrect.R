@@ -15,13 +15,13 @@
 #' @author Hou Yun
 #' @rdname GeomRound
 #' @export
-GeomRoundcol2grob <- function(data,
-                              trans = NULL,
-                              coord = PANEL(),
-                              region = CELL(),
-                              ...,
-                              clip = FALSE,
-                              na.rm = FALSE) {
+GeomRoundcolArcET2grob <- function(data,
+                                   trans = NULL,
+                                   coord = PANEL(),
+                                   region = CELL(),
+                                   ...,
+                                   clip = FALSE,
+                                   na.rm = FALSE) {
   if (empty(data)) {
     return(zeroGrob())
   }
@@ -42,13 +42,13 @@ GeomRoundcol2grob <- function(data,
 
 #' @rdname GeomRound
 #' @export
-GeomRoundbar2grob <- function(data,
-                              trans = NULL,
-                              coord = PANEL(),
-                              region = CELL(),
-                              ...,
-                              clip = FALSE,
-                              na.rm = FALSE) {
+GeomRoundbarArcET2grob <- function(data,
+                                   trans = NULL,
+                                   coord = PANEL(),
+                                   region = CELL(),
+                                   ...,
+                                   clip = FALSE,
+                                   na.rm = FALSE) {
   if (empty(data)) {
     return(zeroGrob())
   }
@@ -68,13 +68,13 @@ GeomRoundbar2grob <- function(data,
 
 #' @rdname GeomRound
 #' @export
-GeomRoundrect2grob <- function(data,
-                               trans = NULL,
-                               coord = PANEL(),
-                               region = CELL(),
-                               ...,
-                               clip = FALSE,
-                               na.rm = FALSE) {
+GeomRoundrectArcET2grob <- function(data,
+                                    trans = NULL,
+                                    coord = PANEL(),
+                                    region = CELL(),
+                                    ...,
+                                    clip = FALSE,
+                                    na.rm = FALSE) {
   if (empty(data)) {
     return(zeroGrob())
   }
@@ -94,13 +94,13 @@ GeomRoundrect2grob <- function(data,
 
 #' @rdname GeomRound
 #' @export
-GeomRoundtile2grob <- function(data,
-                               trans = NULL,
-                               coord = PANEL(),
-                               region = CELL(),
-                               ...,
-                               clip = FALSE,
-                               na.rm = FALSE) {
+GeomRoundtileArcET2grob <- function(data,
+                                    trans = NULL,
+                                    coord = PANEL(),
+                                    region = CELL(),
+                                    ...,
+                                    clip = FALSE,
+                                    na.rm = FALSE) {
   if (empty(data)) {
     return(zeroGrob())
   }
@@ -119,13 +119,13 @@ GeomRoundtile2grob <- function(data,
 
 #' @rdname GeomRound
 #' @export
-GeomRoundpolygon2grob <- function(data,
-                                  trans = NULL,
-                                  coord = PANEL(),
-                                  region = CELL(),
-                                  ...,
-                                  clip = FALSE,
-                                  na.rm = FALSE) {
+GeomRoundpolygonArcET2grob <- function(data,
+                                       trans = NULL,
+                                       coord = PANEL(),
+                                       region = CELL(),
+                                       ...,
+                                       clip = FALSE,
+                                       na.rm = FALSE) {
   if (empty(data)) {
     return(zeroGrob)
   }
@@ -143,7 +143,7 @@ GeomRoundpolygon2grob <- function(data,
 
 #' @rdname GeomRound
 #' @export
-GeomShape2grob <- GeomRoundpolygon2grob
+GeomShapeArcET2grob <- GeomRoundpolygonArcET2grob
 
 #' @title Roundrect Layer
 #' @description functions to drawing round rect, bar, histogram and polygon.
@@ -176,7 +176,7 @@ geom_roundhistogram <- function(mapping = NULL,
   layer(data = data,
         mapping = mapping,
         stat = stat,
-        geom = GeomRoundbar,
+        geom = GeomRoundbarArcET,
         position = position,
         show.legend = show.legend,
         inherit.aes = inherit.aes,
@@ -210,7 +210,7 @@ geom_roundpolygon <- function(mapping = NULL,
   layer(data = data,
         mapping = mapping,
         stat = stat,
-        geom = GeomRoundpolygon,
+        geom = GeomRoundpolygonArcET,
         position = position,
         show.legend = show.legend,
         inherit.aes = inherit.aes,
@@ -241,7 +241,7 @@ geom_roundcol <- function(mapping = NULL,
   layer(data = data,
         mapping = mapping,
         stat = "identity",
-        geom = GeomRoundcol,
+        geom = GeomRoundcolArcET,
         position = position,
         show.legend = show.legend,
         inherit.aes = inherit.aes,
@@ -275,7 +275,7 @@ geom_roundbar <- function(mapping = NULL,
   layer(data = data,
         mapping = mapping,
         stat = stat,
-        geom = GeomRoundbar,
+        geom = GeomRoundbarArcET,
         position = position,
         show.legend = show.legend,
         inherit.aes = inherit.aes,
@@ -307,7 +307,7 @@ geom_roundtile <- function(mapping = NULL,
   layer(data = data,
         mapping = mapping,
         stat = stat,
-        geom = GeomRoundtile,
+        geom = GeomRoundtileArcET,
         position = position,
         show.legend = show.legend,
         inherit.aes = inherit.aes,
@@ -337,7 +337,7 @@ geom_roundrect <- function(mapping = NULL,
   layer(data = data,
         mapping = mapping,
         stat = stat,
-        geom = GeomRoundrect,
+        geom = GeomRoundrectArcET,
         position = position,
         show.legend = show.legend,
         inherit.aes = inherit.aes,
@@ -354,11 +354,11 @@ geom_roundrect <- function(mapping = NULL,
 #' @format NULL
 #' @usage NULL
 #' @export
-GeomRoundpolygon <- ggproto(
-  "GeomRoundpolygon", GeomPolygon,
+GeomRoundpolygonArcET <- ggproto(
+  "GeomRoundpolygonArcET", GeomPolygon,
   draw_panel = function(self, data, panel_params, coord, lineend = "butt",
                         linejoin = "mitre", linemitre = 10, expand = 0,
-                        radius = 0) {
+                        radius = 0, arc = TRUE, steps = 0.005, simplify = TRUE) {
     if (empty(data)) {
       return(zeroGrob())
     }
@@ -388,18 +388,19 @@ GeomRoundpolygon <- ggproto(
 #' @format NULL
 #' @usage NULL
 #' @export
-GeomRoundtile <- ggproto(
-  "GeomRoundbar", GeomBar,
+GeomRoundtileArcET <- ggproto(
+  "GeomRoundbarArcET", GeomBar,
   draw_panel = function(self, data, panel_params, coord, lineend = "butt",
-                         linejoin = "mitre", linemitre = 10, radius = 0) {
-    ggproto_parent(GeomRoundrect, self)$draw_panel(data = data,
-                                              panel_params = panel_params,
-                                              coord = coord,
-                                              expand = 0,
-                                              radius = radius,
-                                              lineend = lineend,
-                                              linejoin = linejoin,
-                                              linemitre = linemitre)
+                        linejoin = "mitre", linemitre = 10, radius = 0,
+                        arc = TRUE, steps = 0.005, simplify = TRUE) {
+    ggproto_parent(GeomRoundrectArcET, self)$draw_panel(data = data,
+                                                        panel_params = panel_params,
+                                                        coord = coord,
+                                                        expand = 0,
+                                                        radius = radius,
+                                                        lineend = lineend,
+                                                        linejoin = linejoin,
+                                                        linemitre = linemitre)
   }
 )
 
@@ -407,39 +408,20 @@ GeomRoundtile <- ggproto(
 #' @format NULL
 #' @usage NULL
 #' @export
-GeomRoundbar <- ggproto(
-  "GeomRoundbar", GeomBar,
-  draw_panel = function(self, data, panel_params, coord, lineend = "butt",
-                         linejoin = "mitre", linemitre = 10, radius = 0,
-                        flipped_aes = FALSE) {
-    ggproto_parent(GeomRoundrect, self)$draw_panel(data = data,
-                                              panel_params = panel_params,
-                                              coord = coord,
-                                              expand = 0,
-                                              radius = radius,
-                                              lineend = lineend,
-                                              linejoin = linejoin,
-                                              linemitre = linemitre)
-  }
-)
-
-#' @rdname arcET-extensions
-#' @format NULL
-#' @usage NULL
-#' @export
-GeomRoundcol <- ggproto(
-  "GeomRoundcol", GeomCol,
+GeomRoundbarArcET <- ggproto(
+  "GeomRoundbarArcET", GeomBar,
   draw_panel = function(self, data, panel_params, coord, lineend = "butt",
                          linejoin = "mitre", linemitre = 10, radius = 0,
-                        flipped_aes = FALSE) {
-    ggproto_parent(GeomRoundrect, self)$draw_panel(data = data,
-                                              panel_params = panel_params,
-                                              coord = coord,
-                                              expand = 0,
-                                              radius = radius,
-                                              lineend = lineend,
-                                              linejoin = linejoin,
-                                              linemitre = linemitre)
+                        flipped_aes = FALSE, arc = TRUE, steps = 0.005,
+                        simplify = TRUE) {
+    ggproto_parent(GeomRoundrectArcET, self)$draw_panel(data = data,
+                                                        panel_params = panel_params,
+                                                        coord = coord,
+                                                        expand = 0,
+                                                        radius = radius,
+                                                        lineend = lineend,
+                                                        linejoin = linejoin,
+                                                        linemitre = linemitre)
   }
 )
 
@@ -447,11 +429,32 @@ GeomRoundcol <- ggproto(
 #' @format NULL
 #' @usage NULL
 #' @export
-GeomRoundrect <- ggproto(
-  "GeomRoundrect", GeomRect,
+GeomRoundcolArcET <- ggproto(
+  "GeomRoundcolArcET", GeomCol,
+  draw_panel = function(self, data, panel_params, coord, lineend = "butt",
+                         linejoin = "mitre", linemitre = 10, radius = 0,
+                        flipped_aes = FALSE, arc = TRUE, steps = 0.005,
+                        simplify = TRUE) {
+    ggproto_parent(GeomRoundrectArcET, self)$draw_panel(data = data,
+                                                        panel_params = panel_params,
+                                                        coord = coord,
+                                                        expand = 0,
+                                                        radius = radius,
+                                                        lineend = lineend,
+                                                        linejoin = linejoin,
+                                                        linemitre = linemitre)
+  }
+)
+
+#' @rdname arcET-extensions
+#' @format NULL
+#' @usage NULL
+#' @export
+GeomRoundrectArcET <- ggproto(
+  "GeomRoundrectArcET", GeomRect,
   draw_panel = function(self, data, panel_params, coord, lineend = "butt",
                          linejoin = "mitre", linemitre = 10, expand = 0,
-                         radius = 0) {
+                         radius = 0, arc = TRUE, steps = 0.005, simplify = TRUE) {
     if (empty(data)) {
       return(zeroGrob())
     }

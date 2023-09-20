@@ -23,7 +23,23 @@ ArcPathGrob(
   ...
 )
 
-ArcLineGrob(...)
+ArcLineGrob(
+  x = c(0, 20, 70),
+  y = c(0.2, 0.5, 1),
+  colour = "black",
+  linewidth = 0.5,
+  linetype = 1,
+  alpha = NA,
+  group = 1L,
+  arrow = NULL,
+  lineend = "butt",
+  linejoin = "round",
+  linemitre = 10,
+  arc = TRUE,
+  steps = 0.005,
+  simplify = TRUE,
+  ...
+)
 }
 \arguments{
 \item{x}{numeric vector (in degree) specifying x-values.}
