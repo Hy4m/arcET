@@ -193,7 +193,7 @@ geom_line_arc <- function(mapping = NULL,
   layer(data = data,
         mapping = mapping,
         stat = stat,
-        geom = GeomPathArcET,
+        geom = GeomLineArcET,
         position = position,
         show.legend = show.legend,
         inherit.aes = inherit.aes,
@@ -268,7 +268,6 @@ GeomSegmentArcET <- ggproto(
                                                  arrow.fill = arrow.fill,
                                                  lineend = lineend,
                                                  linejoin = linejoin,
-                                                 linemitre = linemitre,
                                                  na.rm = na.rm)
   }
 )
