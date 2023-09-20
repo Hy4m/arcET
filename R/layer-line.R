@@ -61,6 +61,7 @@ GeomLine2grob <- function(data,
   data <- trans(data)
   data <- data[intersect(names(data), c("x", "y", "colour", "linetype",
                                         "linewidth", "alpha", "group"))]
+  data <- data[order(data$group, data$x), , drop = FALSE]
   data <- cartesian2polar(data, coord = coord, region = region,
                           clip = clip, na.rm = na.rm)
   exec(ArcPathGrob, !!!data, ...)
@@ -321,7 +322,7 @@ GeomContour2grob <- function(data,
                                         "linewidth", "alpha", "group"))]
   data <- cartesian2polar(data = data, coord = coord, region = region,
                           clip = clip, na.rm = na.rm)
-  exec(ArcPathGrob, !!!data, ...)
+  exec(ArcPathGrob, !!!data, ..., arc = FALSE)
 }
 
 #' @rdname GeomPath
@@ -345,7 +346,7 @@ GeomDensity2d2grob <- function(data,
                                         "linetype", "alpha", "group"))]
   data <- cartesian2polar(data = data, coord = coord, region = region,
                           clip = clip, na.rm = na.rm)
-  exec(ArcPathGrob, !!!data, ...)
+  exec(ArcPathGrob, !!!data, ..., arc = FALSE)
 }
 
 #' @rdname GeomPath
