@@ -60,6 +60,7 @@ Other transform:
 \code{\link{GeomPathArcET2grob}()},
 \code{\link{GeomPoint2grob}()},
 \code{\link{GeomPolygon2grob}()},
+\code{\link{GeomPolygonArcET2grob}()},
 \code{\link{GeomRichText2grob}()},
 \code{\link{GeomRoundcolArcET2grob}()},
 \code{\link{GeomText2grob}()},

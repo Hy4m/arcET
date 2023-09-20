@@ -311,3 +311,224 @@ GeomStepArcET <- ggproto(
   }
 )
 
+#' Convert Layer to Grob
+#' @description Convert a ggplot layer to arc grob.
+#' @param data data frame object, which is extract from a ggplot object.
+#' @param trans coordinate transform function.
+#' @param coord coordinate specification, as created by `PANEL()` or extract from
+#' ggplot object.
+#' @param region a CELL object (created by `CELL()` function) used to set
+#' the drawing area.
+#' @param ... other parameters passing to `Arc*Grob()` function.
+#' @param flipped_aes TRUE means that coordinates are inherit `CoordFlip`.
+#' @param clip logical. Allows points to overflow outside the drawing area when
+#' `clip` is FALSE.
+#' @return a grid grob object.
+#' @family transform
+#' @author Hou Yun
+#' @rdname GeomPolygonArc
+#' @export
+GeomPolygonArcET2grob <- function(data,
+                                  trans = NULL,
+                                  coord = PANEL(),
+                                  region = CELL(),
+                                  ...,
+                                  clip = FALSE,
+                                  na.rm = FALSE) {
+  if (empty(data)) {
+    return(zeroGrob)
+  }
+  if ("size" %in% names(data)) {
+    data <- rename(data, "linewidth" = "size")
+  }
+
+  data <- trans(data)
+  data <- data[intersect(names(data), c("x", "y", "colour", "fill", "linetype",
+                                        "linewidth", "alpha", "group", "subgroup"))]
+  data <- cartesian2polar(data, coord = coord, region = region,
+                          clip = clip, na.rm = na.rm)
+  exec(ArcPolygonGrob, !!!data, ...)
+}
+
+#' @rdname GeomPolygonArc
+#' @export
+GeomRectArcET2grob <- function(data,
+                               trans = NULL,
+                               coord = PANEL(),
+                               region = CELL(),
+                               ...,
+                               clip = FALSE,
+                               na.rm = FALSE) {
+  if (empty(data)) {
+    return(zeroGrob)
+  }
+  if ("size" %in% names(data)) {
+    data <- rename(data, "linewidth" = "size")
+  }
+
+  data <- trans(data)
+  data <- data[intersect(names(data), c("xmin", "ymin", "xmax", "ymax",
+                                        "colour", "fill", "linetype",
+                                        "linewidth", "alpha"))]
+  data <- cartesian2polar(data, coord = coord, region = region,
+                          clip = clip, na.rm = na.rm)
+  exec(ArcRectGrob, !!!data, ...)
+}
+
+#' @rdname GeomPolygonArc
+#' @export
+GeomTileArcET2grob <- function(data,
+                               trans = NULL,
+                               coord = PANEL(),
+                               region = CELL(),
+                               ...,
+                               clip = FALSE,
+                               na.rm = FALSE) {
+  if (empty(data)) {
+    return(zeroGrob)
+  }
+  if ("size" %in% names(data)) {
+    data <- rename(data, "linewidth" = "size")
+  }
+
+  data <- trans(data)
+  data <- data[intersect(names(data), c("xmin", "ymin", "xmax", "ymax",
+                                        "colour", "fill", "linetype",
+                                        "linewidth", "alpha"))]
+  data <- cartesian2polar(data, coord = coord, region = region,
+                          clip = FALSE, na.rm = na.rm)
+  exec(ArcRectGrob, !!!data, ...)
+}
+
+#' Arc polygon-like layer
+#' @description All `geom_*_arc()` functions arc same as `geom_*()` in `ggplot2`
+#' package. However, the `geom_*_arc()` functions can set `arc`, `steps` and `simplify`
+#' parameter, which can used to adjust the curve smoothness after conversion to ArcPlot.
+#'
+#' @inheritParams ggplot2::geom_polygon
+#' @inheritParams ggplot2::geom_tile
+#' @inheritParams ggplot2::geom_rect
+#'
+#' @return a gg layer object.
+#' @author Hou Yun
+#' @rdname geom_polygon_arc
+#' @export
+geom_polygon_arc <- function (mapping = NULL,
+                              data = NULL,
+                              stat = "identity",
+                              position = "identity",
+                              rule = "evenodd",
+                              ...,
+                              na.rm = FALSE,
+                              show.legend = NA,
+                              inherit.aes = TRUE) {
+  layer(data = data,
+        mapping = mapping,
+        stat = stat,
+        geom = GeomPolygonArcET,
+        position = position,
+        show.legend = show.legend,
+        inherit.aes = inherit.aes,
+        params = list2(na.rm = na.rm,
+                       rule = rule,
+                       ...))
+}
+
+#' @rdname geom_polygon_arc
+#' @export
+geom_tile_arc <- function (mapping = NULL,
+                           data = NULL,
+                           stat = "identity",
+                           position = "identity",
+                           ...,
+                           linejoin = "mitre",
+                           na.rm = FALSE,
+                           show.legend = NA,
+                           inherit.aes = TRUE) {
+  layer(data = data,
+        mapping = mapping,
+        stat = stat,
+        geom = GeomTileArcET,
+        position = position,
+        show.legend = show.legend,
+        inherit.aes = inherit.aes,
+        params = list2(linejoin = linejoin,
+                       na.rm = na.rm,
+                       ...))
+}
+
+#' @rdname geom_polygon_arc
+#' @export
+geom_rect_arc <- function (mapping = NULL,
+                           data = NULL,
+                           stat = "identity",
+                           position = "identity",
+                           ...,
+                           linejoin = "mitre",
+                           na.rm = FALSE,
+                           show.legend = NA,
+                           inherit.aes = TRUE) {
+  layer(data = data,
+        mapping = mapping,
+        stat = stat,
+        geom = GeomRectArcET,
+        position = position,
+        show.legend = show.legend,
+        inherit.aes = inherit.aes,
+        params = list2(linejoin = linejoin,
+                       na.rm = na.rm,
+                       ...))
+}
+
+#' @rdname arcET-extensions
+#' @format NULL
+#' @usage NULL
+#' @export
+GeomPolygonArcET <- ggproto(
+  "GeomPolygonArcET", GeomPolygon,
+  draw_panel = function (self, data, panel_params, coord, rule = "evenodd",
+                         lineend = "butt", linejoin = "round", linemitre = 10,
+                         arc = TRUE, steps = 0.005, simplify = TRUE, na.rm = FALSE) {
+    ggproto_parent(GeomPolygon, self)$draw_panel(data = data,
+                                                 panel_params = panel_params,
+                                                 coord = coord,
+                                                 rule = rule,
+                                                 lineend = lineend,
+                                                 linejoin = linejoin,
+                                                 linemitre = linemitre)
+  }
+)
+
+#' @rdname arcET-extensions
+#' @format NULL
+#' @usage NULL
+#' @export
+GeomTileArcET <- ggproto(
+  "GeomTileArcET", GeomTile,
+  draw_panel = function (self, data, panel_params, coord, lineend = "butt",
+                         linejoin = "round", linemitre = 10, arc = TRUE,
+                         steps = 0.005, simplify = TRUE, na.rm = FALSE) {
+    ggproto_parent(GeomTile, self)$draw_panel(data = data,
+                                              panel_params = panel_params,
+                                              coord = coord,
+                                              lineend = lineend,
+                                              linejoin = linejoin)
+  }
+)
+
+#' @rdname arcET-extensions
+#' @format NULL
+#' @usage NULL
+#' @export
+GeomRectArcET <- ggproto(
+  "GeomRectArcET", GeomRect,
+  draw_panel = function (self, data, panel_params, coord, lineend = "butt",
+                         linejoin = "round", linemitre = 10, arc = TRUE,
+                         steps = 0.005, simplify = TRUE, na.rm = FALSE) {
+    ggproto_parent(GeomRect, self)$draw_panel(data = data,
+                                              panel_params = panel_params,
+                                              coord = coord,
+                                              lineend = lineend,
+                                              linejoin = linejoin)
+  }
+)

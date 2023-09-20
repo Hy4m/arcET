@@ -16,6 +16,9 @@
 \alias{GeomLineArcET}
 \alias{GeomSegmentArcET}
 \alias{GeomStepArcET}
+\alias{GeomPolygonArcET}
+\alias{GeomTileArcET}
+\alias{GeomRectArcET}
 \title{arcET package extensions to ggplot2}
 \description{
 In general the actual classes should be of little interest to users as the
