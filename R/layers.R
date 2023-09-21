@@ -320,9 +320,9 @@ GeomStepArcET <- ggproto(
 #' @param region a CELL object (created by `CELL()` function) used to set
 #' the drawing area.
 #' @param ... other parameters passing to `Arc*Grob()` function.
-#' @param flipped_aes TRUE means that coordinates are inherit `CoordFlip`.
 #' @param clip logical. Allows points to overflow outside the drawing area when
 #' `clip` is FALSE.
+#' @inheritParams ggplot2::geom_polygon
 #' @return a grid grob object.
 #' @family transform
 #' @author Hou Yun
@@ -532,3 +532,4 @@ GeomRectArcET <- ggproto(
                                               linejoin = linejoin)
   }
 )
+
