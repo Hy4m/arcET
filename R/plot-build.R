@@ -364,7 +364,7 @@ CellPlot_build <- function(gg_element,
     xaxis <- NULL
   } else {
     position <- coord$x$position
-    title.gp <- calc_element(paste0("axis.title.y.", position), thm)
+    title.gp <- calc_element(paste0("axis.title.x.", position), thm)
     line.gp <- calc_element(paste0("axis.line.x.", position), thm)
     tick.gp <- calc_element(paste0("axis.ticks.x.", position), thm)
     ticks.length <- calc_element(paste0("axis.ticks.length.x.", position), thm)
