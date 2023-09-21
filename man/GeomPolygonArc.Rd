@@ -52,7 +52,8 @@ the drawing area.}
 \item{clip}{logical. Allows points to overflow outside the drawing area when
 `clip` is FALSE.}
 
-\item{flipped_aes}{TRUE means that coordinates are inherit `CoordFlip`.}
+\item{na.rm}{If \code{FALSE}, the default, missing values are removed with
+a warning. If \code{TRUE}, missing values are silently removed.}
 }
 \value{
 a grid grob object.
@@ -71,6 +72,7 @@ Other transform:
 \code{\link{GeomPathArcET2grob}()},
 \code{\link{GeomPoint2grob}()},
 \code{\link{GeomPolygon2grob}()},
+\code{\link{GeomRaster2grob}()},
 \code{\link{GeomRichText2grob}()},
 \code{\link{GeomRoundcolArcET2grob}()},
 \code{\link{GeomText2grob}()},

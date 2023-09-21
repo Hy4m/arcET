@@ -87,6 +87,7 @@ Other transform:
 \code{\link{GeomPoint2grob}()},
 \code{\link{GeomPolygon2grob}()},
 \code{\link{GeomPolygonArcET2grob}()},
+\code{\link{GeomRaster2grob}()},
 \code{\link{GeomRichText2grob}()},
 \code{\link{GeomRoundcolArcET2grob}()},
 \code{\link{GeomViolin2grob}()}
