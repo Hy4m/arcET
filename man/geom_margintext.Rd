@@ -11,15 +11,14 @@ geom_margin_vtext(
   stat = "identity",
   position = "identity",
   ...,
+  align = TRUE,
   parse = FALSE,
   margin = unit(1, "pt"),
   sides = "r",
   length = unit(1, "cm"),
-  tick.length = "10\%",
-  link.colour = NULL,
-  link.linetype = NULL,
-  link.linewidth = NULL,
-  link.alpha = NULL,
+  tick.length = unit(1.5, "mm"),
+  line_colour = NULL,
+  line_alpha = NULL,
   na.rm = FALSE,
   show.legend = FALSE,
   inherit.aes = TRUE
@@ -31,15 +30,14 @@ geom_margin_htext(
   stat = "identity",
   position = "identity",
   ...,
+  align = TRUE,
   parse = FALSE,
   margin = unit(1, "pt"),
   sides = "r",
   length = unit(1, "cm"),
-  tick.length = "10\%",
-  link.colour = NULL,
-  link.linetype = NULL,
-  link.linewidth = NULL,
-  link.alpha = NULL,
+  tick.length = unit(1.5, "mm"),
+  line_colour = NULL,
+  line_alpha = NULL,
   na.rm = FALSE,
   show.legend = FALSE,
   inherit.aes = TRUE
@@ -80,6 +78,8 @@ often aesthetics, used to set an aesthetic to a fixed value, like
 \code{colour = "red"} or \code{size = 3}. They may also be parameters
 to the paired geom/stat.}
 
+\item{align}{logical indicating wheather align label.}
+
 \item{parse}{logical, if TRUE will parse text to expression.}
 
 \item{margin}{a grid unit object specifying top and bottom text margin.}
@@ -92,7 +92,7 @@ to the paired geom/stat.}
 \item{tick.length}{tick length of link, should be a grid unit object or character
 ratio.}
 
-\item{link.colour, link.linetype, link.linewidth, link.alpha}{aesthetic of link lines.}
+\item{line_colour, line_alpha}{aesthetic of link lines.}
 
 \item{na.rm}{If \code{FALSE}, the default, missing values are removed with
 a warning. If \code{TRUE}, missing values are silently removed.}

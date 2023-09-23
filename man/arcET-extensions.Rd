@@ -4,8 +4,8 @@
 \docType{data}
 \name{arcET-extensions}
 \alias{arcET-extensions}
-\alias{GeomMarginVtext}
-\alias{GeomMarginHtext}
+\alias{GeomMarginVtextArcET}
+\alias{GeomMarginHtextArcET}
 \alias{GeomRoundpolygonArcET}
 \alias{GeomRoundtileArcET}
 \alias{GeomRoundbarArcET}

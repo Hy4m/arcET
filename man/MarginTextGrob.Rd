@@ -15,12 +15,16 @@ MarginVtextGrob(
   family = "",
   fontface = 1,
   lineheight = 1.2,
+  linewidth = 0.5,
+  linetype = 1,
+  line_colour = NULL,
+  line_alpha = NULL,
+  align = TRUE,
   parse = FALSE,
   sides = "r",
   margin = unit(1, "pt"),
   length = unit(1, "cm"),
-  tick.length = "10\%",
-  line.gp = gpar(),
+  tick.length = unit(1.5, "mm"),
   ...
 )
 
@@ -34,12 +38,16 @@ MarginHtextGrob(
   family = "",
   fontface = 1,
   lineheight = 1.2,
+  linewidth = 0.5,
+  linetype = 1,
+  line_colour = NULL,
+  line_alpha = NULL,
+  align = TRUE,
   parse = FALSE,
   sides = "t",
   margin = unit(1, "pt"),
   length = unit(1, "cm"),
-  tick.length = "10\%",
-  line.gp = gpar(),
+  tick.length = unit(1.5, "mm"),
   ...
 )
 }
@@ -62,6 +70,10 @@ MarginHtextGrob(
 
 \item{lineheight}{height of a line as a multiple of the size of text.}
 
+\item{linewidth, linetype, line_colour, line_alpha}{attributes of line.}
+
+\item{align}{logical indicating wheather align label.}
+
 \item{parse}{logical, if TRUE will parse text to expression.}
 
 \item{sides}{position of margin text. `sides` must be one of "l" or "r" for
@@ -73,8 +85,6 @@ MarginHtextGrob(
 
 \item{tick.length}{tick length of link, should be a grid unit object or character
 ratio.}
-
-\item{line.gp}{other parameters of link, see \code{?grid::gpar} for details.}
 
 \item{...}{not used.}
 }

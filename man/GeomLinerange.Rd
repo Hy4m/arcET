@@ -101,7 +101,7 @@ Other transform:
 \code{\link{GeomBar2grob}()},
 \code{\link{GeomBlank2grob}()},
 \code{\link{GeomBoxplot2grob}()},
-\code{\link{GeomMarginVtext2grob}()},
+\code{\link{GeomMarginVtextArcET2grob}()},
 \code{\link{GeomPath2grob}()},
 \code{\link{GeomPathArcET2grob}()},
 \code{\link{GeomPoint2grob}()},
