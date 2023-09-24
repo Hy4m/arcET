@@ -33,7 +33,7 @@ geom_margin_htext(
   align = TRUE,
   parse = FALSE,
   margin = unit(1, "pt"),
-  sides = "r",
+  sides = "t",
   length = unit(1, "cm"),
   tick.length = unit(1.5, "mm"),
   line_colour = NULL,
