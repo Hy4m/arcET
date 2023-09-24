@@ -104,6 +104,16 @@ show_cell(region2)
 
 <img src="man/figures/README-cell-2.png" width="100%" />
 
+``` r
+
+## combine
+show_cell(CELL(start = 120, end = 60, r0 = 0.5, r1 = 1),
+          CELL(start = 140, end = 40, r0 = 0.5, r1 = 1,
+               direct = "reverse.clockwise"))
+```
+
+<img src="man/figures/README-cell-3.png" width="100%" />
+
 ## Notes
 
 It is still in the phase of code testing and updating help
