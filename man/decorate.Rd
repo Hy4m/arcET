@@ -12,6 +12,7 @@
 \alias{decorate_segment}
 \alias{decorate_hline}
 \alias{decorate_vline}
+\alias{decorate_background}
 \alias{decorate_richtext}
 \title{Annotate Plot}
 \usage{
@@ -143,6 +144,18 @@ decorate_vline(
   ...
 )
 
+decorate_background(
+  plot,
+  fill = "grey95",
+  colour = NA,
+  linetype = 1,
+  linewidth = 0.5,
+  alpha = NA,
+  xlim = NULL,
+  ylim = NULL,
+  ...
+)
+
 decorate_richtext(
   plot,
   label,
@@ -179,6 +192,10 @@ CellPlot.}
       sensitive} and if \code{TRUE}, case is ignored during matching.}
 
 \item{...}{other parameters passing `Arc*Grob()` function.}
+
+\item{fill, colour, linetype, linewidth, alpha}{aesthetic of background.}
+
+\item{xlim, ylim}{axis limits.}
 }
 \value{
 a modified ArcPlot object.

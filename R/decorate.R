@@ -450,6 +450,40 @@ decorate_vline <- function(plot,
   plot
 }
 
+#' @param fill,colour,linetype,linewidth,alpha aesthetic of background.
+#' @param xlim,ylim axis limits.
+#' @rdname decorate
+#' @export
+decorate_background <- function(plot,
+                                fill = "grey95",
+                                colour = NA,
+                                linetype = 1,
+                                linewidth = 0.5,
+                                alpha = NA,
+                                xlim = NULL,
+                                ylim = NULL,
+                                ...) {
+  stopifnot(is_ArcPlot(plot))
+
+  xlim <- xlim %||% attr(plot, "xlim") %||% c(-1, 1)
+  ylim <- ylim %||% attr(plot, "ylim") %||% c(-1, 1)
+  r <- max(abs(xlim), abs(ylim), na.rm = TRUE)
+  bg <- grid::circleGrob(x = 0,
+                         y = 0,
+                         r = r,
+                         gp = gpar(col = alpha(colour, alpha),
+                                   fill = alpha(fill, alpha),
+                                   lty = linetype,
+                                   lwd = linewidth * .pt),
+                         name = "panel-background")
+
+  plot$annotate$anno <- c(plot$annotate$anno, list(bg))
+  plot$annotate$pos <- c(plot$annotate$pos, -1)
+
+  set_current_plot(plot)
+  plot
+}
+
 #' @noRd
 utils::globalVariables(
   c("mid_x",
