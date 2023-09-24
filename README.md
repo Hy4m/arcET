@@ -81,15 +81,31 @@ region location in polar coordinates, and it mainly has the following
 four parameters: `start` and `end` are used to set the angle (in degree)
 position of the start and end of the region; `r0` and `r1` are used to
 set the radius of the start and end of the region. In addition, the
-`direct` parameter controls the direction of the region, which is
-`clockwise` by default, but you can be set to `reverse.clockwise`.
+`direct` parameter controls the direction of the region. The default of
+`direct` parameter is `clockwise`, but you can set to
+`reverse.clockwise`.
 
 The `show_cell()` function is a quick way to visualize what different
 parameters do:
 
 ``` r
 region <- CELL(start = 120, end = 60, r0 = 0.5, r1 = 1)
-show_cell(region)
+
+region ## print
+#> 
+#> ── --------CELLMETA information:-------- ───────────────────────────────────────
+#> start -> 120 (in degree)
+#> end -> 60 (in degree)
+#> r0 -> 0.5 (in [0, 1])
+#> r1 -> 1 (in [0, 1])
+#> direct -> clockwise ('clockwise' or 'reverse.clockwise')
+#> x.range -> [120, 60]
+#> y.range -> [0.5, 1]
+#> clip -> <function>
+#> 
+#> 
+#> ── ------------------------------------ ────────────────────────────────────────
+show_cell(region) ## visualize
 ```
 
 <img src="man/figures/README-cell-1.png" width="100%" />
@@ -118,7 +134,12 @@ show_cell(CELL(start = 120, end = 60, r0 = 0.5, r1 = 1),
 
 It is still in the phase of code testing and updating help
 documentation, so many features and usage you may not be able to find
-the corresponding documentation. In addition, arcET currently does not
-support the special layer functions provided in other ggplot2
+the corresponding documentation. In addition, `arcET` currently does not
+support the special layer functions provided in other `ggplot2`
 extensions, and of course I welcome everyone to submit PR to improve the
-arcET package.
+`arcET` package.
+
+Finally, it must be noted that many functions in the `arcET` package
+refer to or copy the corresponding function code in the `ggplot2`
+package, and if I did not comment clearly in the source code, please
+point out or submit an PR to fix it.
