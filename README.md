@@ -41,7 +41,7 @@ ggplot(mtcars, aes(wt, mpg)) + geom_point()
 ``` r
 ## transform
 arc_test()
-#> Build CellID_1 plot...
+#> Build CellID_1 plot......[1/1]
 ```
 
 <img src="man/figures/README-example-2.png" width="100%" />
@@ -54,20 +54,55 @@ library(ggplot2)
 p <- ggplot(mtcars, aes(wt, mpg)) + geom_point()
 
 arcplot() |>
-    init_cell(p, region = CELL(180, 0, 0.5)) |>
-    within_plot(title = "wt vs mpg",
-                xlim = c(-1.05, 1.05),
-                ylim = c(-0.05, 1.05)) |>
-    decorate_bannertext(label = "Bannertext annotation has done",
-                        y = max(y.range) + 0.01,
-                        vjust = 0,
-                        colour = "red",
-                        CellID = "CellID",
-                        fixed = FALSE)
-#> Build CellID_2 plot...
+  init_cell(p, region = CELL(180, 0, 0.5)) |>
+  within_plot(title = "wt vs mpg",
+              xlim = c(-1.1, 1.1),
+              ylim = c(-0.1, 1.1)) |>
+  decorate_rect(ymin = 1,
+                ymax = 1.1,
+                fill = "steelblue",
+                colour = NA,
+                CellID = "CellID",
+                fixed = FALSE) |>
+  decorate_bannertext(label = "Bannertext annotation has done",
+                      y = 1.05,
+                      colour = "red",
+                      CellID = "CellID",
+                      fixed = FALSE)
+#> Build CellID_2 plot......[1/1]
 ```
 
 <img src="man/figures/README-example2-1.png" width="100%" />
+
+## `region` parameter
+
+The `region` parameter (created by `CELL()` function) is used to set the
+region location in polar coordinates, and it mainly has the following
+four parameters: `start` and `end` are used to set the angle (in degree)
+position of the start and end of the region; `r0` and `r1` are used to
+set the radius of the start and end of the region. In addition, the
+`direct` parameter controls the direction of the region, which is
+`clockwise` by default, but you can be set to `reverse.clockwise`.
+
+The `show_cell()` function is a quick way to visualize what different
+parameters do:
+
+``` r
+region <- CELL(start = 120, end = 60, r0 = 0.5, r1 = 1)
+show_cell(region)
+```
+
+<img src="man/figures/README-cell-1.png" width="100%" />
+
+``` r
+
+## reverse.clockwise
+region2 <- CELL(start = 120, end = 60, r0 = 0.5, r1 = 1,
+                direct = "reverse.clockwise")
+show_cell(region2)
+```
+
+<img src="man/figures/README-cell-2.png" width="100%" />
 
 ## Notes
 
