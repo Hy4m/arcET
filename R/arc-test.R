@@ -2,7 +2,7 @@
 #' @description Helper funtion used to quickly preview the results of the conversion.
 #' @param plot a ggplot object.
 #' @param region a `CELL` object.
-#' @param ... not used.
+#' @param ... passing to `within_plot()`.
 #' @param vp 	viewport to draw plot in.
 #' @param newpage draw new (empty) page first?
 #' @return return grob object invisibly.
@@ -31,6 +31,7 @@ arc_test <- function(plot = ggplot2::last_plot(),
   clss <- class(plot)[1]
   region <- region %||% CELL(120, 60, 0.4)
   plot <- init_cell(arcplot(), data = plot, region = region)
+  plot <- within_plot(plot, ...)
 
   plot <- tryCatch(ArcPlot_build(plot),
                    error = function(e) {

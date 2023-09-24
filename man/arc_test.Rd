@@ -17,7 +17,7 @@ arc_test(
 
 \item{region}{a `CELL` object.}
 
-\item{...}{not used.}
+\item{...}{passing to `within_plot()`.}
 
 \item{vp}{viewport to draw plot in.}
 
