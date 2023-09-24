@@ -5,24 +5,27 @@
 \title{Show CELL}
 \usage{
 show_cell(
-  region = CELL(),
-  fill = "grey90",
+  ...,
+  fill = "lightblue",
   colour = NA,
+  background = "grey95",
+  border = NA,
   digits = 2,
   xn = 7,
   yn = 7,
   newpage = is.null(vp),
-  vp = NULL,
-  ...
+  vp = NULL
 )
 }
 \arguments{
-\item{region}{a CELL object (created by `CELL()` function) used to set
+\item{...}{any CELL objects (created by `CELL()` function) used to set
 the drawing area.}
 
 \item{fill}{fill colour of region.}
 
 \item{colour}{border colour of region.}
+
+\item{background, border}{fill and border colour of plot region (unit circle).}
 
 \item{digits}{integer indicating the number of decimal places.}
 
@@ -31,8 +34,6 @@ the drawing area.}
 \item{newpage}{logical, indicating whether a new graphics device needs to be opened.}
 
 \item{vp}{grid viewport object.}
-
-\item{...}{other parameters passing to `ArcRectGrob()`.}
 }
 \value{
 invisible grobs.
@@ -41,7 +42,8 @@ invisible grobs.
 A quick way to show region of `CELL()`.
 }
 \examples{
-show_cell(CELL(start = 120, end = 60, r0 = 0.5))
+show_cell(CELL(120, 60, 0.6))
+show_cell(CELL(120, 60, 0.6), CELL(300, 240, 0.3, 0.6))
 }
 \author{
 Hou Yun
