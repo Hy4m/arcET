@@ -124,9 +124,13 @@ init_cell <- function(plot,
     cell <- data
   }
 
-  CellID <- CellID %||% cell_id()
-  TrackID <- TrackID %||% track_id()
-  SectorID <- SectorID %||% sector_id()
+  if (!is.null(TrackID) && !is.null(SectorID)) {
+    CellID <- CellID %||% paste(TrackID, SectorID, sep = "-")
+  } else {
+    CellID <- CellID %||% cell_id()
+    TrackID <- TrackID %||% track_id()
+    SectorID <- SectorID %||% sector_id()
+  }
 
   plot$plot <- c(plot$plot, list(cell))
   plot$region <- c(plot$region, list(region))
