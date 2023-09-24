@@ -72,7 +72,7 @@ ArcPlot_build <- function(plot, ...) {
 #' @rdname ArcPlot_build
 #' @export
 ArcPlot_build.ArcPlot <- function(plot, ...) {
-  theme <- plot_theme(plot$theme, default = theme_get())
+  theme <- plot$theme
 
   if (length(plot$plot) < 1) {
     xlim <- attr(plot, "xlim") %||% c(-1, 1)

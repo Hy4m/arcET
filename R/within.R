@@ -92,7 +92,11 @@ within_plot <- function(plot,
   stopifnot(is_ArcPlot(plot))
 
   if (!is.null(theme)) {
-    plot$theme <- plot_theme(theme, default = plot$theme)
+    if (attr(theme, "complete")) {
+      plot$theme <- theme
+    } else {
+      plot$theme <- plot$theme %+replace% theme
+    }
   }
 
   labels <- list(title = title,
