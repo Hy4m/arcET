@@ -27,10 +27,6 @@ show_cell <- function(...,
                       newpage = is.null(vp),
                       vp = NULL) {
   dots <- list(...)
-  if (length(dots) < 1) {
-    cli::cli_inform("No `region` input.")
-    invisible()
-  }
 
   if (!all(vapply_lgl(dots, is_CELL))) {
     cli::cli_abort("All `region` should be created by {.fn CELL}")
@@ -49,7 +45,7 @@ show_cell <- function(...,
   gt <- gtable_add_grob(gt, bg, t = 2, l = 2, z = -Inf, clip = "off",
                         name = "background")
 
-  for (ii in 1:length(dots)) {
+  for (ii in seq_along(dots)) {
     REGION <- dots[[ii]]
     xseq <- seq(REGION$x.range[1], REGION$x.range[2], length.out = xn) %% 360
     x_labels <- paste0(round(xseq, digits = digits), iconv("\u00b0", to = "UTF-8"))
@@ -106,7 +102,79 @@ show_cell <- function(...,
     } else {
       grid::pushViewport(vp)
     }
-    grid::grid.draw(grobs)
+    grid::grid.draw(gt)
+
+    grid::upViewport()
+  }
+
+  invisible(gt)
+}
+
+#' Show Layout
+#' @description A quick way to show layout of ArcPlot.
+#' @param plot an ArcPlot object.
+#' @param fill fill colour of region.
+#' @param colour border colour of region.
+#' @param background,border fill and border colour of plot region (unit circle).
+#' @param ... other parameters passing to `ArcBannerTextGrob()`.
+#' @param newpage logical, indicating whether a new graphics device needs to be opened.
+#' @param vp grid viewport object.
+#' @return invisible grobs.
+#' @rdname show_layout
+#' @author Hou Yun
+#' @export
+show_layout <- function(plot,
+                        fill = "lightblue",
+                        colour = NA,
+                        background = "grey95",
+                        border = NA,
+                        ...,
+                        newpage = is.null(vp),
+                        vp = NULL) {
+  stopifnot(is_ArcPlot(plot))
+
+  gt <- gtable(widths = unit(c(1.5, 1, 1.5), c("cm", "null", "cm")),
+               heights = unit(c(1.5, 1, 1.5), c("cm", "null", "cm")),
+               respect = TRUE)
+
+  bg <- grid::circleGrob(x = 0,
+                         y = 0,
+                         r = 1,
+                         default.units = "native",
+                         vp = viewport(xscale = c(-1, 1), yscale = c(-1, 1)),
+                         gp = gpar(col = border, fill = background))
+  gt <- gtable_add_grob(gt, bg, t = 2, l = 2, z = -Inf, clip = "off",
+                        name = "background")
+
+  for (ii in seq_along(plot$region)) {
+    region <- plot$region[[ii]]
+    CellID <- plot$CellID[[ii]]
+
+    panel <- ArcPanelGrob(region = region, fill = fill, colour = colour)
+    label <- ArcBannerTextGrob(x = region$mid_x, y = region$mid_y,
+                               label = CellID, ...)
+
+    grob <- gTree(children = gList(panel, label),
+                  vp = viewport(xscale = c(-1, 1), yscale = c(-1, 1)))
+    gt <- gtable_add_grob(gt, grob, t = 2, l = 2, clip = "off",
+                          name = paste(CellID, "panel", sep = "-"))
+  }
+
+  if (isTRUE(newpage)) {
+    grid::grid.newpage()
+  }
+
+  grDevices::recordGraphics(requireNamespace("arcET", quietly = TRUE),
+                            list(), getNamespace("arcET"))
+  if (is.null(vp)) {
+    grid::grid.draw(gt)
+  } else {
+    if (is.character(vp)) {
+      grid::seekViewport(vp)
+    } else {
+      grid::pushViewport(vp)
+    }
+    grid::grid.draw(gt)
 
     grid::upViewport()
   }
