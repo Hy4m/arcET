@@ -29,6 +29,9 @@ This function always used to setting panel region on
 polar coordinate. Note that the start point needs to be larger than
 the end point.
 }
+\examples{
+show_cell(CELL(start = 180, end = 0, r0 = 0.5))
+}
 \author{
 Hou Yun
 }

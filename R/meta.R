@@ -14,6 +14,8 @@
 #' @rdname CELL
 #' @author Hou Yun
 #' @export
+#' @examples
+#' show_cell(CELL(start = 180, end = 0, r0 = 0.5))
 CELL <- function(start = 360,
                  end = 0,
                  r0 = 0,
