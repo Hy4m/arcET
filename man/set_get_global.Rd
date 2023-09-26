@@ -5,14 +5,17 @@
 \alias{get_arcET_global}
 \title{Get and set global options}
 \usage{
-set_arcET_global(...)
+set_arcET_global(..., env = NULL)
 
-get_arcET_global(which, default = NULL)
+get_arcET_global(which, default = NULL, env = NULL)
 }
 \arguments{
 \item{...}{any options can be defined, using name = value. Currently,
 only the `cell_index`,`sector_index`,`track_index`,`steps` and `simplify`
 options are used}
+
+\item{env}{the environment in which IDs is to be generated. If is NULL (default), will
+evaluated in `arcET_global` environment.}
 
 \item{which}{a character string indicating which global setting will be returned.}
 

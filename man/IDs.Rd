@@ -7,15 +7,17 @@
 \alias{reset_ids}
 \title{Get ids}
 \usage{
-cell_id()
+cell_id(env = NULL)
 
-track_id()
+track_id(env = NULL)
 
-sector_id()
+sector_id(env = NULL)
 
-reset_ids(which = c("all", "CellID", "TrackID", "SectorID"))
+reset_ids(which = c("all", "CellID", "TrackID", "SectorID"), env = NULL)
 }
 \arguments{
+\item{env}{the environment in which IDs is to be generated.}
+
 \item{which}{if "all" will reset all id's index.}
 }
 \value{
