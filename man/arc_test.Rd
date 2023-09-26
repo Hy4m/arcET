@@ -35,6 +35,9 @@ if (FALSE) { # Not Run
   library(arcET)
   ggplot(mtcars, aes(wt, mpg)) + geom_point()
   arc_test()
+
+  ggplot(mpg, aes(class)) + geom_bar()
+  arc_test()
 }
 }
 \author{
