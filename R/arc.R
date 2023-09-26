@@ -60,7 +60,8 @@ arcplot <- function(data = NULL, mapping = aes(), ...) {
                                  labels = list(),
                                  data = data,
                                  mapping = mapping,
-                                 ids = ids),
+                                 ids = ids,
+                                 env = rlang::env_clone(arcET_global)),
 
                     class = "ArcPlot")
   set_current_plot(plot)
@@ -127,9 +128,9 @@ init_cell <- function(plot,
   if (!is.null(TrackID) && !is.null(SectorID)) {
     CellID <- CellID %||% paste(TrackID, SectorID, sep = "-")
   } else {
-    CellID <- CellID %||% cell_id()
-    TrackID <- TrackID %||% track_id()
-    SectorID <- SectorID %||% sector_id()
+    CellID <- CellID %||% cell_id(plot$env)
+    TrackID <- TrackID %||% track_id(plot$env)
+    SectorID <- SectorID %||% sector_id(plot$env)
   }
 
   plot$plot <- c(plot$plot, list(cell))
